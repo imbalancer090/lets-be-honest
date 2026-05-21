@@ -36,8 +36,11 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
   /* svh = viewport height when browser toolbar fully shown — nav never hides behind it.
      Cascade: svh preferred, dvh fallback, vh oldest fallback. */
   .phone{width:100vw;height:100vh;height:100dvh;height:100svh;border-radius:0;box-shadow:none}
-  #gnav{border-radius:0}
   #card-modal{border-radius:0}
+}
+@media(min-width:431px){
+  /* Desktop phone frame — round bottom corners of nav to match card */
+  #gnav{border-radius:0 0 44px 44px}
 }
 
 .grain{position:absolute;inset:0;pointer-events:none;z-index:999;opacity:0.042;mix-blend-mode:screen;
@@ -52,7 +55,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
   height:calc(72px + env(safe-area-inset-bottom));
   display:flex;align-items:center;justify-content:space-around;
   background:rgba(6,6,8,0.92);border-top:1px solid rgba(255,255,255,0.07);
-  backdrop-filter:blur(32px);z-index:500;border-radius:0 0 44px 44px;
+  backdrop-filter:blur(32px);z-index:500;border-radius:0;
   padding-bottom:calc(14px + env(safe-area-inset-bottom));
 }
 .nb{background:none;border:none;cursor:pointer;padding:10px 18px;display:flex;flex-direction:column;align-items:center;gap:5px}
@@ -201,7 +204,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 .s2-foot{display:flex;flex-direction:column;gap:10px;margin-top:32px}
 .s2-date{font-size:9px;color:rgba(255,255,255,0.28);letter-spacing:0.1em;font-family:'Inter',sans-serif}
 .s2-btns{display:flex;gap:10px}
-.s2-btn{flex:1;background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.2);padding:13px 16px;font-family:'Italiana',serif;font-size:16px;font-style:italic;font-weight:700;border-radius:12px;cursor:pointer;backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.18)}
+.s2-btn{flex:1;background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.2);padding:13px 14px;font-family:'Italiana',serif;font-size:clamp(13px,4vw,16px);font-style:italic;font-weight:700;border-radius:12px;cursor:pointer;backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.18);white-space:nowrap;text-align:center}
 #s2-share-hint{
   font-family:'Inter',sans-serif;font-size:10px;letter-spacing:0.06em;
   color:rgba(255,255,255,0.28);text-align:center;
@@ -254,7 +257,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 
 /* Insight chip */
 .s3-insight{
-  flex-shrink:0;margin:10px 22px 0;
+  flex-shrink:0;margin:12px 22px 0;
   background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);
   border-radius:12px;padding:10px 13px;
   display:flex;align-items:flex-start;gap:9px;
@@ -320,9 +323,40 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 .cards-row{display:flex;gap:9px}
 
 /* Float wrapper */
-.gc-fw{animation:cardFloat var(--fd,4s) ease-in-out infinite;animation-delay:var(--fdl,0s)}
+.gc-fw{position:relative;animation:cardFloat var(--fd,4s) ease-in-out infinite;animation-delay:var(--fdl,0s)}
 .gc-fw-half{width:calc(50% - 4.5px);flex-shrink:0}
 @keyframes cardFloat{0%,100%{transform:translateY(0px)}50%{transform:translateY(-5px)}}
+
+/* ── iOS-style long-press delete ── */
+@keyframes jiggle{
+  0%  {transform:rotate(-1.6deg) scale(0.983)}
+  50% {transform:rotate(1.6deg) scale(0.983)}
+  100%{transform:rotate(-1.6deg) scale(0.983)}
+}
+/* Stagger so cards don't all wiggle in sync */
+.jiggle-mode .gc-fw:nth-child(odd)  .gc{animation:jiggle 0.22s ease-in-out infinite}
+.jiggle-mode .gc-fw:nth-child(even) .gc{animation:jiggle 0.22s ease-in-out infinite 0.11s}
+/* Also stagger half-cards inside rows */
+.jiggle-mode .cards-row .gc-fw:nth-child(odd)  .gc{animation-delay:0.05s}
+.jiggle-mode .cards-row .gc-fw:nth-child(even) .gc{animation-delay:0.16s}
+/* Pause float during jiggle */
+.jiggle-mode .gc-fw{animation:none}
+/* Suppress hover transform during jiggle */
+.jiggle-mode .gc:hover{transform:none}
+/* X badge — sits on the gc-fw wrapper, outside overflow:hidden of gc */
+.gc-del-x{
+  position:absolute;top:-8px;left:-6px;z-index:60;
+  width:22px;height:22px;border-radius:50%;
+  background:#ff3b30;border:2px solid rgba(255,255,255,0.9);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:14px;font-weight:300;line-height:1;
+  cursor:pointer;pointer-events:none;
+  opacity:0;transform:scale(0);
+  transition:opacity 0.15s,transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow:0 2px 8px rgba(0,0,0,0.45);
+  user-select:none;-webkit-user-select:none;
+}
+.jiggle-mode .gc-del-x{opacity:1;transform:scale(1);pointer-events:all}
 
 /* Glass card */
 .gc{
@@ -407,7 +441,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 .s4-h2 em{font-style:italic;color:rgba(255,255,255,0.44)}
 .s4-tag{flex-shrink:0;padding:5px 22px 0;font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:0.13em;color:rgba(255,255,255,0.22);z-index:2;position:relative;text-transform:uppercase}
 #s4-personal{
-  flex-shrink:0;margin:16px 22px 0;
+  flex-shrink:0;margin:auto 22px 0;
   display:flex;align-items:center;gap:10px;
   background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);
   border-radius:12px;padding:11px 14px;
@@ -420,7 +454,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 .s4p-text em{color:rgba(255,255,255,0.88);font-style:italic}
 .s4p-arrow{font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,0.25);flex-shrink:0}
 .pulse-list{
-  margin-top:auto;flex-shrink:0;padding:18px 22px calc(86px + env(safe-area-inset-bottom));
+  flex-shrink:0;padding:12px 22px calc(86px + env(safe-area-inset-bottom));
   display:flex;flex-direction:column;z-index:2;position:relative;
   pointer-events:all;
 }
@@ -627,11 +661,6 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
     </div>
     <!-- Legend chips -->
     <div class="s3-legend" id="s3-legend"></div>
-    <!-- Insight chip -->
-    <div class="s3-insight" id="s3-insight">
-      <div class="s3-insight-dot" id="s3-insight-dot"></div>
-      <div class="s3-insight-text" id="s3-insight-text"></div>
-    </div>
     <!-- Weekly comparison — visible when 2+ entries in each of this/last week -->
     <div id="s3-week-compare"></div>
     <!-- Timeline -->
@@ -640,6 +669,11 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
       <canvas id="wave-canvas" height="56"></canvas>
       <div class="wave-tooltip" id="wave-tooltip"></div>
       <div class="viz-caption" style="padding:4px 0 0;text-align:left">intensity over time</div>
+    </div>
+    <!-- Insight chip — grouped with timeline data, not blocking main visual -->
+    <div class="s3-insight" id="s3-insight">
+      <div class="s3-insight-dot" id="s3-insight-dot"></div>
+      <div class="s3-insight-text" id="s3-insight-text"></div>
     </div>
     <!-- Month summary — visible after 7+ entries -->
     <div id="s3-month-summary"></div>
@@ -1291,6 +1325,34 @@ function recordStoryVideo(canvas,ctx,mime,onLabel){
   });
 }
 
+// Starts recording in background when S2 opens. By the time the user reads
+// the screen and taps share (~5–10 s), the 5-second clip is already done.
+// shareFeeling() checks _storyVid.ready and uses blob synchronously so
+// navigator.share() fires within the user gesture window (no NotAllowedError).
+function preRenderStoryVideo(){
+  _storyVid={blob:null,mime:null,ready:false,recording:false};
+  if(!currentEntry) return;
+  const canVideo=typeof HTMLCanvasElement!=='undefined'
+    && typeof HTMLCanvasElement.prototype.captureStream==='function'
+    && typeof MediaRecorder!=='undefined';
+  if(!canVideo) return;
+  const mime=['video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm']
+    .find(m=>{ try{ return MediaRecorder.isTypeSupported(m); }catch(e){ return false; } });
+  if(!mime) return;
+  const sc=document.createElement('canvas');
+  sc.width=1080; sc.height=1920;
+  const sctx=sc.getContext('2d');
+  _storyVid.recording=true;
+  recordStoryVideo(sc,sctx,mime,()=>{}) // silent — no label updates
+    .then(blob=>{
+      _storyVid.blob=blob;
+      _storyVid.mime=mime;
+      _storyVid.ready=true;
+      _storyVid.recording=false;
+    })
+    .catch(()=>{ _storyVid.recording=false; });
+}
+
 function renderAck(t){
   const dpr=window.devicePixelRatio||1;
   const W=ackCanvas.offsetWidth||375,H=ackCanvas.offsetHeight||812;
@@ -1740,6 +1802,7 @@ function loadEntries(){
   return[];
 }
 let picks=[],entries=loadEntries(),dragging=false,hintDismissed=false;
+let _jiggleMode=false;
 let editingSlot=null; // null=append mode, 0-3=replace that slot
 const s1Pick=document.getElementById('s1-pick');
 const s1Hint=document.getElementById('s1-hint');
@@ -1930,6 +1993,9 @@ window.addEventListener('touchend',e=>{
 // SUBMIT
 // ═══════════════════════════════════
 let currentEntry=null;
+// Pre-rendered story video — populated when S2 screen opens so the blob is
+// ready before the user taps share (avoids iOS gesture-context expiry).
+let _storyVid={blob:null,mime:null,ready:false,recording:false};
 function checkMilestone(){
   if(!entries.length)return null;
   const n=entries.length;
@@ -2018,6 +2084,7 @@ function submitCI(){
       requestAnimationFrame(()=>requestAnimationFrame(()=>mEl.classList.add('show')));
     }
   }
+  preRenderStoryVideo(); // start 5-second clip in background; ready before user taps share
   go('s2');
 }
 async function shareFeeling(){
@@ -2030,75 +2097,56 @@ async function shareFeeling(){
   const unlock=()=>{ if(btn) btn.style.pointerEvents=''; };
   const feelText=currentEntry.feel?`I'm feeling "${currentEntry.feel}".`:'This is how today feels.';
 
-  // ── Create 1080×1920 story canvas (9:16 Instagram Story format) ────
-  const sc=document.createElement('canvas');
-  sc.width=1080; sc.height=1920;
-  const sctx=sc.getContext('2d');
-
-  // ── 1. Try animated video (Android Chrome + Desktop) ───────────────
-  // iOS Safari does not support captureStream/MediaRecorder — skips to PNG.
-  const canVideo=typeof sc.captureStream==='function'&&typeof MediaRecorder!=='undefined';
-  if(canVideo){
-    const mime=['video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm']
-      .find(m=>MediaRecorder.isTypeSupported(m));
-    if(mime){
+  // ── 1. Pre-rendered video path ─────────────────────────────────────────
+  // preRenderStoryVideo() started recording when S2 opened (~5 s ago).
+  // If it finished, the blob is ready RIGHT NOW — navigator.share fires
+  // synchronously within the user gesture window (no NotAllowedError).
+  if(_storyVid.ready && _storyVid.blob){
+    const ext=_storyVid.mime.includes('mp4')?'mp4':'webm';
+    const vFile=new File([_storyVid.blob],`lbh-feeling.${ext}`,{type:_storyVid.mime.split(';')[0]});
+    if(navigator.canShare&&navigator.canShare({files:[vFile]})){
       lock();
       try{
-        const videoBlob=await recordStoryVideo(sc,sctx,mime,setLabel);
-        const ext=mime.includes('mp4')?'mp4':'webm';
-        const vFile=new File([videoBlob],`lbh-feeling.${ext}`,{type:mime.split(';')[0]});
-        unlock(); setLabel('Share this feeling');
-        // Try native share sheet with video file
-        if(navigator.canShare&&navigator.canShare({files:[vFile]})){
-          try{
-            await navigator.share({files:[vFile],title:"Let's Be Honest",text:feelText});
-            return;
-          }catch(err){ if(err.name==='AbortError') return; }
-        }
-        // Download fallback for video
-        const vUrl=URL.createObjectURL(videoBlob);
-        const va=document.createElement('a');
-        va.href=vUrl; va.download=`lbh-feeling.${ext}`;
-        document.body.appendChild(va); va.click(); document.body.removeChild(va);
-        setTimeout(()=>URL.revokeObjectURL(vUrl),1500);
+        await navigator.share({files:[vFile],title:"Let's Be Honest",text:feelText});
+        unlock();
         return;
       }catch(err){
-        console.warn('Video recording failed, falling back to PNG:',err);
         unlock();
+        if(err.name==='AbortError') return; // user dismissed share sheet
+        // NotAllowedError or other error → fall through to image share
       }
     }
   }
+  // Video still recording or unavailable → fall through to image share.
+  // (If user taps share within 5 s on a device that supports video,
+  //  _storyVid.recording will be true; we skip video rather than waiting.)
 
-  // ── 2. Image path (iOS — captureStream/MediaRecorder unavailable) ──
-  // iOS Safari cannot generate video in-browser (WebKit limitation, no workaround).
-  // We render a story-format image and open the native share sheet the same way
-  // the working photo-share did — navigator.share({files}) opens iOS share sheet,
-  // Instagram/Messages/WhatsApp all appear as targets.
+  // ── 2. Image share (iOS Safari, or when video unavailable/not ready) ──
   lock(); setLabel('Creating…');
 
-  // Cascade: try story render first, fall back to simpler card if canvas fails.
-  // This ensures shareBlob is ALWAYS valid so we ALWAYS reach navigator.share.
+  const sc=document.createElement('canvas');
+  sc.width=1080; sc.height=1920;
+  const sctx=sc.getContext('2d');
   let shareBlob=null;
 
-  // Attempt A: full story frame at 1080×1920 (preferred — story proportions)
+  // Attempt A: story frame at 1080×1920 (Instagram Story proportions)
   try{
     renderStoryFrame(sctx,currentEntry,ackTime);
     shareBlob=await new Promise(res=>sc.toBlob(res,'image/jpeg',0.92));
-  }catch(e){ console.warn('Story render failed, trying fallback:',e); }
+  }catch(e){ console.warn('Story render failed:',e); }
 
-  // Attempt B: original export card at 375×812 — guaranteed identical to the
-  // version that was already confirmed to open the iOS share sheet
+  // Attempt B: simpler export card at 375×812 — guaranteed to work on all browsers
   if(!shareBlob){
     try{
       const fc=document.createElement('canvas');
       fc.width=375; fc.height=812;
       renderExportCard(fc.getContext('2d'),currentEntry,ackTime);
       shareBlob=await new Promise(res=>fc.toBlob(res,'image/jpeg',0.92));
-    }catch(e){ console.warn('Fallback render also failed:',e); }
+    }catch(e){ console.warn('Fallback render failed:',e); }
   }
 
   unlock(); setLabel('Share this feeling');
-  if(!shareBlob) return; // both renders failed — nothing to share
+  if(!shareBlob) return;
 
   const shareFile=new File([shareBlob],'lbh-feeling.jpg',{type:'image/jpeg'});
 
@@ -2109,14 +2157,14 @@ async function shareFeeling(){
       return;
     }catch(err){ if(err.name==='AbortError') return; }
   }
-  // URL-only share (older devices without file sharing support)
+  // URL-only share (older devices)
   if(navigator.share){
     try{
       await navigator.share({title:"Let's Be Honest",text:feelText,url:window.location.href});
       return;
     }catch(err){ if(err.name==='AbortError') return; }
   }
-  // Last resort: download + hint
+  // Last resort: download
   const dlUrl=URL.createObjectURL(shareBlob);
   const dlA=document.createElement('a');
   dlA.href=dlUrl; dlA.download='lbh-feeling.jpg';
@@ -2418,6 +2466,19 @@ function seededRand(seed,salt){
   const x=Math.sin(seed*9301+salt*49297+233)*97;
   return x-Math.floor(x);
 }
+function enterJiggleMode(){
+  if(_jiggleMode) return;
+  _jiggleMode=true;
+  const scroll=document.getElementById('cards-scroll');
+  if(scroll) scroll.classList.add('jiggle-mode');
+}
+function exitJiggleMode(){
+  if(!_jiggleMode) return;
+  _jiggleMode=false;
+  const scroll=document.getElementById('cards-scroll');
+  if(scroll) scroll.classList.remove('jiggle-mode');
+}
+
 function buildCard(entry,cls){
   const g=cardGrad(entry.hexArr);
   const g2=cardGrad2(entry.hexArr);
@@ -2455,7 +2516,39 @@ function buildCard(entry,cls){
         <div class="gc-dots">${entry.hexArr.map(h=>`<div class="gc-dot" style="background:${h}"></div>`).join('')}</div>
       </div>
     </div>`;
-  el.addEventListener('click',()=>openModal(entry));
+  // Long-press delete (iOS-style)
+  const xBtn=document.createElement('button');
+  xBtn.className='gc-del-x';
+  xBtn.setAttribute('aria-label','Delete check-in');
+  xBtn.textContent='×';
+  xBtn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const ts=entry.t.getTime();
+    entries=entries.filter(ev=>ev.t.getTime()!==ts);
+    saveEntries();
+    buildPatterns(); // rebuild — jiggle mode stays so user can delete more
+  });
+
+  let _lpTimer=null, _lpStartX=0, _lpStartY=0;
+  el.addEventListener('pointerdown',e=>{
+    _lpStartX=e.clientX; _lpStartY=e.clientY;
+    _lpTimer=setTimeout(()=>{ _lpTimer=null; enterJiggleMode(); },550);
+  });
+  function _cancelLP(){ if(_lpTimer){ clearTimeout(_lpTimer); _lpTimer=null; } }
+  el.addEventListener('pointerup',  _cancelLP);
+  el.addEventListener('pointerleave',_cancelLP);
+  el.addEventListener('pointermove',e=>{
+    if(Math.abs(e.clientX-_lpStartX)>8||Math.abs(e.clientY-_lpStartY)>8) _cancelLP();
+  });
+  el.addEventListener('click',e=>{
+    if(_jiggleMode){ e.stopPropagation(); exitJiggleMode(); return; }
+    openModal(entry);
+  });
+
+  // Prevent context menu on long-press (mobile Safari)
+  el.addEventListener('contextmenu',e=>e.preventDefault());
+
+  wrap.appendChild(xBtn);
   wrap.appendChild(el);
   return wrap;
 }
@@ -3629,7 +3722,7 @@ function buildPulsePersonal(){
 function buildPulse(){
   const maxWeight=Math.max(...PULSE_DATA.map(p=>p.weight));
   document.getElementById('pulse-list').innerHTML=
-    PULSE_DATA.map((p,i)=>`
+    PULSE_DATA.slice(0,5).map((p,i)=>`
       <div class="pr" onclick="openPulsePanel(PULSE_DATA[${i}])">
         <div class="pr-sw" style="background:${p.hex};box-shadow:0 0 8px ${p.hex}99,0 0 18px ${p.hex}44"></div>
         <div class="pr-body">
@@ -3740,6 +3833,7 @@ function go(id){
   window.scrollTo(0,0);
   // Rebuild patterns every time user navigates to s3 so stand-in
   // visuals are always present regardless of timing or user data state
+  if(id!=='s3') exitJiggleMode();
   if(id==='s3') buildPatterns();
   if(id==='s1') updateReturnSignal();
   if(id==='s4') buildPulsePersonal();
@@ -3803,6 +3897,11 @@ function syncCanvasSizes(){
 // ═══════════════════════════════════
 syncCanvasSizes();
 window.addEventListener('resize',syncCanvasSizes);
+// Exit jiggle mode when tapping outside the cards area
+document.addEventListener('pointerdown',e=>{
+  if(!_jiggleMode) return;
+  if(!e.target.closest('#cards-scroll')) exitJiggleMode();
+});
 buildPatterns();
 buildPulse();
 buildPulsePersonal();
