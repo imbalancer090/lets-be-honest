@@ -33,7 +33,9 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
   box-shadow:0 80px 160px rgba(0,0,0,0.9),0 0 0 1px rgba(255,255,255,0.06),0 0 80px rgba(120,80,255,0.06)}
 @media(max-width:430px){
   html,body{overflow:hidden;height:100%;min-height:0}
-  .phone{width:100vw;height:100dvh;height:100vh;border-radius:0;box-shadow:none}
+  /* svh = viewport height when browser toolbar fully shown — nav never hides behind it.
+     Cascade: svh preferred, dvh fallback, vh oldest fallback. */
+  .phone{width:100vw;height:100vh;height:100dvh;height:100svh;border-radius:0;box-shadow:none}
   #gnav{border-radius:0}
   #card-modal{border-radius:0}
 }
@@ -200,6 +202,13 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 .s2-date{font-size:9px;color:rgba(255,255,255,0.28);letter-spacing:0.1em;font-family:'Inter',sans-serif}
 .s2-btns{display:flex;gap:10px}
 .s2-btn{flex:1;background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.2);padding:13px 16px;font-family:'Italiana',serif;font-size:16px;font-style:italic;font-weight:700;border-radius:12px;cursor:pointer;backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.18)}
+#s2-share-hint{
+  font-family:'Inter',sans-serif;font-size:10px;letter-spacing:0.06em;
+  color:rgba(255,255,255,0.28);text-align:center;
+  opacity:0;transition:opacity 0.4s ease;pointer-events:none;
+  padding-top:4px;
+}
+#s2-share-hint.show{opacity:1}
 /* Milestone moment */
 #s2-milestone{font-family:'Italiana',serif;font-size:13px;font-style:italic;color:rgba(255,255,255,0.60);letter-spacing:0.03em;margin-bottom:4px;height:0;overflow:hidden;opacity:0;transition:opacity 1.0s ease 0.55s,height 0.4s ease;pointer-events:none}
 #s2-milestone.show{opacity:1;height:1.4em}
@@ -591,9 +600,10 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
     <div class="s2-foot">
       <div class="s2-date" id="s2date"></div>
       <div class="s2-btns">
-        <button class="s2-btn" onclick="shareFeeling()">Save &amp; Share</button>
+        <button class="s2-btn" id="s2-share-btn" onclick="shareFeeling()">Share this feeling</button>
         <button class="s2-btn" onclick="go('s3')">See your palette &rarr;</button>
       </div>
+      <div id="s2-share-hint">Save the image, then share it to Stories.</div>
     </div>
   </div>
 </div>
@@ -1903,53 +1913,66 @@ async function shareFeeling(){
   if(!currentEntry)return;
   await document.fonts.ready;
 
+  const btn=document.getElementById('s2-share-btn');
+  if(btn){btn.textContent='Creating…';btn.style.pointerEvents='none';}
+
+  // ── Render export card at story-friendly resolution ──────────────
   const expCanvas=document.createElement('canvas');
   expCanvas.width=375;expCanvas.height=812;
   const expCtx=expCanvas.getContext('2d');
+  renderExportCard(expCtx,currentEntry,ackTime);
 
-  // Try MediaRecorder video (ideal for Instagram Stories)
-  const tryVideo=typeof MediaRecorder!=='undefined'&&typeof expCanvas.captureStream==='function';
-  if(tryVideo){
+  // Convert to a PNG blob so we can pass it as a File to the share sheet
+  const blob=await new Promise(resolve=>expCanvas.toBlob(resolve,'image/png'));
+  const file=new File([blob],'lbh-feeling.png',{type:'image/png'});
+  const feelText=currentEntry.feel?`I'm feeling "${currentEntry.feel}".`:'This is how today feels.';
+
+  if(btn){btn.textContent='Share this feeling';btn.style.pointerEvents='';}
+
+  // ── 1. Native share sheet with image file (iOS 15+, Android Chrome 89+) ──
+  // Opens the OS share sheet — user can pick Instagram Stories, Messages, WhatsApp, etc.
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
     try{
-      const mime=
-        MediaRecorder.isTypeSupported('video/mp4')?'video/mp4':
-        MediaRecorder.isTypeSupported('video/webm;codecs=vp9')?'video/webm;codecs=vp9':
-        MediaRecorder.isTypeSupported('video/webm')?'video/webm':null;
-      if(mime){
-        const stream=expCanvas.captureStream(30);
-        const recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:8000000});
-        const chunks=[];
-        recorder.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
-        let rafId,startMs=performance.now();
-        function drawLoop(){
-          renderExportCard(expCtx,currentEntry,(performance.now()-startMs)/1000);
-          rafId=requestAnimationFrame(drawLoop);
-        }
-        recorder.onstop=()=>{
-          cancelAnimationFrame(rafId);
-          const ext=mime.includes('mp4')?'mp4':'webm';
-          const blob=new Blob(chunks,{type:mime});
-          const url=URL.createObjectURL(blob);
-          const a=document.createElement('a');
-          a.href=url;a.download=`lbh-feeling.${ext}`;
-          document.body.appendChild(a);a.click();
-          setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},1200);
-        };
-        recorder.start(100);
-        drawLoop();
-        setTimeout(()=>recorder.stop(),5500); // 5.5s Instagram Story loop
-        return;
-      }
-    }catch(err){console.warn('Video capture:',err);}
+      await navigator.share({
+        files:[file],
+        title:"Let's Be Honest",
+        text:feelText
+      });
+      return;
+    }catch(err){
+      if(err.name==='AbortError')return; // user cancelled — do nothing
+      console.warn('File share failed, trying URL share:',err);
+    }
   }
 
-  // Fallback: PNG image download
-  renderExportCard(expCtx,currentEntry,ackTime);
-  const link=document.createElement('a');
-  link.download='lbh-feeling.png';
-  link.href=expCanvas.toDataURL('image/png');
-  document.body.appendChild(link);link.click();
-  document.body.removeChild(link);
+  // ── 2. Native share sheet without file (URL + text only) ─────────
+  // Older iOS / some Android — no image but still opens the share sheet
+  if(navigator.share){
+    try{
+      await navigator.share({
+        title:"Let's Be Honest",
+        text:feelText,
+        url:window.location.href
+      });
+      return;
+    }catch(err){
+      if(err.name==='AbortError')return;
+      console.warn('URL share failed, falling back to download:',err);
+    }
+  }
+
+  // ── 3. Fallback: download the PNG + show hint ─────────────────────
+  // Desktop browsers and anything that doesn't support the Share API
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='lbh-feeling.png';
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1200);
+
+  // Show a hint for iOS users who end up here unexpectedly
+  const conf=document.getElementById('s2-share-hint');
+  if(conf){conf.classList.add('show');setTimeout(()=>conf.classList.remove('show'),4500);}
 }
 
 // ═══════════════════════════════════
