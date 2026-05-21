@@ -92,7 +92,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 /* S1 background canvas — ambient only */
 #s1-canvas{cursor:default}
 .s1-hint{
-  position:absolute;bottom:248px;left:22px;right:22px;z-index:41;
+  position:absolute;bottom:calc(218px + env(safe-area-inset-bottom));left:22px;right:22px;z-index:41;
   font-family:'Italiana',serif;font-size:15px;font-style:italic;
   color:rgba(255,255,255,0.62);text-align:center;pointer-events:none;
   text-shadow:0 1px 12px rgba(0,0,0,0.55);
@@ -157,7 +157,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 
 /* Suggest card — sits cleanly above the bottom panel, no overlap */
 #suggest-card{
-  position:absolute;bottom:calc(182px + env(safe-area-inset-bottom));left:18px;right:18px;z-index:42;
+  position:absolute;bottom:calc(153px + env(safe-area-inset-bottom));left:18px;right:18px;z-index:42;
   background:rgba(6,6,10,0.72);backdrop-filter:blur(36px) saturate(1.8);
   border:1px solid rgba(255,255,255,0.14);border-radius:18px;
   padding:12px 17px;
@@ -168,22 +168,22 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 }
 #suggest-card.show{opacity:1;transform:translateY(0);pointer-events:auto}
 .suggest-lbl{font-family:'Inter',sans-serif;font-size:8.5px;letter-spacing:0.14em;color:rgba(255,255,255,0.3);margin-bottom:5px}
-.suggest-phrase{font-family:'Italiana',serif;font-size:20px;font-style:italic;font-weight:700;color:#fff;line-height:1.1}
+.suggest-phrase{
+  font-family:'Italiana',serif;font-size:20px;font-style:italic;font-weight:700;
+  color:#fff;line-height:1.1;
+  background:transparent;border:none;outline:none;width:100%;padding:0;margin:0;
+  -webkit-appearance:none;appearance:none;caret-color:rgba(255,255,255,0.6);
+}
+.suggest-phrase::placeholder{color:rgba(255,255,255,0.18);font-style:italic;font-family:'Italiana',serif}
 .suggest-edit{font-family:'Inter',sans-serif;font-size:9px;color:rgba(255,255,255,0.2);margin-top:6px;letter-spacing:0.05em}
 
-/* Bottom panel — no separate gradient bar, button IS the palette */
+/* Bottom panel — button only, no input field */
 .s1-panel{
   position:absolute;bottom:calc(72px + env(safe-area-inset-bottom));left:0;right:0;z-index:40;
   padding:12px 20px 14px;
   background:rgba(6,6,8,0.82);backdrop-filter:blur(36px) saturate(1.5);
   border-top:1px solid rgba(255,255,255,0.07);
 }
-.feel-input{
-  background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.1);
-  padding:7px 0;font-size:14px;font-style:italic;color:rgba(255,255,255,0.75);outline:none;
-  font-family:'Italiana',serif;width:100%;margin-bottom:10px;
-}
-.feel-input::placeholder{color:rgba(255,255,255,0.2);font-style:italic}
 
 /* Honest button — shows picked gradient as its own background */
 .honest-btn{
@@ -263,7 +263,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 #s2-feel-echo{font-family:'Italiana',serif;font-size:13px;font-style:italic;color:rgba(255,255,255,0.32);margin-top:14px;margin-bottom:2px;letter-spacing:0.01em}
 #s2-streak{font-family:'Italiana',serif;font-size:11px;font-style:italic;color:rgba(255,255,255,0.18);margin-bottom:6px;letter-spacing:0.01em}
 #s2-reflect{font-family:'Italiana',serif;font-size:11px;font-style:italic;color:rgba(255,255,255,0.13);margin-bottom:6px;letter-spacing:0.01em;opacity:0;transition:opacity 1.4s ease 1.2s}
-#s2-echo{font-family:'Italiana',serif;font-size:11px;font-style:italic;color:rgba(255,255,255,0.09);margin-bottom:10px;letter-spacing:0.01em;opacity:0;transition:opacity 1.4s ease 2.4s}
+#s2-echo{font-family:'Italiana',serif;font-size:11.5px;font-style:italic;color:rgba(255,255,255,0.34);margin-bottom:10px;letter-spacing:0.01em;opacity:0;transition:opacity 1.6s ease 2.8s}
 
 
 /* ═══════════════════════════
@@ -339,6 +339,51 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
   margin-top:-6px;z-index:20;
 }
 .wave-tooltip.vis{opacity:1}
+
+/* ── V5 RETENTION FEATURES ── */
+
+/* Emotional Portrait — atmospheric blurred history layer behind ripple */
+#s3-portrait{
+  position:absolute;inset:0;width:100%;height:100%;display:block;
+  z-index:0;pointer-events:none;
+}
+/* Make ripple-wrap a stacking context for the portrait */
+.s3-ripple-wrap{position:relative;z-index:2;}
+
+/* Emotional Drift — single poetic observation line, above timeline */
+#s3-drift{
+  flex-shrink:0;padding:14px 22px 2px;z-index:2;position:relative;
+  font-family:'Italiana',serif;font-size:13.5px;font-style:italic;
+  color:rgba(255,255,255,0.52);letter-spacing:0.01em;line-height:1.5;
+  display:none;transition:opacity 0.6s ease;
+}
+
+/* Emotional Contradiction — appears after 21+ entries */
+#s3-contradiction{
+  flex-shrink:0;margin:12px 22px 0;z-index:2;position:relative;
+  padding:10px 13px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.065);
+  border-radius:12px;
+  font-family:'Italiana',serif;font-size:12px;font-style:italic;
+  color:rgba(255,255,255,0.38);line-height:1.58;
+  display:none;
+}
+
+/* Season chapter headers */
+.season-hd{
+  padding:18px 0 6px;
+  border-top:1px solid rgba(255,255,255,0.055);
+  margin:6px 0 0;
+}
+.season-hd.first{border-top:none;padding-top:2px}
+.season-name{
+  font-family:'Italiana',serif;font-size:17px;font-style:italic;font-weight:700;
+  color:rgba(255,255,255,0.62);letter-spacing:-0.01em;line-height:1;
+}
+.season-range{
+  font-family:'Inter',sans-serif;font-size:7.5px;letter-spacing:0.13em;
+  color:rgba(255,255,255,0.20);text-transform:uppercase;margin-top:4px;
+}
 
 /* Backup notice */
 .s3-backup{margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.055);display:flex;flex-direction:column;gap:7px}
@@ -484,7 +529,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 .s4-h2 em{font-style:italic;color:rgba(255,255,255,0.44)}
 .s4-tag{flex-shrink:0;padding:5px 22px 0;font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:0.13em;color:rgba(255,255,255,0.22);z-index:2;position:relative;text-transform:uppercase}
 #s4-personal{
-  flex-shrink:0;margin:auto 22px 0;
+  flex-shrink:0;margin:0 22px 8px;
   display:flex;align-items:center;gap:10px;
   background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);
   border-radius:12px;padding:11px 14px;
@@ -497,7 +542,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 .s4p-text em{color:rgba(255,255,255,0.88);font-style:italic}
 .s4p-arrow{font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,0.25);flex-shrink:0}
 .pulse-list{
-  flex-shrink:0;padding:12px 22px calc(86px + env(safe-area-inset-bottom));
+  flex-shrink:0;margin-top:auto;padding:12px 22px calc(86px + env(safe-area-inset-bottom));
   display:flex;flex-direction:column;z-index:2;position:relative;
   pointer-events:all;
 }
@@ -652,12 +697,11 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 
   <div id="suggest-card">
     <div class="suggest-lbl">SUGGESTED FEELING</div>
-    <div class="suggest-phrase" id="suggest-phrase">quiet and distant</div>
+    <input type="text" class="suggest-phrase" id="suggest-phrase" maxlength="60" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Name this feeling…">
     <div class="suggest-edit">tap to edit</div>
   </div>
 
   <div class="s1-panel">
-    <input class="feel-input" id="feelinput" placeholder="Name this feeling..." maxlength="60">
     <button class="honest-btn off" id="honestbtn" onclick="submitCI()"><span>That's honest.</span><span id="s1-cta-hint">pick a color to continue</span></button>
   </div>
 </div>
@@ -700,6 +744,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
     <div id="s3-tagline">The more you check in,<br>the more beautiful this becomes.</div>
     <!-- Emotional ripple visualization — centerpiece -->
     <div class="s3-ripple-wrap">
+      <canvas id="s3-portrait" height="296"></canvas>
       <canvas id="ripple-canvas" height="296"></canvas>
       <div class="viz-caption">your emotional atmosphere this month</div>
     </div>
@@ -707,6 +752,8 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
     <div class="s3-legend" id="s3-legend"></div>
     <!-- Weekly comparison — visible when 2+ entries in each of this/last week -->
     <div id="s3-week-compare"></div>
+    <!-- Emotional Drift — single poetic observation; appears 5+ entries -->
+    <div id="s3-drift"></div>
     <!-- Timeline -->
     <div class="wave-wrap" id="wave-wrap">
       <div class="wave-label" id="wave-label">YOUR TIMELINE</div>
@@ -714,11 +761,13 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
       <div class="wave-tooltip" id="wave-tooltip"></div>
       <div class="viz-caption" style="padding:4px 0 0;text-align:left">intensity over time</div>
     </div>
-    <!-- Insight chip — grouped with timeline data, not blocking main visual -->
+    <!-- Insight chip — grouped with timeline data -->
     <div class="s3-insight" id="s3-insight">
       <div class="s3-insight-dot" id="s3-insight-dot"></div>
       <div class="s3-insight-text" id="s3-insight-text"></div>
     </div>
+    <!-- Emotional Contradiction — appears after 21+ entries -->
+    <div id="s3-contradiction"></div>
     <!-- Month summary — visible after 7+ entries -->
     <div id="s3-month-summary"></div>
     <!-- Cards -->
@@ -1028,6 +1077,31 @@ function renderWheel(t){
   bv.addColorStop(0.55,'rgba(6,6,8,0.80)');
   bv.addColorStop(1,'rgba(6,6,8,0.97)');
   wheelCtx.fillStyle=bv;wheelCtx.fillRect(0,H-310,W,310);
+
+  // ── Time-of-day ambient tint — very subtle hue wash over the wheel ──
+  // Maps current hour to a faint atmospheric colour so morning feels
+  // warmer, afternoons neutral, evenings cooler, night deep.
+  {
+    const hr=new Date().getHours();
+    // [h, s%, l%] → RGBA overlay parameters
+    let tr,tg,tb,ta;
+    if(hr>=21||hr<4){        // night: deep indigo
+      [tr,tg,tb,ta]=[30,10,80,0.09];
+    } else if(hr<6){          // early morning: cool grey
+      [tr,tg,tb,ta]=[60,60,110,0.06];
+    } else if(hr<10){         // morning: warm amber
+      [tr,tg,tb,ta]=[220,140,40,0.07];
+    } else if(hr<14){         // midday: clean neutral, very faint
+      [tr,tg,tb,ta]=[255,250,240,0.03];
+    } else if(hr<18){         // afternoon: golden warm
+      [tr,tg,tb,ta]=[200,160,60,0.05];
+    } else {                   // evening: dusty rose/violet
+      [tr,tg,tb,ta]=[140,60,130,0.07];
+    }
+    wheelCtx.globalCompositeOperation='source-over';
+    wheelCtx.fillStyle=`rgba(${tr},${tg},${tb},${ta})`;
+    wheelCtx.fillRect(0,0,W,H);
+  }
 }
 
 // Full-spectrum pick: center=white, mid=saturated, edge=near-black
@@ -1945,13 +2019,18 @@ function updatePickUI(){
   const[r,g,b]=hexToRgb(picks[picks.length-1]);
   btn.style.setProperty('--btn-glow',`rgba(${r},${g},${b},0.4)`);
   const phrase=generatePhrase(picks);
-  document.getElementById('suggest-phrase').textContent=phrase;
+  const phraseInp=document.getElementById('suggest-phrase');
+  if(!phraseInp._userEdited)phraseInp.value=phrase;
   sug.classList.add('show');
-  const inp=document.getElementById('feelinput');
-  if(!inp._userEdited)inp.value=phrase;
+  // Auto-focus phrase input so user can immediately type
+  phraseInp.focus();
 }
-document.getElementById('feelinput').addEventListener('input',e=>{e.target._userEdited=!!e.target.value;});
-document.getElementById('suggest-card').addEventListener('click',()=>{document.getElementById('feelinput').focus();});
+document.getElementById('suggest-phrase').addEventListener('input',e=>{e.target._userEdited=!!e.target.value;});
+// Tapping the label or hint text also focuses the phrase
+document.getElementById('suggest-card').addEventListener('click',e=>{
+  if(e.target!==document.getElementById('suggest-phrase'))
+    document.getElementById('suggest-phrase').focus();
+});
 
 function buildGrad(hexArr,angle){
   angle=angle||148;
@@ -2086,7 +2165,7 @@ function checkMilestone(){
 
 function submitCI(){
   if(!picks.length)return;
-  const inp=document.getElementById('feelinput');
+  const inp=document.getElementById('suggest-phrase');
   const feel=inp.value.trim()||generatePhrase(picks)||'unnamed feeling';
   const now=new Date();
   currentEntry={hexArr:[...picks],feel,t:now};
@@ -2134,7 +2213,7 @@ function submitCI(){
   }
   buildPatterns();
   picks=[];updatePickUI();
-  inp.value='';inp._userEdited=false;
+  inp.value='';inp._userEdited=false;inp.blur();
   hintDismissed=false;
   if(!_hintSeenPermanently) s1Hint.style.opacity='1';
   s1Pick.style.display='none';
@@ -2451,6 +2530,33 @@ function drawRipple(tones,t=0){
     ctx.fillStyle=gGrd;ctx.fillRect(0,0,W,H);
   });
   ctx.globalCompositeOperation='source-over';
+
+  // ── Visual evolution — atmospheric depth grows with history ──────
+  // Faint nebula layer that fills in as entries accumulate.
+  // 1-4: none. 5-10: whisper. 11-20: soft. 21-40: present. 40+: full.
+  const evN=entries.length;
+  if(evN>=5&&sorted.length>0){
+    const evDepth=evN>=40?1.0:evN>=21?0.65:evN>=11?0.38:0.18; // 0→1
+    ctx.globalCompositeOperation='lighter';
+    sorted.forEach(({tone,idx})=>{
+      const[r,g,b]=hexToRgb(tone.hex);
+      const mean=(r+g+b)/3;
+      const rv=Math.min(Math.max(mean+(r-mean)*1.2,0)|0,255);
+      const gv=Math.min(Math.max(mean+(g-mean)*1.2,0)|0,255);
+      const bv=Math.min(Math.max(mean+(b-mean)*1.2,0)|0,255);
+      // Slowly drifting bloom per tone
+      const bx=cx+Math.cos(t*0.04+idx*2.09)*cx*0.28;
+      const by=cy+Math.sin(t*0.03+idx*1.57)*cy*0.22;
+      const nebR=Math.min(W,H)*(0.38+idx*0.12)*evDepth;
+      const neb=ctx.createRadialGradient(bx,by,0,bx,by,nebR);
+      const a=(0.06*evDepth*(0.7+0.3*Math.sin(t*0.18+idx*2.44))).toFixed(3);
+      neb.addColorStop(0,  `rgba(${rv},${gv},${bv},${a})`);
+      neb.addColorStop(0.5,`rgba(${rv},${gv},${bv},${(a*0.4).toFixed(3)})`);
+      neb.addColorStop(1,  `rgba(${rv},${gv},${bv},0)`);
+      ctx.fillStyle=neb;ctx.fillRect(0,0,W,H);
+    });
+    ctx.globalCompositeOperation='source-over';
+  }
 
   // ── Soft outer vignette — fades the outermost ring edge smoothly ──
   // Replaces the hard circular boundary with a gentle gradient dissolve
@@ -2777,16 +2883,53 @@ function getStreak(){
 function findEcho(entry,allEntries){
   // allEntries[0] is the just-added entry — start from index 1
   if(allEntries.length<2)return null;
-  const curGroup=hueGroup(hexToHue(entry.hexArr[0]));
+  const curHue=hexToHue(entry.hexArr[0]);
+  const curHour=new Date(entry.t||Date.now()).getHours();
+  const curTod=curHour<6?'night':curHour<12?'morning':curHour<17?'afternoon':'evening';
   for(let i=1;i<allEntries.length;i++){
     const prev=allEntries[i];
-    const prevGroup=hueGroup(hexToHue(prev.hexArr[0]));
-    if(prevGroup===curGroup){
-      const days=Math.floor((Date.now()-prev.t.getTime())/86400000);
-      if(days<1)continue; // same day — not meaningful as an echo
-      const when=days===1?'yesterday':days<7?`${days} days ago`:days<14?'last week':`${Math.floor(days/7)} weeks ago`;
-      return`a familiar atmosphere — last here ${when}.`;
+    const prevHue=hexToHue(prev.hexArr[0]);
+    const hueDiff=Math.min(Math.abs(curHue-prevHue),360-Math.abs(curHue-prevHue));
+    if(hueDiff>30)continue;
+    const days=Math.floor((Date.now()-prev.t.getTime())/86400000);
+    if(days<1)continue;
+    const prevHour=new Date(prev.t).getHours();
+    const prevTod=prevHour<6?'night':prevHour<12?'morning':prevHour<17?'afternoon':'evening';
+    const sameTod=curTod===prevTod;
+    const when=days===1?'yesterday':days<7?`${days} days ago`:days<14?'last week':`${Math.floor(days/7)} weeks ago`;
+    if(hueDiff<12&&sameTod){
+      const pool=[
+        `this exact atmosphere returned — ${when}, same time of day.`,
+        `the same quality keeps arriving at this hour. last here ${when}.`,
+        `something returned exactly — ${when}.`,
+        `this tone came back. same hour, same feeling. ${when}.`,
+      ];
+      return pool[days%pool.length];
     }
+    if(hueDiff<12){
+      const pool=[
+        `this color came back. it was here ${when}.`,
+        `a familiar atmosphere — last here ${when}.`,
+        `this same tone returned. you were here ${when}.`,
+        `something recognizable — ${when}.`,
+      ];
+      return pool[days%pool.length];
+    }
+    if(sameTod){
+      const pool=[
+        `something similar appears at this hour. last here ${when}.`,
+        `this time of day carries a familiar color. ${when}.`,
+        `a related tone at the same hour — you were here ${when}.`,
+      ];
+      return pool[days%pool.length];
+    }
+    const pool=[
+      `a familiar atmosphere — last here ${when}.`,
+      `something similar was present ${when}.`,
+      `this quality appeared before — ${when}.`,
+      `a color close to this one came through ${when}.`,
+    ];
+    return pool[days%pool.length];
   }
   return null;
 }
@@ -2903,6 +3046,259 @@ function exportData(){
   if(conf){conf.classList.add('show');setTimeout(()=>conf.classList.remove('show'),2800);}
 }
 
+// ═══════════════════════════════════════════════════════
+// V5 RETENTION ENGINE
+// ═══════════════════════════════════════════════════════
+
+// ── Drift copy pools ─────────────────────────────────
+const DRIFT={
+  cooler:[
+    "You've been moving toward quieter colors lately.",
+    "Something has been cooling in the palette this week.",
+    "Cooler tones keep arriving.",
+    "The palette has been drifting inward.",
+  ],
+  warmer:[
+    "Something brighter has been appearing lately.",
+    "Warm tones keep returning.",
+    "The palette has been moving toward something warmer.",
+    "Something lit has been arriving more often this week.",
+  ],
+  darker:[
+    "Deeper tones have been gathering lately.",
+    "Something heavier has been present this week.",
+    "The palette has been moving toward darker ground.",
+    "A quieter depth has been settling in.",
+  ],
+  lighter:[
+    "Something softer has been arriving.",
+    "The palette has been lifting this week.",
+    "Lighter tones have been appearing more.",
+    "Something quieter and brighter has been present.",
+  ],
+  nightward:[
+    "Late hours have been carrying the most lately.",
+    "Night keeps holding the deepest colors.",
+    "Something arrives only in the dark — and keeps doing it.",
+  ],
+  morningward:[
+    "Mornings have been arriving with more weight lately.",
+    "Something stirs earlier these days.",
+    "The palette has been heaviest before noon.",
+  ],
+  stable:[
+    "A consistent emotional register lately.",
+    "The palette has been holding a steady quality.",
+    "Something settled has been present through the week.",
+  ],
+};
+
+// ── Season name table ─────────────────────────────────
+const SEASON_NAMES={
+  'burning+night':  ['The Burning Hours','Restless Nights','Fire Season'],
+  'burning+morning':['Heavy Mornings','The Charged Hours','Burning Start'],
+  'burning+evening':['The Restless Middle','Afternoon Heat','Close Hours'],
+  'restless+night': ['Searching Nights','The Unsettled Hours','Between Sleep'],
+  'restless+morning':['Restless Start','Searching Mornings','The In-Between'],
+  'restless+*':     ['Searching Season','Restless Weeks','The Unsettled'],
+  'distant+night':  ['The Blue Hours','Still Waters','Quiet Distance'],
+  'distant+morning':['Grey Arrival','The Cool Start','Muted Mornings'],
+  'distant+evening':['The Blue Week','Soft Distance','Still Evenings'],
+  'distant+*':      ['Quiet Distance','The Cooler Season','Far Away'],
+  'tender+night':   ['Tender Hours','Night Softness','The Quiet Dark'],
+  'tender+morning': ['Soft Morning','Gentle Arrival','Tender Start'],
+  'tender+*':       ['Soft Return','Tender Season','The Gentle Hours'],
+  'electric+night': ['Electric Nights','The Vivid Hours','Bright Dark'],
+  'electric+*':     ['Electric Season','The Bright Weeks','Vivid Hours'],
+  'hopeful+*':      ['Soft Return','Green Hours','Something Forward'],
+  'reflective+*':   ['Quiet Recovery','The Still Season','Reflective Hours'],
+  'uncertain+*':    ['The Searching Weeks','Open Season','Uncertain Hours'],
+  'searching+*':    ['Searching Season','The Between Time','Open Ends'],
+  '*+night':        ['Night Season','The Dark Hours','Late Arrival'],
+  '*+morning':      ['Morning Season','Early Hours','The Morning Weeks'],
+  '*':              ['A Season','Unnamed Hours','A Quiet Period'],
+};
+
+function pickDrift(arr,seed){ return arr[Math.abs(seed)%arr.length]; }
+
+// ── Compute emotional drift ───────────────────────────
+function computeDrift(all){
+  if(all.length<5) return null;
+  const now=Date.now(), DAY=86400000;
+  const recent=all.filter(e=>now-e.t.getTime()<7*DAY);
+  const prior=all.filter(e=>{const age=now-e.t.getTime();return age>=7*DAY&&age<14*DAY;});
+  // Need 2+ in both windows for comparison; else use first-vs-last-half split
+  const useRecent=recent.length>=2&&prior.length>=2;
+  const a=useRecent?recent:all.slice(0,Math.ceil(all.length/2));
+  const b=useRecent?prior:all.slice(Math.ceil(all.length/2));
+  if(!b.length) return null;
+  const avgWarmth=arr=>arr.reduce((s,e)=>s+colorProfile(e.hexArr[0]).warmth,0)/arr.length;
+  const avgLum=arr=>arr.reduce((s,e)=>s+hexToHsl(e.hexArr[0]).l,0)/arr.length;
+  const nightFrac=arr=>arr.filter(e=>{const h=new Date(e.t).getHours();return h>=21||h<4;}).length/arr.length;
+  const mornFrac=arr=>arr.filter(e=>{const h=new Date(e.t).getHours();return h>=6&&h<12;}).length/arr.length;
+  const dw=avgWarmth(a)-avgWarmth(b);
+  const dl=avgLum(a)-avgLum(b);
+  const dn=nightFrac(a)-nightFrac(b);
+  const dm=mornFrac(a)-mornFrac(b);
+  const seed=all.length;
+  // Strongest signal wins
+  const signals=[
+    {key:'warmer', v:dw,    thresh:0.09},
+    {key:'cooler', v:-dw,   thresh:0.09},
+    {key:'lighter',v:dl,    thresh:0.07},
+    {key:'darker', v:-dl,   thresh:0.07},
+    {key:'nightward',v:dn,  thresh:0.22},
+    {key:'morningward',v:dm,thresh:0.22},
+  ].filter(s=>s.v>s.thresh).sort((a,b)=>b.v-a.v);
+  if(!signals.length) return pickDrift(DRIFT.stable,seed);
+  return pickDrift(DRIFT[signals[0].key],seed);
+}
+
+// ── Compute emotional contradiction ──────────────────
+const CONTRADICTION_LINES=[
+  // time-of-day contrasts
+  e=>`You tend to reach for ${e.mornLabel} colors in the morning — and something ${e.nightLabel} arrives at night.`,
+  e=>`${e.mornLabel} tones appear when the day is young. ${e.nightLabel} ones arrive when it's late.`,
+  // intensity range contrast
+  e=>`Your palette carries both ${e.brightLabel} and very deep entries. Rarely in between.`,
+  e=>`Something ${e.brightLabel} and something shadowed both live in this palette.`,
+  // warmth contradiction
+  e=>`Warmth and distance keep appearing together here.`,
+  e=>`${e.tone1} and ${e.tone2} keep appearing alongside each other.`,
+];
+function computeContradiction(all){
+  if(all.length<21) return null;
+  const morning=all.filter(e=>{const h=new Date(e.t).getHours();return h>=6&&h<12;});
+  const night=all.filter(e=>{const h=new Date(e.t).getHours();return h>=21||h<4;});
+  const avgWarmth=arr=>arr.length?arr.reduce((s,e)=>s+colorProfile(e.hexArr[0]).warmth,0)/arr.length:0.5;
+  const avgLum=arr=>arr.length?arr.reduce((s,e)=>s+hexToHsl(e.hexArr[0]).l,0)/arr.length:0.5;
+  if(morning.length>=3&&night.length>=3){
+    const mw=avgWarmth(morning),nw=avgWarmth(night);
+    const ml=avgLum(morning),nl=avgLum(night);
+    if(Math.abs(mw-nw)>0.18){
+      const mLabel=mw>nw?'warmer':'cooler', nLabel=mw>nw?'quieter':'warmer';
+      return `You tend to reach for ${mLabel} colors in the morning, and something ${nLabel} arrives at night.`;
+    }
+    if(Math.abs(ml-nl)>0.14){
+      const mLabel=ml>nl?'lighter':'deeper', nLabel=ml>nl?'deeper':'brighter';
+      return `${ml>nl?'Brighter':'Softer'} tones in the morning. Something ${nLabel} tends to arrive at night.`;
+    }
+  }
+  // Fallback: check palette variance
+  const lums=all.map(e=>hexToHsl(e.hexArr[0]).l);
+  const mean=lums.reduce((s,l)=>s+l,0)/lums.length;
+  const variance=lums.reduce((s,l)=>s+(l-mean)**2,0)/lums.length;
+  if(variance>0.04){
+    return "Your palette carries both very bright and very deep entries. Something wide lives here.";
+  }
+  // Tone contrast
+  const tones=buildDominantTones(all);
+  if(tones.length>=2){
+    const t1=tones[0].label.toLowerCase(), t2=tones[1].label.toLowerCase();
+    return `${t1[0].toUpperCase()+t1.slice(1)} and ${t2} keep appearing alongside each other.`;
+  }
+  return null;
+}
+
+// ── Compute emotional seasons ─────────────────────────
+function nameOneSeason(seasonEntries){
+  if(!seasonEntries.length) return 'A Season';
+  const tones=buildDominantTones(seasonEntries);
+  const group=tones.length?tones[0].group:'searching';
+  // dominant time of day
+  const todC={};
+  seasonEntries.forEach(e=>{
+    const h=new Date(e.t).getHours();
+    const slot=h<6?'night':h<12?'morning':h<17?'afternoon':'evening';
+    // late night also counts as night
+    if(h>=21) todC['night']=(todC['night']||0)+1;
+    else todC[slot]=(todC[slot]||0)+1;
+  });
+  const tod=Object.entries(todC).sort((a,b)=>b[1]-a[1])[0]?.[0]||'*';
+  const key1=`${group}+${tod}`, key2=`${group}+*`, key3=`*+${tod}`;
+  const pool=SEASON_NAMES[key1]||SEASON_NAMES[key2]||SEASON_NAMES[key3]||SEASON_NAMES['*'];
+  // Seed from entry timestamps for stability
+  const seed=seasonEntries.reduce((s,e)=>s+e.t.getTime(),0)%pool.length;
+  return pool[Math.abs(seed)%pool.length];
+}
+
+function computeSeasons(all){
+  // Need 14+ entries and some temporal spread to form seasons
+  if(all.length<8) return null;
+  const sorted=[...all].sort((a,b)=>a.t-b.t);
+  const DAY=86400000;
+  const totalSpan=(sorted[sorted.length-1].t-sorted[0].t)/DAY;
+  if(totalSpan<6) return null; // not enough time spread
+  const seasons=[];
+  let bucket=[sorted[0]];
+  for(let i=1;i<sorted.length;i++){
+    const dayGap=(sorted[i].t-sorted[i-1].t)/DAY;
+    const hueShift=Math.abs(hexToHue(sorted[i].hexArr[0])-hexToHue(bucket[bucket.length-1].hexArr[0]));
+    const normalizedShift=Math.min(hueShift,360-hueShift);
+    const warmShift=Math.abs(colorProfile(sorted[i].hexArr[0]).warmth-colorProfile(bucket[0].hexArr[0]).warmth);
+    // New season triggers: big gap OR strong palette shift after enough entries
+    const isBigGap=dayGap>5;
+    const isPaletteShift=bucket.length>=5&&(normalizedShift>85||warmShift>0.3);
+    if(isBigGap||isPaletteShift){
+      if(bucket.length>=3) seasons.push(bucket);
+      bucket=[sorted[i]];
+    } else {
+      bucket.push(sorted[i]);
+    }
+  }
+  if(bucket.length>=3) seasons.push(bucket);
+  // Need at least 2 seasons to be interesting
+  if(seasons.length<2) return null;
+  return seasons.map(s=>({
+    name:nameOneSeason(s),
+    entries:s,
+    start:s[0].t,
+    end:s[s.length-1].t,
+  }));
+}
+
+// ── Render emotional portrait (history haze behind ripple) ────────────
+function renderPortrait(all){
+  const canvas=document.getElementById('s3-portrait');
+  if(!canvas||!all.length) return;
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.offsetWidth||343, H=canvas.offsetHeight||296;
+  const nw=Math.round(W*dpr), nh=Math.round(H*dpr);
+  if(canvas.width!==nw||canvas.height!==nh){canvas.width=nw;canvas.height=nh;}
+  const ctx=canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,W,H);
+  // Each entry renders a blurred radial bloom, weighted by recency
+  const n=all.length;
+  const useEntries=all.slice(0,Math.min(n,50)); // cap at 50
+  const cx=W/2, cy=H/2;
+  useEntries.forEach((e,i)=>{
+    // Older entries further from center and more transparent
+    const age=(i/Math.max(useEntries.length-1,1)); // 0=newest, 1=oldest
+    const [r,g,b]=hexToRgb(e.hexArr[0]);
+    // Newer entries pulse near center; older ones drift outward
+    const spread=W*(0.14+age*0.32);
+    // Positional drift based on hue — keeps colors spatially separated
+    const hue=hexToHue(e.hexArr[0]);
+    const angle=(hue/360)*Math.PI*2;
+    const dist=spread*0.35;
+    const bx=cx+Math.cos(angle)*dist*(1+age*0.5);
+    const by=cy+Math.sin(angle)*dist*(1+age*0.5);
+    const alpha=(1-age)*0.22*(n>20?1:n/20); // fades in as entries accumulate
+    if(alpha<0.01) return;
+    const grd=ctx.createRadialGradient(bx,by,0,bx,by,spread);
+    grd.addColorStop(0,  `rgba(${r},${g},${b},${alpha.toFixed(3)})`);
+    grd.addColorStop(0.5,`rgba(${r},${g},${b},${(alpha*0.4).toFixed(3)})`);
+    grd.addColorStop(1,  `rgba(${r},${g},${b},0)`);
+    ctx.fillStyle=grd;
+    ctx.fillRect(0,0,W,H);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// END V5 RETENTION ENGINE
+// ═══════════════════════════════════════════════════════
+
 function buildPatterns(){
   document.getElementById('s3month').textContent='This '+new Date().toLocaleString('en',{month:'long'});
   const n=entries.length;
@@ -2946,10 +3342,34 @@ function buildPatterns(){
     }
   }
 
-  // ── Insight chip — hide until there's enough real data ────────────
+  // ── Portrait — atmospheric history haze behind ripple ────────────
+  if(n>0) requestAnimationFrame(()=>renderPortrait(entries));
+  else {
+    const pc=document.getElementById('s3-portrait');
+    if(pc){const ctx=pc.getContext('2d');ctx.clearRect(0,0,pc.width,pc.height);}
+  }
+
+  // ── Drift — 5+ entries ────────────────────────────────────────────
+  const driftEl=document.getElementById('s3-drift');
+  if(driftEl){
+    if(n>=5){
+      const driftText=computeDrift(entries);
+      if(driftText){
+        driftEl.textContent=driftText;
+        driftEl.style.display='';
+        driftEl.style.opacity='1';
+      } else {
+        driftEl.style.display='none';
+      }
+    } else {
+      driftEl.style.display='none';
+    }
+  }
+
+  // ── Insight chip — gate to 7+ entries ────────────────────────────
   const insightEl=document.getElementById('s3-insight');
   if(insightEl){
-    if(n===0){
+    if(n<7){
       insightEl.style.display='none';
     } else {
       insightEl.style.display='';
@@ -2964,9 +3384,53 @@ function buildPatterns(){
     }
   }
 
+  // ── Contradiction — 21+ entries ───────────────────────────────────
+  const contradictionEl=document.getElementById('s3-contradiction');
+  if(contradictionEl){
+    if(n>=21){
+      const ctxt=computeContradiction(entries);
+      if(ctxt){
+        contradictionEl.textContent=ctxt;
+        contradictionEl.style.display='';
+      } else {
+        contradictionEl.style.display='none';
+      }
+    } else {
+      contradictionEl.style.display='none';
+    }
+  }
+
   // ── Cards — real entries only, no DEMO ────────────────────────────
   const scroll=document.getElementById('cards-scroll');
   scroll.innerHTML='';
+
+  // Compute seasons for headers (8+ entries, 6+ day span)
+  const seasons=n>=8?computeSeasons(entries):null;
+  // Build a map: entry timestamp → season index for header display
+  const seasonStartTs=new Set();
+  if(seasons){
+    seasons.forEach(s=>seasonStartTs.add(s.entries[0].t.getTime()));
+  }
+  // Build season lookup by entry timestamp
+  const entrySeasonMap=new Map();
+  if(seasons){
+    seasons.forEach((s,si)=>s.entries.forEach(e=>entrySeasonMap.set(e.t.getTime(),si)));
+  }
+
+  function appendSeasonHeaderIfNeeded(entryTs,isFirst){
+    if(!seasons)return;
+    const si=entrySeasonMap.get(entryTs);
+    if(si===undefined)return;
+    const s=seasons[si];
+    if(s.entries[0].t.getTime()!==entryTs)return; // only at season start
+    const hd=document.createElement('div');
+    hd.className='season-hd'+(isFirst?' first':'');
+    const opts={month:'short',day:'numeric'};
+    const startStr=s.start.toLocaleDateString('en',opts);
+    const endStr=s.end.toLocaleDateString('en',opts);
+    hd.innerHTML=`<div class="season-name">${s.name}</div><div class="season-range">${startStr} – ${endStr}</div>`;
+    scroll.appendChild(hd);
+  }
 
   if(n===0){
     scroll.appendChild(makePlaceholder('ph-hero'));
@@ -2978,6 +3442,7 @@ function buildPatterns(){
     msg.textContent='Your palette starts with the first color you give it.';
     scroll.appendChild(msg);
   } else if(n===1){
+    appendSeasonHeaderIfNeeded(entries[0].t.getTime(),true);
     scroll.appendChild(buildCard(entries[0],'gc-hero'));
     const row=document.createElement('div');row.className='cards-row';
     row.appendChild(makePlaceholder('ph-half'));
@@ -2987,8 +3452,10 @@ function buildPatterns(){
     msg.textContent='Each honest check-in deepens the pattern.';
     scroll.appendChild(msg);
   } else if(n===2){
+    appendSeasonHeaderIfNeeded(entries[0].t.getTime(),true);
     scroll.appendChild(buildCard(entries[0],'gc-hero'));
     const row=document.createElement('div');row.className='cards-row';
+    appendSeasonHeaderIfNeeded(entries[1].t.getTime(),false);
     row.appendChild(buildCard(entries[1],'gc-half'));
     row.appendChild(makePlaceholder('ph-half'));
     scroll.appendChild(row);
@@ -2996,8 +3463,18 @@ function buildPatterns(){
     msg.textContent='Return with a few more colors.';
     scroll.appendChild(msg);
   } else {
+    appendSeasonHeaderIfNeeded(entries[0].t.getTime(),true);
     scroll.appendChild(buildCard(entries[0],'gc-hero'));
     for(let i=1;i<entries.length;i+=2){
+      // Insert season header before the row if either entry starts a new season
+      const e1ts=entries[i].t.getTime();
+      const e2ts=entries[i+1]?entries[i+1].t.getTime():null;
+      // Check if first entry in this row starts a season
+      if(entrySeasonMap.size){
+        const si1=entrySeasonMap.get(e1ts);
+        const s1=si1!==undefined?seasons[si1]:null;
+        if(s1&&s1.entries[0].t.getTime()===e1ts) appendSeasonHeaderIfNeeded(e1ts,i===1);
+      }
       const row=document.createElement('div');row.className='cards-row';
       row.appendChild(buildCard(entries[i],'gc-half'));
       if(entries[i+1])row.appendChild(buildCard(entries[i+1],'gc-half'));
