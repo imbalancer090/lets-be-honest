@@ -2069,33 +2069,59 @@ async function shareFeeling(){
     }
   }
 
-  // ── 2. PNG fallback (iOS, older browsers) ──────────────────────────
+  // ── 2. Image path (iOS — captureStream/MediaRecorder unavailable) ──
+  // iOS Safari cannot generate video in-browser (WebKit limitation, no workaround).
+  // We render a story-format image and open the native share sheet the same way
+  // the working photo-share did — navigator.share({files}) opens iOS share sheet,
+  // Instagram/Messages/WhatsApp all appear as targets.
   lock(); setLabel('Creating…');
-  renderStoryFrame(sctx,currentEntry,ackTime);
-  const pngBlob=await new Promise(res=>sc.toBlob(res,'image/png'));
-  const pngFile=new File([pngBlob],'lbh-feeling.png',{type:'image/png'});
-  unlock(); setLabel('Share this feeling');
 
-  // Try native share with image file (iOS 15+, Android Chrome 89+)
-  if(navigator.canShare&&navigator.canShare({files:[pngFile]})){
+  // Cascade: try story render first, fall back to simpler card if canvas fails.
+  // This ensures shareBlob is ALWAYS valid so we ALWAYS reach navigator.share.
+  let shareBlob=null;
+
+  // Attempt A: full story frame at 1080×1920 (preferred — story proportions)
+  try{
+    renderStoryFrame(sctx,currentEntry,ackTime);
+    shareBlob=await new Promise(res=>sc.toBlob(res,'image/jpeg',0.92));
+  }catch(e){ console.warn('Story render failed, trying fallback:',e); }
+
+  // Attempt B: original export card at 375×812 — guaranteed identical to the
+  // version that was already confirmed to open the iOS share sheet
+  if(!shareBlob){
     try{
-      await navigator.share({files:[pngFile],title:"Let's Be Honest",text:feelText});
+      const fc=document.createElement('canvas');
+      fc.width=375; fc.height=812;
+      renderExportCard(fc.getContext('2d'),currentEntry,ackTime);
+      shareBlob=await new Promise(res=>fc.toBlob(res,'image/jpeg',0.92));
+    }catch(e){ console.warn('Fallback render also failed:',e); }
+  }
+
+  unlock(); setLabel('Share this feeling');
+  if(!shareBlob) return; // both renders failed — nothing to share
+
+  const shareFile=new File([shareBlob],'lbh-feeling.jpg',{type:'image/jpeg'});
+
+  // Native share sheet — opens iOS/Android OS picker (Instagram, Messages, WhatsApp…)
+  if(navigator.canShare&&navigator.canShare({files:[shareFile]})){
+    try{
+      await navigator.share({files:[shareFile],title:"Let's Be Honest",text:feelText});
       return;
     }catch(err){ if(err.name==='AbortError') return; }
   }
-  // Try share without file (URL + text only)
+  // URL-only share (older devices without file sharing support)
   if(navigator.share){
     try{
       await navigator.share({title:"Let's Be Honest",text:feelText,url:window.location.href});
       return;
     }catch(err){ if(err.name==='AbortError') return; }
   }
-  // Pure download + hint
-  const pUrl=URL.createObjectURL(pngBlob);
-  const pa=document.createElement('a');
-  pa.href=pUrl; pa.download='lbh-feeling.png';
-  document.body.appendChild(pa); pa.click(); document.body.removeChild(pa);
-  setTimeout(()=>URL.revokeObjectURL(pUrl),1200);
+  // Last resort: download + hint
+  const dlUrl=URL.createObjectURL(shareBlob);
+  const dlA=document.createElement('a');
+  dlA.href=dlUrl; dlA.download='lbh-feeling.jpg';
+  document.body.appendChild(dlA); dlA.click(); document.body.removeChild(dlA);
+  setTimeout(()=>URL.revokeObjectURL(dlUrl),1200);
   const hint=document.getElementById('s2-share-hint');
   if(hint){ hint.classList.add('show'); setTimeout(()=>hint.classList.remove('show'),4500); }
 }
