@@ -92,10 +92,40 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 /* S1 background canvas — ambient only */
 #s1-canvas{cursor:default}
 .s1-hint{
-  position:absolute;bottom:252px;left:22px;right:22px;z-index:41;
-  font-family:'Italiana',serif;font-size:13px;font-style:italic;
-  color:rgba(255,255,255,0.38);text-align:center;pointer-events:none;
-  transition:opacity 0.55s ease;
+  position:absolute;bottom:248px;left:22px;right:22px;z-index:41;
+  font-family:'Italiana',serif;font-size:15px;font-style:italic;
+  color:rgba(255,255,255,0.62);text-align:center;pointer-events:none;
+  text-shadow:0 1px 12px rgba(0,0,0,0.55);
+  transition:opacity 0.6s ease;
+}
+
+/* ── First-use ghost cursor — drifts across the wheel, fades on first touch ── */
+#s1-ghost{
+  position:absolute;
+  width:40px;height:40px;
+  top:42%;left:50%;
+  pointer-events:none;z-index:43;
+  animation:ghostFloat 7s ease-in-out infinite;
+  transition:opacity 0.7s ease;
+}
+#s1-ghost.gone{opacity:0}
+#s1-ghost::before{
+  content:'';
+  position:absolute;inset:0;
+  border-radius:50%;
+  border:1.5px solid rgba(255,255,255,0.45);
+  box-shadow:0 0 0 5px rgba(255,255,255,0.07),0 0 22px rgba(255,255,255,0.12);
+  animation:ghostPulse 2.4s ease-in-out infinite;
+}
+@keyframes ghostFloat{
+  0%  {transform:translate(calc(-50% - 95px),calc(-50% + 12px))}
+  30% {transform:translate(calc(-50% + 15px),calc(-50% - 38px))}
+  65% {transform:translate(calc(-50% + 105px),calc(-50% + 18px))}
+  100%{transform:translate(calc(-50% - 95px),calc(-50% + 12px))}
+}
+@keyframes ghostPulse{
+  0%,100%{transform:scale(1);opacity:0.85}
+  50%    {transform:scale(1.22);opacity:0.38}
 }
 #s1-return{
   position:absolute;top:calc(58px + env(safe-area-inset-top));left:22px;z-index:40;
@@ -157,14 +187,27 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 
 /* Honest button — shows picked gradient as its own background */
 .honest-btn{
-  width:100%;border:none;cursor:pointer;padding:15px;
+  width:100%;border:none;cursor:pointer;padding:13px 15px;
   font-family:'Italiana',serif;font-size:18px;font-style:italic;font-weight:700;
-  border-radius:14px;transition:all 0.6s ease;letter-spacing:0.01em;
-  position:relative;overflow:hidden;
+  border-radius:14px;transition:background 0.65s ease,color 0.45s ease,box-shadow 0.65s ease,border-color 0.45s ease;
+  letter-spacing:0.01em;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
 }
+/* Inner hint — collapses when color is picked */
+#s1-cta-hint{
+  font-family:'Inter',sans-serif;font-size:9px;letter-spacing:0.10em;
+  color:rgba(255,255,255,0.32);pointer-events:none;
+  overflow:hidden;max-height:14px;
+  transition:opacity 0.4s ease,max-height 0.45s ease;
+}
+#s1-cta-hint.hidden{opacity:0;max-height:0}
 .honest-btn.off{
-  background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.14);
-  border:1px solid rgba(255,255,255,0.06);pointer-events:none;cursor:default;
+  background:rgba(255,255,255,0.055);
+  color:rgba(255,255,255,0.22);
+  border:1px solid rgba(255,255,255,0.09);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);
+  pointer-events:none;cursor:default;
+  backdrop-filter:blur(12px);
 }
 .honest-btn.on{
   background:var(--btn-grad,rgba(255,255,255,0.12));
@@ -603,7 +646,8 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 
   <div class="s1-title"><h1>How does<br>today <em>feel?</em></h1></div>
 
-  <div class="s1-hint" id="s1-hint">Drag to pick a color. Pick what feels true.</div>
+  <div class="s1-hint" id="s1-hint">Drag anywhere to find today's color.</div>
+  <div id="s1-ghost"></div>
   <div class="s1-pick" id="s1-pick"></div>
 
   <div id="suggest-card">
@@ -614,7 +658,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 
   <div class="s1-panel">
     <input class="feel-input" id="feelinput" placeholder="Name this feeling..." maxlength="60">
-    <button class="honest-btn off" id="honestbtn" onclick="submitCI()">That's honest.</button>
+    <button class="honest-btn off" id="honestbtn" onclick="submitCI()"><span>That's honest.</span><span id="s1-cta-hint">pick a color to continue</span></button>
   </div>
 </div>
 
@@ -754,6 +798,11 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
   if(localStorage.getItem('lbh_onboarded')==='1'){
     ov.style.display='none';
     if(dh)dh.style.display='none';
+  }
+  // Hide ghost cursor immediately for returning users who've already interacted
+  if(localStorage.getItem('lbh_hint_seen')==='1'){
+    const g=document.getElementById('s1-ghost');
+    if(g)g.classList.add('gone');
   }
 })();
 function dismissOverlay(){
@@ -1802,12 +1851,24 @@ function loadEntries(){
   return[];
 }
 let picks=[],entries=loadEntries(),dragging=false,hintDismissed=false;
+let _hintSeenPermanently=localStorage.getItem('lbh_hint_seen')==='1';
 let _jiggleMode=false;
 let editingSlot=null; // null=append mode, 0-3=replace that slot
 const s1Pick=document.getElementById('s1-pick');
 const s1Hint=document.getElementById('s1-hint');
 
-function dismissHint(){if(!hintDismissed){hintDismissed=true;s1Hint.style.opacity='0';}}
+function dismissHint(){
+  if(!hintDismissed){
+    hintDismissed=true;
+    s1Hint.style.opacity='0';
+  }
+  if(!_hintSeenPermanently){
+    _hintSeenPermanently=true;
+    localStorage.setItem('lbh_hint_seen','1');
+    const g=document.getElementById('s1-ghost');
+    if(g) g.classList.add('gone');
+  }
+}
 
 function setEditMode(slot){
   editingSlot=slot;
@@ -1821,8 +1882,8 @@ function setEditMode(slot){
 function cancelEditMode(){
   editingSlot=null;
   for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.remove('editing');
-  if(hintDismissed){s1Hint.style.opacity='0';}
-  else{s1Hint.textContent='Drag to pick a color. Pick what feels true.';}
+  if(hintDismissed||_hintSeenPermanently){s1Hint.style.opacity='0';}
+  else{s1Hint.textContent='Drag anywhere to find today\'s color.';}
 }
 function removePick(slot){
   picks.splice(slot,1);
@@ -1871,10 +1932,13 @@ function updatePickUI(){
   }
   const btn=document.getElementById('honestbtn');
   const sug=document.getElementById('suggest-card');
+  const ctaHint=document.getElementById('s1-cta-hint');
   if(!picks.length){
     btn.className='honest-btn off';
+    if(ctaHint) ctaHint.classList.remove('hidden');
     sug.classList.remove('show');return;
   }
+  if(ctaHint) ctaHint.classList.add('hidden');
   btn.className='honest-btn on';
   // Button background IS the gradient (no separate preview bar)
   btn.style.setProperty('--btn-grad',buildGrad(picks,148));
@@ -2071,7 +2135,8 @@ function submitCI(){
   buildPatterns();
   picks=[];updatePickUI();
   inp.value='';inp._userEdited=false;
-  hintDismissed=false;s1Hint.style.opacity='1';
+  hintDismissed=false;
+  if(!_hintSeenPermanently) s1Hint.style.opacity='1';
   s1Pick.style.display='none';
   // Milestone check — runs after entries.unshift so count/daySpan are current
   const milestoneText=checkMilestone();
