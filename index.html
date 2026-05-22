@@ -607,7 +607,9 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 .pp-words{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
 .pp-word{font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);border-radius:50px;padding:4px 12px;letter-spacing:0.04em}
 .pp-close{margin-top:18px;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);color:rgba(255,255,255,0.4);font-family:'Italiana',serif;font-size:14px;font-style:italic;padding:12px;border-radius:12px;cursor:pointer}
-.modal-delete-btn{margin-top:24px;width:100%;background:none;border:1px solid rgba(220,80,80,0.18);color:rgba(220,80,80,0.38);font-family:'Italiana',serif;font-size:13px;font-style:italic;padding:11px;border-radius:12px;cursor:pointer;transition:color 0.2s,border-color 0.2s;letter-spacing:0.01em}
+.modal-share-btn{margin-top:24px;width:100%;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.88);font-family:'Italiana',serif;font-size:15px;font-style:italic;font-weight:700;padding:13px;border-radius:12px;cursor:pointer;transition:background 0.2s,color 0.2s,border-color 0.2s;letter-spacing:0.01em;backdrop-filter:blur(10px)}
+.modal-share-btn:hover{background:rgba(255,255,255,0.16);border-color:rgba(255,255,255,0.34)}
+.modal-delete-btn{margin-top:10px;width:100%;background:none;border:1px solid rgba(220,80,80,0.18);color:rgba(220,80,80,0.38);font-family:'Italiana',serif;font-size:13px;font-style:italic;padding:11px;border-radius:12px;cursor:pointer;transition:color 0.2s,border-color 0.2s;letter-spacing:0.01em}
 .modal-delete-btn:hover{color:rgba(220,80,80,0.70);border-color:rgba(220,80,80,0.40)}
 .modal-delete-btn.confirming{color:rgba(220,80,80,0.80);border-color:rgba(220,80,80,0.55)}
 .modal-delete-confirm{font-family:'Inter',sans-serif;font-size:8px;letter-spacing:0.10em;color:rgba(220,80,80,0.42);text-transform:uppercase;text-align:center;margin-top:6px;opacity:0;transition:opacity 0.3s ease}
@@ -833,6 +835,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
     <div class="modal-section-lbl modal-section-lbl-mt">EMOTIONAL WEATHER</div>
     <canvas id="modal-chart" height="220" style="width:100%;border-radius:20px;display:block"></canvas>
     <div class="viz-caption" style="padding:8px 0 0">this moment among your recent check-ins</div>
+    <button class="modal-share-btn" id="modal-share-btn" onclick="shareModalEntry()">Share this feeling</button>
     <button class="modal-delete-btn" id="modal-delete-btn" onclick="deleteModalEntry()">Delete this check-in</button>
     <div class="modal-delete-confirm" id="modal-delete-confirm">tap again to confirm</div>
   </div>
@@ -1145,7 +1148,11 @@ function getWheelColor(wx,wy){
   const dist=Math.sqrt(dx*dx+dy*dy);
   if(dist>W_BASE_R+32)return null;
   const norm=Math.min(dist/W_BASE_R,1.0);
-  const hue=(Math.atan2(dy,dx)*180/Math.PI+450)%360;
+  // Subtract the live visual rotation so picked hue matches what's on screen.
+  // renderWheel uses startAngle = -PI/2 + wheelTime*0.068, which shifts the
+  // spectrum by wheelTime*0.068 radians clockwise. We mirror that here.
+  const rotDeg=wheelTime*0.068*(180/Math.PI);
+  const hue=((Math.atan2(dy,dx)*(180/Math.PI)+90-rotDeg)%360+360)%360;
   let sat,light;
   if(norm<0.26){
     // Inner white zone: saturation builds, lightness fades from pure white
@@ -3998,6 +4005,140 @@ function drawModalChart(entry){
 
 // Card modal
 let modalEntry=null,modalDeletePending=false;
+// Pre-render video state for modal sharing (mirrors _storyVid / preRenderStoryVideo)
+let _modalVid={blob:null,mime:null,ready:false,recording:false};
+
+function preRenderModalVideo(){
+  _modalVid={blob:null,mime:null,ready:false,recording:false};
+  if(!modalEntry) return;
+  if(typeof MediaRecorder==='undefined') return;
+  const sc=document.createElement('canvas');
+  sc.width=1080; sc.height=1920;
+  const sctx=sc.getContext('2d');
+  let stream;
+  try{ stream=sc.captureStream(30); }catch(e){ return; }
+  const CONFIGS=[
+    {mimeType:'video/mp4;codecs=avc1',videoBitsPerSecond:8_000_000},
+    {mimeType:'video/mp4',            videoBitsPerSecond:8_000_000},
+    {mimeType:'video/webm;codecs=vp9',videoBitsPerSecond:8_000_000},
+    {mimeType:'video/webm;codecs=vp8',videoBitsPerSecond:8_000_000},
+    {mimeType:'video/webm',           videoBitsPerSecond:8_000_000},
+    {videoBitsPerSecond:8_000_000},
+  ];
+  let recorder, usedMime;
+  for(const cfg of CONFIGS){
+    try{ recorder=new MediaRecorder(stream,cfg); usedMime=cfg.mimeType||recorder.mimeType||'video/mp4'; break; }catch(e){}
+  }
+  if(!recorder) return;
+  _modalVid.recording=true;
+  const DURATION=5000, FPS=30;
+  let startMs=null, lastFrameMs=0, chunks=[], rafId;
+  const entrySnap=modalEntry; // snapshot in case modal closes mid-render
+  recorder.ondataavailable=e=>{ if(e.data.size>0) chunks.push(e.data); };
+  recorder.onstop=()=>{
+    cancelAnimationFrame(rafId);
+    const blobMime=(usedMime||'video/mp4').split(';')[0];
+    _modalVid.blob=new Blob(chunks,{type:blobMime});
+    _modalVid.mime=usedMime||'video/mp4';
+    _modalVid.ready=true;
+    _modalVid.recording=false;
+    const btn=document.getElementById('modal-share-btn');
+    if(btn&&btn._waitingForVideo){
+      btn.textContent='Share this feeling';
+      btn.style.pointerEvents='';
+      btn._waitingForVideo=false;
+    }
+  };
+  recorder.onerror=()=>{
+    cancelAnimationFrame(rafId);
+    _modalVid.recording=false;
+    const btn=document.getElementById('modal-share-btn');
+    if(btn&&btn._waitingForVideo){
+      btn.textContent='Share this feeling';
+      btn.style.pointerEvents='';
+      btn._waitingForVideo=false;
+    }
+  };
+  recorder.start(200);
+  function loop(now){
+    if(!startMs) startMs=now;
+    const elapsed=now-startMs;
+    if(elapsed>=DURATION){ recorder.stop(); return; }
+    if(now-lastFrameMs>=1000/FPS){
+      lastFrameMs=now;
+      renderStoryFrame(sctx,entrySnap,elapsed/1000);
+    }
+    rafId=requestAnimationFrame(loop);
+  }
+  rafId=requestAnimationFrame(loop);
+}
+
+async function shareModalEntry(){
+  if(!modalEntry) return;
+  await document.fonts.ready;
+  const entry=modalEntry;
+  const btn=document.getElementById('modal-share-btn');
+  const setLabel=t=>{ if(btn) btn.textContent=t; };
+  const lock=()=>{ if(btn) btn.style.pointerEvents='none'; };
+  const unlock=()=>{ if(btn) btn.style.pointerEvents=''; };
+  const feelText=entry.feel?`I'm feeling "${entry.feel}".`:'This is how today feels.';
+
+  // ── PATH A: Video blob ready — share immediately within gesture window ──
+  if(_modalVid.ready && _modalVid.blob){
+    const blobMime=(_modalVid.mime||'video/mp4').split(';')[0];
+    const ext=blobMime.includes('mp4')?'mp4':'webm';
+    const vFile=new File([_modalVid.blob],`lbh-feeling.${ext}`,{type:blobMime});
+    if(navigator.canShare&&navigator.canShare({files:[vFile]})){
+      lock();
+      try{
+        await navigator.share({files:[vFile],title:"Let's Be Honest",text:feelText});
+        unlock();
+        return;
+      }catch(err){
+        unlock();
+        if(err.name==='AbortError') return;
+        // fall through to image
+      }
+    }
+  }
+
+  // ── PATH B: Video still recording — wait for blob, preserve gesture ──
+  if(_modalVid.recording){
+    lock();
+    setLabel('Almost ready — tap again soon');
+    btn._waitingForVideo=true;
+    return;
+  }
+
+  // ── PATH C: No video support — share as image ──
+  lock(); setLabel('Creating…');
+  let shareBlob=null;
+  try{
+    const sc=document.createElement('canvas');
+    sc.width=1080; sc.height=1920;
+    renderStoryFrame(sc.getContext('2d'),entry,0);
+    shareBlob=await new Promise(res=>sc.toBlob(res,'image/jpeg',0.92));
+  }catch(e){}
+  if(!shareBlob){
+    try{
+      const fc=document.createElement('canvas');
+      fc.width=375; fc.height=812;
+      renderExportCard(fc.getContext('2d'),entry,0);
+      shareBlob=await new Promise(res=>fc.toBlob(res,'image/jpeg',0.92));
+    }catch(e){}
+  }
+  unlock(); setLabel('Share this feeling');
+  if(!shareBlob) return;
+  const shareFile=new File([shareBlob],'lbh-feeling.jpg',{type:'image/jpeg'});
+  if(navigator.canShare&&navigator.canShare({files:[shareFile]})){
+    try{ await navigator.share({files:[shareFile],title:"Let's Be Honest",text:feelText}); return; }
+    catch(err){ if(err.name==='AbortError') return; }
+  }
+  if(navigator.share){
+    try{ await navigator.share({title:"Let's Be Honest",text:feelText}); }catch(e){}
+  }
+}
+
 function openModal(entry){
   modalEntry=entry;
   modalDeletePending=false;
@@ -4005,6 +4146,9 @@ function openModal(entry){
   const conf=document.getElementById('modal-delete-confirm');
   if(btn){btn.classList.remove('confirming');btn.textContent='Delete this check-in';}
   if(conf)conf.classList.remove('show');
+  // Reset share button state
+  const shareBtn=document.getElementById('modal-share-btn');
+  if(shareBtn){shareBtn.textContent='Share this feeling';shareBtn.style.pointerEvents='';shareBtn._waitingForVideo=false;}
   const g=cardGrad(entry.hexArr);
   const date=new Date(entry.t).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   document.getElementById('modal-wp-bg').style.setProperty('--g',g);
@@ -4020,10 +4164,13 @@ function openModal(entry){
   document.getElementById('card-modal').classList.add('show');
   document.querySelector('.modal-body').scrollTop=0;
   requestAnimationFrame(()=>drawModalChart(entry));
+  preRenderModalVideo(); // start 5-second clip in background; ready before user taps share
 }
 function closeModal(){
   document.getElementById('card-modal').classList.remove('show');
   if(modalChartAnim){cancelAnimationFrame(modalChartAnim);modalChartAnim=null;}
+  // Clean up any in-progress modal video recording
+  _modalVid={blob:null,mime:null,ready:false,recording:false};
   modalEntry=null;modalDeletePending=false;
 }
 function deleteModalEntry(){
