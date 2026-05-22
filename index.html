@@ -1401,13 +1401,14 @@ function renderStoryFrame(ctx, entry, t){
   ctx.globalCompositeOperation='source-over';
   ctx.fillStyle=tg; ctx.fillRect(0,LH*0.46,LW,LH*0.54);
 
-  // 3. Badge — prominent brand identifier
-  ctx.font='italic bold 28px Italiana,serif';
-  const bTxt="letsbehonest.space", bPadX=22, bH=44, bX=36, bY=72;
+  // 3. Badge — sized to match on-screen headers, colored fill from entry palette
+  ctx.font='italic bold 22px Italiana,serif';
+  const bTxt="letsbehonest.space", bPadX=18, bH=36, bX=36, bY=80;
   const bW=ctx.measureText(bTxt).width+bPadX*2;
-  ctx.fillStyle='rgba(255,255,255,0.11)';
-  ctx.strokeStyle='rgba(255,255,255,0.28)'; ctx.lineWidth=1.5;
-  _storyRRect(ctx,bX,bY,bW,bH,22); ctx.fill(); ctx.stroke();
+  const[bR,bG,bB]=hexToRgb(entry.hexArr[0]);
+  ctx.fillStyle=`rgba(${bR},${bG},${bB},0.42)`;
+  ctx.strokeStyle=`rgba(${bR},${bG},${bB},0.72)`; ctx.lineWidth=1;
+  _storyRRect(ctx,bX,bY,bW,bH,20); ctx.fill(); ctx.stroke();
   ctx.fillStyle='rgba(255,255,255,0.96)';
   ctx.textBaseline='middle'; ctx.textAlign='left';
   ctx.fillText(bTxt,bX+bPadX,bY+bH/2);
