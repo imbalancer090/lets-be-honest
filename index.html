@@ -2022,8 +2022,6 @@ function updatePickUI(){
   const phraseInp=document.getElementById('suggest-phrase');
   if(!phraseInp._userEdited)phraseInp.value=phrase;
   sug.classList.add('show');
-  // Auto-focus phrase input so user can immediately type
-  phraseInp.focus();
 }
 document.getElementById('suggest-phrase').addEventListener('input',e=>{e.target._userEdited=!!e.target.value;});
 // Tapping the label or hint text also focuses the phrase
