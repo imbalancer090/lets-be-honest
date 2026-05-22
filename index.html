@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
 <!-- Primary meta -->
-<title>Let's Be Honest</title>
-<meta name="description" content="Name what you're feeling right now. Let's Be Honest turns your emotions into color.">
+<title>letsbehonest.space</title>
+<meta name="description" content="Name what you're feeling right now. letsbehonest.space turns your emotions into color.">
 <meta name="theme-color" content="#060608">
 
 <!-- Favicon — inline SVG, no separate file required -->
@@ -16,13 +16,13 @@
 <!-- iOS home screen -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Let's Be Honest">
+<meta name="apple-mobile-web-app-title" content="letsbehonest.space">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="Let's Be Honest">
+<meta property="og:title" content="letsbehonest.space">
 <meta property="og:description" content="Name what you're feeling right now.">
-<meta property="og:site_name" content="Let's Be Honest">
+<meta property="og:site_name" content="letsbehonest.space">
 
 <link href="https://fonts.googleapis.com/css2?family=Italiana&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet" referrerpolicy="no-referrer">
 <style>
@@ -677,7 +677,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 
 <!-- ══ ONBOARDING OVERLAY ══ -->
 <div id="intro-overlay">
-  <div class="bp intro-badge">Let's Be Honest</div>
+  <div class="bp intro-badge">letsbehonest.space</div>
   <div class="intro-headline">Pick the colors<br>that match how<br>today feels.</div>
   <div class="intro-sub">Your emotions are a spectrum.<br>Understanding them starts with noticing them.</div>
   <div class="intro-privacy">Your feelings stay on this device. Nothing is sent anywhere.</div>
@@ -690,7 +690,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
   <canvas id="wheel-canvas" width="375" height="812"></canvas>
 
   <div class="s1-head">
-    <div class="bp">Let's Be Honest</div>
+    <div class="bp">letsbehonest.space</div>
     <div class="pick-dots">
       <div class="pd" id="pd0"></div>
       <div class="pd" id="pd1"></div>
@@ -725,7 +725,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 <div class="screen" id="s2">
   <canvas id="ack-canvas" width="375" height="812"></canvas>
   <div class="s2-overlay">
-    <div class="bp" style="align-self:flex-start">Let's Be Honest</div>
+    <div class="bp" style="align-self:flex-start">letsbehonest.space</div>
     <div id="s2-palette"></div>
     <div class="s2-big" id="s2-big"></div>
     <div class="s2-sub">Let it exist.</div>
@@ -749,7 +749,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 <div class="screen" id="s3">
   <div class="s3-wrap">
     <div class="s3-hd">
-      <div class="bp">Let's Be Honest</div>
+      <div class="bp">letsbehonest.space</div>
       <div class="s3-mo" id="s3month">This May</div>
     </div>
     <div class="s3-h2wrap">
@@ -795,7 +795,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 <div class="screen" id="s4">
   <canvas id="pulse-aurora-canvas" width="375" height="812"></canvas>
   <div class="s4-wrap">
-    <div class="s4-hd"><div class="bp">Let's Be Honest</div></div>
+    <div class="s4-hd"><div class="bp">letsbehonest.space</div></div>
     <div class="s4-h2wrap">
       <div class="s4-h2">These feelings<br>find <em>everyone.</em></div>
     </div>
@@ -1302,9 +1302,9 @@ function renderExportCard(ctx,entry,t){
   ctx.textBaseline='top';
 
   // Logo
-  ctx.font="18px Italiana,serif";ctx.textAlign='left';
-  ctx.fillStyle='rgba(255,255,255,0.88)';
-  ctx.fillText("Let's Be Honest",26,62);
+  ctx.font="italic bold 20px Italiana,serif";ctx.textAlign='left';
+  ctx.fillStyle='rgba(255,255,255,0.96)';
+  ctx.fillText("letsbehonest.space",26,62);
 
   // ── Bottom-anchored elements (fixed positions, no overlap possible) ──
   // Color swatches — pinned to bottom
@@ -1401,14 +1401,14 @@ function renderStoryFrame(ctx, entry, t){
   ctx.globalCompositeOperation='source-over';
   ctx.fillStyle=tg; ctx.fillRect(0,LH*0.46,LW,LH*0.54);
 
-  // 3. Badge
-  ctx.font='italic bold 22px Italiana,serif';
-  const bTxt="Let's Be Honest", bPadX=18, bH=36, bX=36, bY=80;
+  // 3. Badge — prominent brand identifier
+  ctx.font='italic bold 28px Italiana,serif';
+  const bTxt="letsbehonest.space", bPadX=22, bH=44, bX=36, bY=72;
   const bW=ctx.measureText(bTxt).width+bPadX*2;
-  ctx.fillStyle='rgba(255,255,255,0.07)';
-  ctx.strokeStyle='rgba(255,255,255,0.14)'; ctx.lineWidth=1;
-  _storyRRect(ctx,bX,bY,bW,bH,20); ctx.fill(); ctx.stroke();
-  ctx.fillStyle='rgba(255,255,255,0.88)';
+  ctx.fillStyle='rgba(255,255,255,0.11)';
+  ctx.strokeStyle='rgba(255,255,255,0.28)'; ctx.lineWidth=1.5;
+  _storyRRect(ctx,bX,bY,bW,bH,22); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,0.96)';
   ctx.textBaseline='middle'; ctx.textAlign='left';
   ctx.fillText(bTxt,bX+bPadX,bY+bH/2);
 
@@ -2327,7 +2327,7 @@ async function shareFeeling(){
     if(navigator.canShare&&navigator.canShare({files:[vFile]})){
       lock();
       try{
-        await navigator.share({files:[vFile],title:"Let's Be Honest",text:feelText});
+        await navigator.share({files:[vFile],title:"letsbehonest.space",text:feelText});
         unlock();
         return;
       }catch(err){
@@ -2377,13 +2377,13 @@ async function shareFeeling(){
   const shareFile=new File([shareBlob],'lbh-feeling.jpg',{type:'image/jpeg'});
   if(navigator.canShare&&navigator.canShare({files:[shareFile]})){
     try{
-      await navigator.share({files:[shareFile],title:"Let's Be Honest",text:feelText});
+      await navigator.share({files:[shareFile],title:"letsbehonest.space",text:feelText});
       return;
     }catch(err){ if(err.name==='AbortError') return; }
   }
   if(navigator.share){
     try{
-      await navigator.share({title:"Let's Be Honest",text:feelText,url:window.location.href});
+      await navigator.share({title:"letsbehonest.space",text:feelText,url:window.location.href});
       return;
     }catch(err){ if(err.name==='AbortError') return; }
   }
@@ -4091,7 +4091,7 @@ async function shareModalEntry(){
     if(navigator.canShare&&navigator.canShare({files:[vFile]})){
       lock();
       try{
-        await navigator.share({files:[vFile],title:"Let's Be Honest",text:feelText});
+        await navigator.share({files:[vFile],title:"letsbehonest.space",text:feelText});
         unlock();
         return;
       }catch(err){
@@ -4131,11 +4131,11 @@ async function shareModalEntry(){
   if(!shareBlob) return;
   const shareFile=new File([shareBlob],'lbh-feeling.jpg',{type:'image/jpeg'});
   if(navigator.canShare&&navigator.canShare({files:[shareFile]})){
-    try{ await navigator.share({files:[shareFile],title:"Let's Be Honest",text:feelText}); return; }
+    try{ await navigator.share({files:[shareFile],title:"letsbehonest.space",text:feelText}); return; }
     catch(err){ if(err.name==='AbortError') return; }
   }
   if(navigator.share){
-    try{ await navigator.share({title:"Let's Be Honest",text:feelText}); }catch(e){}
+    try{ await navigator.share({title:"letsbehonest.space",text:feelText}); }catch(e){}
   }
 }
 
