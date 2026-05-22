@@ -241,7 +241,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 #ack-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .s2-overlay{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;justify-content:flex-end;padding:60px 26px calc(86px + env(safe-area-inset-bottom))}
 .s2-overlay>.bp{position:absolute;top:calc(22px + env(safe-area-inset-top));left:26px}
-.s2-big{font-family:'Italiana',serif;font-size:80px;line-height:0.9;font-weight:700;color:#fff;letter-spacing:-0.03em;word-break:break-word;overflow-wrap:break-word;hyphens:auto;max-height:52vh;overflow:hidden}
+.s2-big{font-family:'Italiana',serif;font-size:80px;line-height:0.92;font-weight:700;color:#fff;letter-spacing:-0.03em;word-break:break-word;overflow-wrap:break-word;hyphens:none;max-height:52vh;overflow:hidden;transition:font-size 0.25s ease}
 .s2-sub{font-family:'Italiana',serif;font-size:14px;color:rgba(255,255,255,0.5);font-style:italic;line-height:1.58;margin-top:18px;max-width:210px}
 #s2-feel-echo{display:none}
 .s2-foot{display:flex;flex-direction:column;gap:10px;margin-top:32px}
@@ -967,12 +967,15 @@ function renderWheel(t){
     }
   }
 
-  // ── Dark radial vignette — center bright, perimeter into deep darkness ──
-  const dk=wheelCtx.createRadialGradient(W_CX,W_CY,W_BASE_R*0.28,W_CX,W_CY,W_BASE_R);
-  dk.addColorStop(0,'rgba(0,0,0,0)');
-  dk.addColorStop(0.38,'rgba(0,0,0,0.45)');
-  dk.addColorStop(0.72,'rgba(0,0,0,0.80)');
-  dk.addColorStop(1,'rgba(0,0,0,0.97)');
+  // ── Dark radial vignette — mirrors the quadratic dark zone in getWheelColor ──
+  // Darkness kicks in harder at ~46% radius to visually match what's pickable.
+  const dk=wheelCtx.createRadialGradient(W_CX,W_CY,W_BASE_R*0.26,W_CX,W_CY,W_BASE_R);
+  dk.addColorStop(0,   'rgba(0,0,0,0)');
+  dk.addColorStop(0.28,'rgba(0,0,0,0.18)');
+  dk.addColorStop(0.46,'rgba(0,0,0,0.52)');
+  dk.addColorStop(0.62,'rgba(0,0,0,0.80)');
+  dk.addColorStop(0.78,'rgba(0,0,0,0.94)');
+  dk.addColorStop(1,   'rgba(0,0,0,0.99)');
   wheelCtx.fillStyle=dk;
   wheelCtx.fillRect(0,0,W,H);
 
@@ -980,23 +983,23 @@ function renderWheel(t){
   const dv1x=W_CX+Math.cos(t*0.19+0.8)*W_BASE_R*0.54;
   const dv1y=W_CY+Math.sin(t*0.14+1.2)*W_BASE_R*0.50;
   const void1=wheelCtx.createRadialGradient(dv1x,dv1y,0,dv1x,dv1y,W_BASE_R*0.44);
-  void1.addColorStop(0,'rgba(0,0,0,0.78)');
-  void1.addColorStop(0.40,'rgba(0,0,0,0.32)');
+  void1.addColorStop(0,'rgba(0,0,0,0.38)');
+  void1.addColorStop(0.40,'rgba(0,0,0,0.12)');
   void1.addColorStop(1,'rgba(0,0,0,0)');
   wheelCtx.fillStyle=void1;wheelCtx.fillRect(0,0,W,H);
 
   const dv2x=W_CX+Math.cos(t*0.11+3.8)*W_BASE_R*0.48;
   const dv2y=W_CY+Math.sin(t*0.16+2.6)*W_BASE_R*0.44;
   const void2=wheelCtx.createRadialGradient(dv2x,dv2y,0,dv2x,dv2y,W_BASE_R*0.38);
-  void2.addColorStop(0,'rgba(0,0,0,0.70)');
-  void2.addColorStop(0.48,'rgba(0,0,0,0.22)');
+  void2.addColorStop(0,'rgba(0,0,0,0.32)');
+  void2.addColorStop(0.48,'rgba(0,0,0,0.08)');
   void2.addColorStop(1,'rgba(0,0,0,0)');
   wheelCtx.fillStyle=void2;wheelCtx.fillRect(0,0,W,H);
 
   const dv3x=W_CX+Math.cos(t*0.076+6.1)*W_BASE_R*0.36;
   const dv3y=W_CY+Math.sin(t*0.092+4.4)*W_BASE_R*0.38;
   const void3=wheelCtx.createRadialGradient(dv3x,dv3y,0,dv3x,dv3y,W_BASE_R*0.28);
-  void3.addColorStop(0,'rgba(0,0,0,0.60)');
+  void3.addColorStop(0,'rgba(0,0,0,0.26)');
   void3.addColorStop(1,'rgba(0,0,0,0)');
   wheelCtx.fillStyle=void3;wheelCtx.fillRect(0,0,W,H);
 
@@ -1126,7 +1129,7 @@ function renderWheel(t){
 function getWheelColor(wx,wy){
   const dx=wx-W_CX,dy=wy-W_CY;
   const dist=Math.sqrt(dx*dx+dy*dy);
-  if(dist>W_BASE_R+20)return null;
+  if(dist>W_BASE_R+32)return null;
   const norm=Math.min(dist/W_BASE_R,1.0);
   const hue=(Math.atan2(dy,dx)*180/Math.PI+450)%360;
   let sat,light;
@@ -1134,16 +1137,17 @@ function getWheelColor(wx,wy){
     // Inner white zone: saturation builds, lightness fades from pure white
     sat=(norm/0.26)*0.92;
     light=1.0-(norm/0.26)*0.42;
-  } else if(norm<0.56){
-    // Saturated mid ring — peak chroma
-    const t=(norm-0.26)/0.30;
+  } else if(norm<0.46){
+    // Saturated mid ring — peak chroma (tightened so dark zone is wider)
+    const t=(norm-0.26)/0.20;
     sat=0.92;
     light=0.58-t*0.12; // 0.58 → 0.46
   } else {
-    // Dark outer zone — deep colors into near-black
-    const t=(norm-0.56)/0.44;
-    sat=0.92-t*0.30; // 0.92 → 0.62
-    light=0.46-t*0.43; // 0.46 → 0.03
+    // Dark outer zone — quadratic curve so near-black is reached at ~65% radius,
+    // well within reach on any phone screen size.
+    const t=Math.min((norm-0.46)/0.36,1.0); // saturates at norm 0.82
+    sat=0.88-t*0.55;                         // 0.88 → 0.33 (desaturates to near-grey at black)
+    light=0.46*Math.pow(1-t,2);             // quadratic drop: 0.46 → 0 much faster than linear
   }
   const[r,g,b]=hslToRgb(hue,sat,light);
   return rgbToHex(r,g,b);
@@ -1440,58 +1444,87 @@ function _storyRRect(ctx,x,y,w,h,r){
   ctx.closePath();
 }
 
-// Records 5 s of story animation → resolves with Blob
-function recordStoryVideo(canvas,ctx,mime,onLabel){
-  return new Promise((resolve,reject)=>{
-    const DURATION=5000, FPS=30;
-    let startMs=null, lastFrameMs=0, chunks=[], rafId;
-    const stream=canvas.captureStream(FPS);
-    const recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:8_000_000});
-    recorder.ondataavailable=e=>{ if(e.data.size>0) chunks.push(e.data); };
-    recorder.onstop=()=>{ cancelAnimationFrame(rafId); resolve(new Blob(chunks,{type:mime.split(';')[0]})); };
-    recorder.onerror=err=>{ cancelAnimationFrame(rafId); reject(err); };
-    recorder.start(200);
-    function loop(now){
-      if(!startMs) startMs=now;
-      const elapsed=now-startMs;
-      if(elapsed>=DURATION){ recorder.stop(); return; }
-      onLabel(`Creating ${Math.ceil((DURATION-elapsed)/1000)}s…`);
-      if(now-lastFrameMs>=1000/FPS){
-        lastFrameMs=now;
-        renderStoryFrame(ctx,currentEntry,elapsed/1000);
-      }
-      rafId=requestAnimationFrame(loop);
-    }
-    rafId=requestAnimationFrame(loop);
-  });
-}
-
-// Starts recording in background when S2 opens. By the time the user reads
-// the screen and taps share (~5–10 s), the 5-second clip is already done.
-// shareFeeling() checks _storyVid.ready and uses blob synchronously so
-// navigator.share() fires within the user gesture window (no NotAllowedError).
+// Pre-render video state — reset each time S2 opens
+// Architecture: recording starts immediately in background.
+// If user taps share before it finishes → button enters "almost ready" wait state.
+// recorder.onstop re-enables the button → user taps again → blob shared instantly
+// within a fresh gesture window (no NotAllowedError on iOS).
 function preRenderStoryVideo(){
   _storyVid={blob:null,mime:null,ready:false,recording:false};
   if(!currentEntry) return;
-  const canVideo=typeof HTMLCanvasElement!=='undefined'
-    && typeof HTMLCanvasElement.prototype.captureStream==='function'
-    && typeof MediaRecorder!=='undefined';
-  if(!canVideo) return;
-  const mime=['video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm']
-    .find(m=>{ try{ return MediaRecorder.isTypeSupported(m); }catch(e){ return false; } });
-  if(!mime) return;
+  if(typeof MediaRecorder==='undefined') return;
+
+  // Off-screen canvas at Instagram Story resolution
   const sc=document.createElement('canvas');
   sc.width=1080; sc.height=1920;
   const sctx=sc.getContext('2d');
+
+  let stream;
+  try{ stream=sc.captureStream(30); }catch(e){ return; }
+
+  // Try each config via actual construction — more reliable than isTypeSupported,
+  // which incorrectly returns false for video/mp4 on several iOS Safari versions.
+  const CONFIGS=[
+    {mimeType:'video/mp4;codecs=avc1',videoBitsPerSecond:8_000_000},
+    {mimeType:'video/mp4',            videoBitsPerSecond:8_000_000},
+    {mimeType:'video/webm;codecs=vp9',videoBitsPerSecond:8_000_000},
+    {mimeType:'video/webm;codecs=vp8',videoBitsPerSecond:8_000_000},
+    {mimeType:'video/webm',           videoBitsPerSecond:8_000_000},
+    {videoBitsPerSecond:8_000_000}, // browser default — last resort
+  ];
+  let recorder, usedMime;
+  for(const cfg of CONFIGS){
+    try{
+      recorder=new MediaRecorder(stream,cfg);
+      usedMime=cfg.mimeType||recorder.mimeType||'video/mp4';
+      break;
+    }catch(e){}
+  }
+  if(!recorder) return;
+
   _storyVid.recording=true;
-  recordStoryVideo(sc,sctx,mime,()=>{}) // silent — no label updates
-    .then(blob=>{
-      _storyVid.blob=blob;
-      _storyVid.mime=mime;
-      _storyVid.ready=true;
-      _storyVid.recording=false;
-    })
-    .catch(()=>{ _storyVid.recording=false; });
+  const DURATION=5000, FPS=30;
+  let startMs=null, lastFrameMs=0, chunks=[], rafId;
+
+  recorder.ondataavailable=e=>{ if(e.data.size>0) chunks.push(e.data); };
+  recorder.onstop=()=>{
+    cancelAnimationFrame(rafId);
+    const blobMime=(usedMime||'video/mp4').split(';')[0];
+    _storyVid.blob=new Blob(chunks,{type:blobMime});
+    _storyVid.mime=usedMime||'video/mp4';
+    _storyVid.ready=true;
+    _storyVid.recording=false;
+    // If user already tapped share and is waiting, re-enable the button
+    const btn=document.getElementById('s2-share-btn');
+    if(btn&&btn._waitingForVideo){
+      btn.textContent='Share this feeling';
+      btn.style.pointerEvents='';
+      btn._waitingForVideo=false;
+    }
+  };
+  recorder.onerror=()=>{
+    cancelAnimationFrame(rafId);
+    _storyVid.recording=false;
+    const btn=document.getElementById('s2-share-btn');
+    if(btn&&btn._waitingForVideo){
+      btn.textContent='Share this feeling';
+      btn.style.pointerEvents='';
+      btn._waitingForVideo=false;
+    }
+  };
+  recorder.start(200);
+
+  function loop(now){
+    if(!startMs) startMs=now;
+    const elapsed=now-startMs;
+    if(elapsed>=DURATION){ recorder.stop(); return; }
+    if(now-lastFrameMs>=1000/FPS){
+      lastFrameMs=now;
+      renderStoryFrame(sctx,currentEntry,elapsed/1000);
+    }
+    rafId=requestAnimationFrame(loop);
+  }
+  rafId=requestAnimationFrame(loop);
 }
 
 function renderAck(t){
@@ -2195,7 +2228,11 @@ function submitCI(){
   document.getElementById('s2-palette').innerHTML=
     currentEntry.hexArr.map(h=>`<div class="s2-sw" style="background:${h};--sc:${h}99"></div>`).join('');
   const feelDisplay=feel.replace(/\.+$/,'')+'.';
-  document.getElementById('s2-big').textContent=feelDisplay;
+  const s2BigEl=document.getElementById('s2-big');
+  s2BigEl.textContent=feelDisplay;
+  // Scale font size by character count so long phrases never break awkwardly
+  const clen=feelDisplay.length;
+  s2BigEl.style.fontSize=clen<=14?'80px':clen<=22?'64px':clen<=32?'50px':clen<=44?'40px':'32px';
   document.getElementById('s2-feel-echo').textContent='';
   const streak=getStreak();
   const isFirstEver=entries.length===1;
@@ -2248,7 +2285,7 @@ function submitCI(){
   go('s2');
 }
 async function shareFeeling(){
-  if(!currentEntry)return;
+  if(!currentEntry) return;
   await document.fonts.ready;
 
   const btn=document.getElementById('s2-share-btn');
@@ -2257,13 +2294,15 @@ async function shareFeeling(){
   const unlock=()=>{ if(btn) btn.style.pointerEvents=''; };
   const feelText=currentEntry.feel?`I'm feeling "${currentEntry.feel}".`:'This is how today feels.';
 
-  // ── 1. Pre-rendered video path ─────────────────────────────────────────
-  // preRenderStoryVideo() started recording when S2 opened (~5 s ago).
-  // If it finished, the blob is ready RIGHT NOW — navigator.share fires
-  // synchronously within the user gesture window (no NotAllowedError).
+  // ── PATH A: Video blob is ready — share it now, within gesture window ──
+  // The blob was pre-rendered in the background when S2 opened. Using it
+  // synchronously here means navigator.share() fires inside the user gesture
+  // and iOS won't reject it with NotAllowedError.
   if(_storyVid.ready && _storyVid.blob){
-    const ext=_storyVid.mime.includes('mp4')?'mp4':'webm';
-    const vFile=new File([_storyVid.blob],`lbh-feeling.${ext}`,{type:_storyVid.mime.split(';')[0]});
+    const blobMime=(_storyVid.mime||'video/mp4').split(';')[0];
+    const ext=blobMime.includes('mp4')?'mp4':'webm';
+    const vFile=new File([_storyVid.blob],`lbh-feeling.${ext}`,{type:blobMime});
+    // canShare gates whether the OS share sheet can receive this file type
     if(navigator.canShare&&navigator.canShare({files:[vFile]})){
       lock();
       try{
@@ -2272,59 +2311,62 @@ async function shareFeeling(){
         return;
       }catch(err){
         unlock();
-        if(err.name==='AbortError') return; // user dismissed share sheet
-        // NotAllowedError or other error → fall through to image share
+        if(err.name==='AbortError') return; // user dismissed — nothing to do
+        // Any other error (e.g. format rejected): fall through to image
       }
     }
+    // canShare said no for video — fall through to image
   }
-  // Video still recording or unavailable → fall through to image share.
-  // (If user taps share within 5 s on a device that supports video,
-  //  _storyVid.recording will be true; we skip video rather than waiting.)
 
-  // ── 2. Image share (iOS Safari, or when video unavailable/not ready) ──
+  // ── PATH B: Video still recording — lock button, wait for onstop callback ──
+  // onstop re-enables the button; the NEXT tap will hit Path A with blob ready.
+  // This preserves a fresh gesture window for that tap.
+  if(_storyVid.recording){
+    lock();
+    setLabel('Almost ready — tap again soon');
+    btn._waitingForVideo=true;
+    return; // do NOT fall through; wait for video
+  }
+
+  // ── PATH C: No video support or recording failed — share as image ─────
   lock(); setLabel('Creating…');
 
-  const sc=document.createElement('canvas');
-  sc.width=1080; sc.height=1920;
-  const sctx=sc.getContext('2d');
   let shareBlob=null;
-
-  // Attempt A: story frame at 1080×1920 (Instagram Story proportions)
   try{
-    renderStoryFrame(sctx,currentEntry,ackTime);
+    // 1080×1920 story frame (Instagram Story proportions)
+    const sc=document.createElement('canvas');
+    sc.width=1080; sc.height=1920;
+    renderStoryFrame(sc.getContext('2d'),currentEntry,ackTime);
     shareBlob=await new Promise(res=>sc.toBlob(res,'image/jpeg',0.92));
-  }catch(e){ console.warn('Story render failed:',e); }
+  }catch(e){}
 
-  // Attempt B: simpler export card at 375×812 — guaranteed to work on all browsers
   if(!shareBlob){
     try{
+      // Smaller fallback card
       const fc=document.createElement('canvas');
       fc.width=375; fc.height=812;
       renderExportCard(fc.getContext('2d'),currentEntry,ackTime);
       shareBlob=await new Promise(res=>fc.toBlob(res,'image/jpeg',0.92));
-    }catch(e){ console.warn('Fallback render failed:',e); }
+    }catch(e){}
   }
 
   unlock(); setLabel('Share this feeling');
   if(!shareBlob) return;
 
   const shareFile=new File([shareBlob],'lbh-feeling.jpg',{type:'image/jpeg'});
-
-  // Native share sheet — opens iOS/Android OS picker (Instagram, Messages, WhatsApp…)
   if(navigator.canShare&&navigator.canShare({files:[shareFile]})){
     try{
       await navigator.share({files:[shareFile],title:"Let's Be Honest",text:feelText});
       return;
     }catch(err){ if(err.name==='AbortError') return; }
   }
-  // URL-only share (older devices)
   if(navigator.share){
     try{
       await navigator.share({title:"Let's Be Honest",text:feelText,url:window.location.href});
       return;
     }catch(err){ if(err.name==='AbortError') return; }
   }
-  // Last resort: download
+  // Last resort: direct download
   const dlUrl=URL.createObjectURL(shareBlob);
   const dlA=document.createElement('a');
   dlA.href=dlUrl; dlA.download='lbh-feeling.jpg';
