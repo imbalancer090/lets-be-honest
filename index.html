@@ -172,7 +172,8 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 #suggest-card.show{opacity:1;transform:translateY(0);pointer-events:none}
 /* Only the actual interactive children capture events */
 #suggest-card.show .suggest-phrase,
-#suggest-card.show .suggest-edit{pointer-events:auto}
+#suggest-card.show .suggest-edit,
+#suggest-card.show .suggest-lbl{pointer-events:auto}
 /* Soft framing label — tentative, not diagnostic */
 .suggest-lbl{
   font-family:'Italiana',serif;font-size:10px;font-style:italic;
@@ -572,8 +573,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 .gc-time-badge{font-size:8px;color:rgba(255,255,255,0.3);font-family:'Inter',sans-serif;margin-top:2px;letter-spacing:0.06em}
 .gc-feel{font-family:'Italiana',serif;font-size:17px;color:#fff;font-weight:700;font-style:italic;line-height:1.1;text-shadow:0 2px 20px rgba(0,0,0,0.5);margin-top:auto}
 .gc-feel.lg{font-size:22px}
-.gc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
-.gc-tag{font-size:7.5px;color:rgba(255,255,255,0.3);letter-spacing:0.1em;font-family:'Inter',sans-serif}
+.gc-foot{display:flex;justify-content:flex-end;align-items:center;margin-top:6px}
 .gc-dots{display:flex;gap:3px}
 .gc-dot{width:7px;height:7px;border-radius:50%;opacity:0.85}
 .pat-empty{font-family:'Italiana',serif;font-size:14px;color:rgba(255,255,255,0.1);font-style:italic;padding:18px 0}
@@ -594,6 +594,8 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 .s4-h2{font-family:'Italiana',serif;font-size:36px;line-height:0.95;font-weight:700;color:#fff;letter-spacing:-0.022em;text-shadow:0 2px 32px rgba(3,2,16,0.7)}
 .s4-h2 em{font-style:italic;color:rgba(255,255,255,0.44)}
 .s4-tag{flex-shrink:0;padding:5px 22px 0;font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:0.13em;color:rgba(255,255,255,0.22);z-index:2;position:relative;text-transform:uppercase}
+.s4-source{flex-shrink:0;padding:5px 22px 0;font-family:'Inter',sans-serif;font-size:8px;letter-spacing:0.13em;color:rgba(255,255,255,0.14);z-index:2;position:relative;text-transform:uppercase;transition:color 0.6s ease}
+.s4-source.live{color:rgba(100,220,200,0.38)}
 #s4-personal{
   flex-shrink:0;margin:8px 22px 4px;
   display:flex;align-items:center;gap:8px;
@@ -861,6 +863,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
       <div class="s4-h2">These feelings<br>find <em>everyone.</em></div>
     </div>
     <div class="s4-tag">You're not alone in this.</div>
+    <div class="s4-source" id="s4-source"></div>
     <div id="s4-personal" onclick="go('s3')" style="display:none"></div>
     <div class="pulse-list" id="pulse-list"></div>
   </div>
@@ -2254,29 +2257,6 @@ let currentEntry=null;
 // Pre-rendered story video — populated when S2 screen opens so the blob is
 // ready before the user taps share (avoids iOS gesture-context expiry).
 let _storyVid={blob:null,mime:null,ready:false,recording:false};
-function checkMilestone(){
-  if(!entries.length)return null;
-  const n=entries.length;
-  const oldest=entries[entries.length-1];
-  const daySpan=(Date.now()-oldest.t.getTime())/86400000;
-  // Month (highest priority — also marks week as seen)
-  if(daySpan>=30&&!localStorage.getItem('lbh_m_month')){
-    localStorage.setItem('lbh_m_month','1');
-    localStorage.setItem('lbh_m_week','1');
-    return'one month of honesty.';
-  }
-  // Tenth check-in — checked before week so a week-7+ submit can't eclipse it
-  if(n>=10&&!localStorage.getItem('lbh_m_10')){
-    localStorage.setItem('lbh_m_10','1');
-    return'your tenth check-in.';
-  }
-  // First week
-  if(daySpan>=7&&!localStorage.getItem('lbh_m_week')){
-    localStorage.setItem('lbh_m_week','1');
-    return'one week of showing up.';
-  }
-  return null;
-}
 
 function submitCI(){
   if(!picks.length)return;
@@ -2290,7 +2270,7 @@ function submitCI(){
   ackHexArr=[...picks];
   document.getElementById('s2date').textContent=
     now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase()+
-    ' -- '+now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    ' · '+now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
   document.getElementById('s2-palette').innerHTML=
     currentEntry.hexArr.map(h=>`<div class="s2-sw" style="background:${h};--sc:${h}99"></div>`).join('');
   const feelDisplay=feel.replace(/\.+$/,'')+'.';
@@ -2429,30 +2409,18 @@ const TONE_META={
   electric: {hex:'#c030a0',label:'Electric'},
   open:     {hex:'#7030c0',label:'Open'},
 };
-const REFLECT_LINES=[
-  'Patterns emerge slowly.',
-  'Some feelings return differently.',
-  'The atmosphere shifts gradually.',
-  'Honesty becomes clearer in repetition.',
-  'Your palette changes over time.',
-  'Meaning accumulates quietly.',
-  'Small returns shape the whole.',
-  'The picture forms with each honest moment.',
-];
 
 const INSIGHTS_LIST=[
-  'Your palette has been moving between intensity and stillness.',
-  'Hope keeps appearing alongside other feelings. They can coexist.',
-  'Something tender lives at the center of this palette.',
-  'Your colors hold more than one feeling at once.',
-  'A range of qualities here — stillness and movement, side by side.',
-  'Something warm keeps appearing alongside other things.',
-  'Your evenings and mornings hold different qualities of feeling.',
-  'A feeling that had been looking for language. This is it.',
-  'Not one thing, but many things at once — a full internal weather.',
-  'Withdrawal and hope are both present here. Feelings don\'t always resolve.',
-  'You tend to check in more at the start of the week.',
-  'There is a recurring stillness woven through your recent palette.',
+  'Colors hold what words often can\'t.',
+  'Feelings don\'t always arrive with names. That\'s what colors are for.',
+  'Nothing here needs to be resolved.',
+  'Honesty doesn\'t require explanation.',
+  'The palette shifts. That\'s what it\'s supposed to do.',
+  'Some feelings only show up in color.',
+  'You showed up. That\'s the whole practice.',
+  'A feeling noticed is already a little lighter.',
+  'The range here is the point — not a problem to fix.',
+  'This is what inner weather looks like made visible.',
 ];
 function buildDominantTones(all){
   const counts={};
@@ -2766,7 +2734,6 @@ function buildCard(entry,cls){
       </div>
       <div class="gc-feel${cls==='gc-hero'?' lg':''}">${esc(entry.feel)}</div>
       <div class="gc-foot">
-        <div class="gc-tag">LBH</div>
         <div class="gc-dots">${entry.hexArr.map(h=>`<div class="gc-dot" style="background:${h}"></div>`).join('')}</div>
       </div>
     </div>`;
@@ -2962,60 +2929,6 @@ function getStreak(){
   return streak;
 }
 
-// ── Emotional echo: does the new entry's dominant hue match a past one? ──
-function findEcho(entry,allEntries){
-  // allEntries[0] is the just-added entry — start from index 1
-  if(allEntries.length<2)return null;
-  const curHue=hexToHue(entry.hexArr[0]);
-  const curHour=new Date(entry.t||Date.now()).getHours();
-  const curTod=curHour<6?'night':curHour<12?'morning':curHour<17?'afternoon':'evening';
-  for(let i=1;i<allEntries.length;i++){
-    const prev=allEntries[i];
-    const prevHue=hexToHue(prev.hexArr[0]);
-    const hueDiff=Math.min(Math.abs(curHue-prevHue),360-Math.abs(curHue-prevHue));
-    if(hueDiff>30)continue;
-    const days=Math.floor((Date.now()-prev.t.getTime())/86400000);
-    if(days<1)continue;
-    const prevHour=new Date(prev.t).getHours();
-    const prevTod=prevHour<6?'night':prevHour<12?'morning':prevHour<17?'afternoon':'evening';
-    const sameTod=curTod===prevTod;
-    const when=days===1?'yesterday':days<7?`${days} days ago`:days<14?'last week':`${Math.floor(days/7)} weeks ago`;
-    if(hueDiff<12&&sameTod){
-      const pool=[
-        `this exact atmosphere returned — ${when}, same time of day.`,
-        `the same quality keeps arriving at this hour. last here ${when}.`,
-        `something returned exactly — ${when}.`,
-        `this tone came back. same hour, same feeling. ${when}.`,
-      ];
-      return pool[days%pool.length];
-    }
-    if(hueDiff<12){
-      const pool=[
-        `this color came back. it was here ${when}.`,
-        `a familiar atmosphere — last here ${when}.`,
-        `this same tone returned. you were here ${when}.`,
-        `something recognizable — ${when}.`,
-      ];
-      return pool[days%pool.length];
-    }
-    if(sameTod){
-      const pool=[
-        `something similar appears at this hour. last here ${when}.`,
-        `this time of day carries a familiar color. ${when}.`,
-        `a related tone at the same hour — you were here ${when}.`,
-      ];
-      return pool[days%pool.length];
-    }
-    const pool=[
-      `a familiar atmosphere — last here ${when}.`,
-      `something similar was present ${when}.`,
-      `this quality appeared before — ${when}.`,
-      `a color close to this one came through ${when}.`,
-    ];
-    return pool[days%pool.length];
-  }
-  return null;
-}
 
 // ── Recurring tone: is one hue group dominant across 3+ entries? ──
 function findRecurringTone(entries){
@@ -3110,7 +3023,7 @@ function resetAllData(){
 }
 function exportData(){
   const payload={
-    app:'Let\'s Be Honest',
+    app:'letsbehonest.space',
     version:'1.0',
     exported:new Date().toISOString(),
     note:'Use Save & Share → Import backup to restore.',
@@ -3543,7 +3456,7 @@ function buildPatterns(){
     row.appendChild(makePlaceholder('ph-half'));
     scroll.appendChild(row);
     const msg=document.createElement('div');msg.className='pat-early-msg';
-    msg.textContent='Return with a few more colors.';
+    msg.textContent='Something is forming. Keep returning.';
     scroll.appendChild(msg);
   } else {
     appendSeasonHeaderIfNeeded(entries[0].t.getTime(),true);
@@ -4484,10 +4397,10 @@ function buildPulsePersonal(){
   auroraUserRGB=hexToRgb(top.hex);
 }
 
-function buildPulse(){
+function buildPulse(animate){
   const maxWeight=Math.max(...PULSE_DATA.map(p=>p.weight));
   document.getElementById('pulse-list').innerHTML=
-    PULSE_DATA.slice(0,5).map((p,i)=>`
+    PULSE_DATA.map((p,i)=>`
       <div class="pr" onclick="openPulsePanel(PULSE_DATA[${i}])">
         <div class="pr-sw" style="background:${p.hex};box-shadow:0 0 8px ${p.hex}99,0 0 18px ${p.hex}44"></div>
         <div class="pr-body">
@@ -4495,10 +4408,18 @@ function buildPulse(){
             <span class="pr-w">${p.feel}</span>
           </div>
           <div class="pr-bar-track">
-            <div class="pr-bar" style="width:${Math.round(p.weight/maxWeight*100)}%;background:${p.hex};box-shadow:0 0 6px ${p.hex}88"></div>
+            <div class="pr-bar" style="width:${animate?'0%':Math.round(p.weight/maxWeight*100)+'%'};background:${p.hex};box-shadow:0 0 6px ${p.hex}88"></div>
           </div>
         </div>
       </div>`).join('');
+  if(animate){
+    requestAnimationFrame(()=>{
+      const mx=Math.max(...PULSE_DATA.map(p=>p.weight));
+      document.querySelectorAll('#pulse-list .pr-bar').forEach((bar,i)=>{
+        bar.style.width=Math.round(PULSE_DATA[i].weight/mx*100)+'%';
+      });
+    });
+  }
 }
 
 function drawShiftSparkline(shifts,hex){
@@ -4584,6 +4505,32 @@ function closePulsePanel(){document.getElementById('pulse-panel').classList.remo
 // ═══════════════════════════════════
 const NAV_MAP={s1:'CHECK-IN',s2:'CHECK-IN',s3:'PATTERNS',s4:'PULSE'};
 let activeScreen='s1';
+// ── Live pulse via Google Trends ──────────────────────────────────────
+let _pulseFetched=false;
+async function fetchLivePulse(){
+  const srcEl=document.getElementById('s4-source');
+  if(_pulseFetched)return; // already loaded this session; CDN handles freshness
+  if(srcEl)srcEl.textContent='· Connecting...';
+  try{
+    const r=await fetch('/api/pulse');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    data.weights.forEach(({feel,weight})=>{
+      const entry=PULSE_DATA.find(p=>p.feel===feel);
+      if(entry)entry.weight=weight;
+    });
+    buildPulse(true); // rebuild with animated bars
+    if(srcEl){
+      const live=!data.fallback;
+      srcEl.textContent=live?'· Live · Google Trends':'· Trends unavailable';
+      srcEl.classList.toggle('live',live);
+    }
+    _pulseFetched=true;
+  }catch(e){
+    if(srcEl)srcEl.textContent='· Offline';
+  }
+}
+
 function go(id){
   activeScreen=id;
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -4601,7 +4548,7 @@ function go(id){
   if(id!=='s3') exitJiggleMode();
   if(id==='s3') buildPatterns();
   if(id==='s1') updateReturnSignal();
-  if(id==='s4') buildPulsePersonal();
+  if(id==='s4'){buildPulsePersonal();fetchLivePulse();}
 }
 
 // ═══════════════════════════════════
