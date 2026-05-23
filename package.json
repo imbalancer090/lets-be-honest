@@ -1,0 +1,17 @@
+{
+  "name": "lets-be-honest",
+  "version": "1.0.0",
+  "description": "Name what you're feeling right now. letsbehonest.space turns your emotions into color.",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static site - no build needed'",
+    "deploy": "vercel"
+  },
+  "keywords": ["emotions", "colors", "feelings"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/analytics": "^1.4.1"
+  }
+}
