@@ -1,0 +1,31 @@
+{
+  "name": "lets-be-honest",
+  "version": "1.0.0",
+  "description": "An emotional spectrum app exploring feelings through color, motion, and reflection.",
+  "main": "index.html",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"No tests specified\"",
+    "dev": "npx serve .",
+    "preview": "npx serve ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imbalancer090/lets-be-honest.git"
+  },
+  "keywords": [
+    "emotions",
+    "feelings",
+    "color",
+    "wellbeing"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/imbalancer090/lets-be-honest/issues"
+  },
+  "homepage": "https://github.com/imbalancer090/lets-be-honest#readme",
+  "dependencies": {
+    "@vercel/speed-insights": "^2.0.0"
+  }
+}
