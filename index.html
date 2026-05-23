@@ -4505,29 +4505,64 @@ function closePulsePanel(){document.getElementById('pulse-panel').classList.remo
 // ═══════════════════════════════════
 const NAV_MAP={s1:'CHECK-IN',s2:'CHECK-IN',s3:'PATTERNS',s4:'PULSE'};
 let activeScreen='s1';
-// ── Live pulse via Google Trends ──────────────────────────────────────
-let _pulseFetched=false;
-async function fetchLivePulse(){
+// ── Circadian pulse — weights shift with time of day and day of week ──
+function getCircadianWeights(){
+  const now=new Date();
+  const h=now.getHours()+now.getMinutes()/60;
+  const dow=now.getDay(); // 0=Sun … 6=Sat
+
+  // Anchor points [hour, [overwhelmed,tired,anxious,hopeful,calm,lonely]]
+  // Based on documented circadian emotional patterns
+  const A=[
+    [ 0, [1.20,1.10,1.40,0.55,0.45,1.50]],  // midnight
+    [ 3, [1.10,1.50,1.30,0.45,0.40,1.45]],  // 3am — depleted, can't sleep
+    [ 6, [1.00,1.40,1.15,0.80,0.65,0.90]],  // 6am — tired, starting
+    [ 9, [1.10,1.10,1.10,1.10,1.00,0.75]],  // 9am — morning pressure
+    [12, [0.85,0.85,0.85,1.20,1.30,0.65]],  // noon — relative stillness
+    [15, [1.05,1.20,1.05,0.95,0.85,0.75]],  // 3pm — afternoon slump
+    [18, [1.00,0.95,1.00,1.00,1.00,1.10]],  // 6pm — evening shift
+    [21, [1.10,0.95,1.15,0.75,0.80,1.25]],  // 9pm — night thoughts
+    [24, [1.20,1.10,1.40,0.55,0.45,1.50]],  // wrap back to midnight
+  ];
+
+  // Find surrounding anchors and interpolate
+  let lo=A[0],hi=A[A.length-1];
+  for(let i=0;i<A.length-1;i++){
+    if(h>=A[i][0]&&h<A[i+1][0]){lo=A[i];hi=A[i+1];break;}
+  }
+  const t=(h-lo[0])/(hi[0]-lo[0]);
+  const tf=lo[1].map((v,i)=>v+(hi[1][i]-v)*t);
+
+  // Day-of-week modifiers [overwhelmed,tired,anxious,hopeful,calm,lonely]
+  const DOW=[
+    [1.15,0.90,1.20,0.75,0.80,1.10],  // Sun — anticipatory weight
+    [1.20,1.10,1.15,0.80,0.80,0.90],  // Mon — week load
+    [1.00,1.00,1.00,1.00,1.00,1.00],  // Tue
+    [1.00,1.00,1.00,1.00,1.00,1.00],  // Wed
+    [0.95,1.00,0.95,1.05,1.00,1.00],  // Thu
+    [0.85,0.90,0.85,1.20,1.15,0.80],  // Fri
+    [0.80,0.85,0.80,1.15,1.20,0.85],  // Sat
+  ];
+  const df=DOW[dow];
+
+  // BASE matches PULSE_DATA order
+  const BASE=[100,78,68,60,42,24];
+  const raw=BASE.map((b,i)=>b*tf[i]*df[i]);
+  const mx=Math.max(...raw);
+  return raw.map(v=>Math.max(5,Math.round(v/mx*100)));
+}
+
+function applyCircadianPulse(){
+  const weights=getCircadianWeights();
+  PULSE_DATA.forEach((p,i)=>{p.weight=weights[i];});
+  buildPulse(true);
   const srcEl=document.getElementById('s4-source');
-  if(_pulseFetched)return; // already loaded this session; CDN handles freshness
-  if(srcEl)srcEl.textContent='· Connecting...';
-  try{
-    const r=await fetch('/api/pulse');
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    const data=await r.json();
-    data.weights.forEach(({feel,weight})=>{
-      const entry=PULSE_DATA.find(p=>p.feel===feel);
-      if(entry)entry.weight=weight;
-    });
-    buildPulse(true); // rebuild with animated bars
-    if(srcEl){
-      const live=!data.fallback;
-      srcEl.textContent=live?'· Live · Google Trends':'· Trends unavailable';
-      srcEl.classList.toggle('live',live);
-    }
-    _pulseFetched=true;
-  }catch(e){
-    if(srcEl)srcEl.textContent='· Offline';
+  if(srcEl){
+    const h=new Date().getHours();
+    const tod=h<4?'Late night':h<7?'Early morning':h<10?'Morning':
+              h<14?'Midday':h<17?'Afternoon':h<21?'Evening':'Night';
+    srcEl.textContent='· '+tod;
+    srcEl.classList.add('live');
   }
 }
 
@@ -4548,7 +4583,7 @@ function go(id){
   if(id!=='s3') exitJiggleMode();
   if(id==='s3') buildPatterns();
   if(id==='s1') updateReturnSignal();
-  if(id==='s4'){buildPulsePersonal();fetchLivePulse();}
+  if(id==='s4'){buildPulsePersonal();applyCircadianPulse();}
 }
 
 // ═══════════════════════════════════
