@@ -160,29 +160,101 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
   position:absolute;bottom:calc(153px + env(safe-area-inset-bottom));left:18px;right:18px;z-index:42;
   background:rgba(6,6,10,0.72);backdrop-filter:blur(36px) saturate(1.8);
   border:1px solid rgba(255,255,255,0.14);border-radius:18px;
-  padding:12px 17px;
+  padding:13px 17px 11px;
   opacity:0;transform:translateY(10px);
   transition:opacity 0.4s ease,transform 0.4s cubic-bezier(0.34,1.3,0.64,1);
   pointer-events:none;
   box-shadow:0 12px 48px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.12);
 }
-#suggest-card.show{opacity:1;transform:translateY(0);pointer-events:auto}
-.suggest-lbl{font-family:'Inter',sans-serif;font-size:8.5px;letter-spacing:0.14em;color:rgba(255,255,255,0.3);margin-bottom:5px}
+/* Keep container non-blocking so the wheel is tappable through the card's empty space */
+#suggest-card.show{opacity:1;transform:translateY(0);pointer-events:none}
+/* Only the actual interactive children capture events */
+#suggest-card.show .suggest-phrase,
+#suggest-card.show .suggest-edit{pointer-events:auto}
+/* Soft framing label — tentative, not diagnostic */
+.suggest-lbl{
+  font-family:'Italiana',serif;font-size:10px;font-style:italic;
+  color:rgba(255,255,255,0.26);margin-bottom:5px;letter-spacing:0.04em;
+}
+/* The phrase — with a visible bottom border that signals "this is editable" */
 .suggest-phrase{
   font-family:'Italiana',serif;font-size:20px;font-style:italic;font-weight:700;
   color:#fff;line-height:1.1;
-  background:transparent;border:none;outline:none;width:100%;padding:0;margin:0;
-  -webkit-appearance:none;appearance:none;caret-color:rgba(255,255,255,0.6);
+  background:transparent;border:none;outline:none;width:100%;padding:0 0 5px;margin:0;
+  -webkit-appearance:none;appearance:none;caret-color:rgba(255,255,255,0.65);
+  border-bottom:1px solid rgba(255,255,255,0.15);
+  transition:border-bottom-color 0.35s ease;
 }
-.suggest-phrase::placeholder{color:rgba(255,255,255,0.18);font-style:italic;font-family:'Italiana',serif}
-.suggest-edit{font-family:'Inter',sans-serif;font-size:9px;color:rgba(255,255,255,0.2);margin-top:6px;letter-spacing:0.05em}
+.suggest-phrase:focus{border-bottom-color:rgba(255,255,255,0.50);}
+.suggest-phrase::placeholder{color:rgba(255,255,255,0.20);font-style:italic;font-family:'Italiana',serif}
+/* Edit affordance — liquid glass pill, teal/tiffany */
+.suggest-edit{
+  font-family:'Italiana',serif;font-size:12.5px;font-style:italic;
+  color:rgba(180,240,235,0.92);margin-top:10px;letter-spacing:0.03em;
+  display:inline-flex;align-items:center;gap:6px;
+  /* liquid glass: teal tint + layered transparency */
+  background:
+    linear-gradient(
+      135deg,
+      rgba(100,220,210,0.22) 0%,
+      rgba(60,185,195,0.12) 50%,
+      rgba(80,200,215,0.18) 100%
+    );
+  border:none;
+  outline: 1px solid rgba(140,230,225,0.30);
+  outline-offset: -1px;
+  box-shadow:
+    inset 0 1px 0 rgba(200,255,252,0.28),
+    inset 0 -1px 0 rgba(0,160,155,0.18),
+    0 4px 16px rgba(60,200,200,0.12),
+    0 1px 3px rgba(0,0,0,0.28);
+  border-radius:20px;padding:5px 14px 5px 10px;
+  backdrop-filter:blur(12px) saturate(1.6);
+  -webkit-backdrop-filter:blur(12px) saturate(1.6);
+  transition:opacity 0.25s ease,box-shadow 0.25s ease;
+  position:relative;overflow:hidden;
+}
+/* glass sheen — top highlight streak */
+.suggest-edit::after{
+  content:'';
+  position:absolute;top:0;left:10%;right:30%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(200,255,252,0.55),transparent);
+  border-radius:1px;
+  pointer-events:none;
+}
+.suggest-edit::before{content:'✏';font-style:normal;font-size:10px;flex-shrink:0;opacity:0.80}
+/* Hide edit hint while typing — its job is done */
+.suggest-phrase:focus~.suggest-edit{opacity:0;pointer-events:none}
+/* Dim hint once user has written their own phrase */
+#suggest-card.edited .suggest-edit{opacity:0.10}
+/* Pulse the edit hint twice when the card first appears — draws the eye */
+@keyframes editPulse{
+  0%  {box-shadow:inset 0 1px 0 rgba(200,255,252,0.28),inset 0 -1px 0 rgba(0,160,155,0.18),0 4px 16px rgba(60,200,200,0.12),0 1px 3px rgba(0,0,0,0.28)}
+  42% {box-shadow:inset 0 1px 0 rgba(200,255,252,0.50),inset 0 -1px 0 rgba(0,160,155,0.28),0 4px 24px rgba(60,200,200,0.32),0 1px 3px rgba(0,0,0,0.28)}
+  100%{box-shadow:inset 0 1px 0 rgba(200,255,252,0.28),inset 0 -1px 0 rgba(0,160,155,0.18),0 4px 16px rgba(60,200,200,0.12),0 1px 3px rgba(0,0,0,0.28)}
+}
+#suggest-card.show .suggest-edit{
+  animation:editPulse 1.6s ease 0.55s 2;
+}
+/* Underline also pulses briefly on first show */
+@keyframes underPulse{
+  0%  {border-bottom-color:rgba(255,255,255,0.15)}
+  42% {border-bottom-color:rgba(255,255,255,0.55)}
+  100%{border-bottom-color:rgba(255,255,255,0.15)}
+}
+#suggest-card.show .suggest-phrase:not(:focus){
+  animation:underPulse 1.6s ease 0.55s 2;
+}
 
 /* Bottom panel — button only, no input field */
+/* pointer-events:none on container lets wheel taps reach the canvas;
+   the honest-btn handles its own pointer-events via .on/.off */
 .s1-panel{
   position:absolute;bottom:calc(72px + env(safe-area-inset-bottom));left:0;right:0;z-index:40;
   padding:12px 20px 14px;
   background:rgba(6,6,8,0.82);backdrop-filter:blur(36px) saturate(1.5);
   border-top:1px solid rgba(255,255,255,0.07);
+  pointer-events:none;
 }
 
 /* Honest button — shows picked gradient as its own background */
@@ -242,8 +314,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 .s2-overlay{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;justify-content:flex-end;padding:60px 26px calc(86px + env(safe-area-inset-bottom))}
 .s2-overlay>.bp{position:absolute;top:calc(22px + env(safe-area-inset-top));left:26px}
 .s2-big{font-family:'Italiana',serif;font-size:80px;line-height:0.92;font-weight:700;color:#fff;letter-spacing:-0.03em;word-break:break-word;overflow-wrap:break-word;hyphens:none;max-height:52vh;overflow:hidden;transition:font-size 0.25s ease}
-.s2-sub{font-family:'Italiana',serif;font-size:14px;color:rgba(255,255,255,0.5);font-style:italic;line-height:1.58;margin-top:18px;max-width:210px}
-#s2-feel-echo{display:none}
+.s2-sub{font-family:'Italiana',serif;font-size:16px;color:rgba(255,255,255,0.88);font-style:italic;line-height:1.58;margin-top:18px;max-width:210px}
 .s2-foot{display:flex;flex-direction:column;gap:10px;margin-top:32px}
 .s2-date{font-size:9px;color:rgba(255,255,255,0.28);letter-spacing:0.1em;font-family:'Inter',sans-serif}
 .s2-btns{display:flex;gap:10px}
@@ -255,15 +326,8 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
   padding-top:4px;
 }
 #s2-share-hint.show{opacity:1}
-/* Milestone moment */
-#s2-milestone{font-family:'Italiana',serif;font-size:13px;font-style:italic;color:rgba(255,255,255,0.60);letter-spacing:0.03em;margin-bottom:4px;height:0;overflow:hidden;opacity:0;transition:opacity 1.0s ease 0.55s,height 0.4s ease;pointer-events:none}
-#s2-milestone.show{opacity:1;height:1.4em}
 #s2-palette{display:flex;gap:10px;align-items:center;margin-bottom:22px}
 .s2-sw{width:13px;height:13px;border-radius:50%;flex-shrink:0;box-shadow:0 0 10px var(--sc),0 0 24px var(--sc),0 0 44px var(--sc)}
-#s2-feel-echo{font-family:'Italiana',serif;font-size:13px;font-style:italic;color:rgba(255,255,255,0.32);margin-top:14px;margin-bottom:2px;letter-spacing:0.01em}
-#s2-streak{font-family:'Italiana',serif;font-size:11px;font-style:italic;color:rgba(255,255,255,0.18);margin-bottom:6px;letter-spacing:0.01em}
-#s2-reflect{font-family:'Italiana',serif;font-size:11px;font-style:italic;color:rgba(255,255,255,0.13);margin-bottom:6px;letter-spacing:0.01em;opacity:0;transition:opacity 1.4s ease 1.2s}
-#s2-echo{font-family:'Italiana',serif;font-size:11.5px;font-style:italic;color:rgba(255,255,255,0.34);margin-bottom:10px;letter-spacing:0.01em;opacity:0;transition:opacity 1.6s ease 2.8s}
 
 
 /* ═══════════════════════════
@@ -711,9 +775,9 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
   <div class="s1-pick" id="s1-pick"></div>
 
   <div id="suggest-card">
-    <div class="suggest-lbl">SUGGESTED FEELING</div>
-    <input type="text" class="suggest-phrase" id="suggest-phrase" maxlength="60" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Name this feeling…">
-    <div class="suggest-edit">tap to edit</div>
+    <div class="suggest-lbl">maybe —</div>
+    <input type="text" class="suggest-phrase" id="suggest-phrase" maxlength="60" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="name this feeling…">
+    <div class="suggest-edit">write it in your own words</div>
   </div>
 
   <div class="s1-panel">
@@ -729,11 +793,6 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
     <div id="s2-palette"></div>
     <div class="s2-big" id="s2-big"></div>
     <div class="s2-sub">Let it exist.</div>
-    <div id="s2-milestone"></div>
-    <div id="s2-feel-echo"></div>
-    <div id="s2-streak"></div>
-    <div id="s2-reflect"></div>
-    <div id="s2-echo"></div>
     <div class="s2-foot">
       <div class="s2-date" id="s2date"></div>
       <div class="s2-btns">
@@ -971,13 +1030,13 @@ function renderWheel(t){
 
   // ── Dark radial vignette — mirrors the quadratic dark zone in getWheelColor ──
   // Darkness kicks in harder at ~46% radius to visually match what's pickable.
-  const dk=wheelCtx.createRadialGradient(W_CX,W_CY,W_BASE_R*0.26,W_CX,W_CY,W_BASE_R);
-  dk.addColorStop(0,   'rgba(0,0,0,0)');
-  dk.addColorStop(0.28,'rgba(0,0,0,0.18)');
-  dk.addColorStop(0.46,'rgba(0,0,0,0.52)');
-  dk.addColorStop(0.62,'rgba(0,0,0,0.80)');
-  dk.addColorStop(0.78,'rgba(0,0,0,0.94)');
-  dk.addColorStop(1,   'rgba(0,0,0,0.99)');
+  const dk=wheelCtx.createRadialGradient(W_CX,W_CY,W_BASE_R*0.18,W_CX,W_CY,W_BASE_R);
+  dk.addColorStop(0,    'rgba(0,0,0,0)');
+  dk.addColorStop(0.18, 'rgba(0,0,0,0.15)');
+  dk.addColorStop(0.36, 'rgba(0,0,0,0.55)');
+  dk.addColorStop(0.52, 'rgba(0,0,0,0.82)');
+  dk.addColorStop(0.70, 'rgba(0,0,0,0.96)');
+  dk.addColorStop(1,    'rgba(0,0,0,0.99)');
   wheelCtx.fillStyle=dk;
   wheelCtx.fillRect(0,0,W,H);
 
@@ -1154,19 +1213,19 @@ function getWheelColor(wx,wy){
   const rotDeg=wheelTime*0.068*(180/Math.PI);
   const hue=((Math.atan2(dy,dx)*(180/Math.PI)+90-rotDeg)%360+360)%360;
   let sat,light;
-  if(norm<0.26){
+  if(norm<0.20){
     // Inner white zone: saturation builds, lightness fades from pure white
-    sat=(norm/0.26)*0.92;
-    light=1.0-(norm/0.26)*0.42;
-  } else if(norm<0.46){
-    // Saturated mid ring — peak chroma (tightened so dark zone is wider)
-    const t=(norm-0.26)/0.20;
+    sat=(norm/0.20)*0.92;
+    light=1.0-(norm/0.20)*0.42;
+  } else if(norm<0.36){
+    // Saturated mid ring — peak chroma (tightened so dark zone starts earlier)
+    const t=(norm-0.20)/0.16;
     sat=0.92;
     light=0.58-t*0.12; // 0.58 → 0.46
   } else {
-    // Dark outer zone — quadratic curve so near-black is reached at ~65% radius,
-    // well within reach on any phone screen size.
-    const t=Math.min((norm-0.46)/0.36,1.0); // saturates at norm 0.82
+    // Dark outer zone — starts much earlier so sides/edges of wheel are properly dark.
+    // At norm=0.47 (screen edge on 375px phone): t=0.306 → light=0.221 (rich dark color).
+    const t=Math.min((norm-0.36)/0.36,1.0); // saturates at norm 0.72
     sat=0.88-t*0.55;                         // 0.88 → 0.33 (desaturates to near-grey at black)
     light=0.46*Math.pow(1-t,2);             // quadratic drop: 0.46 → 0 much faster than linear
   }
@@ -1301,43 +1360,24 @@ function renderExportCard(ctx,entry,t){
   ctx.fillStyle=tg;ctx.fillRect(0,H*0.46,W,H*0.54);
   ctx.textBaseline='top';
 
-  // Logo
-  ctx.font="italic bold 20px Italiana,serif";ctx.textAlign='left';
-  ctx.fillStyle='rgba(255,255,255,0.96)';
-  ctx.fillText("letsbehonest.space",26,62);
+  // Logo — compact colored pill matching story badge
+  ctx.font="italic bold 13px Italiana,serif";ctx.textAlign='left';
+  const eTxt="letsbehonest.space",ePadX=10,eH=22,eX=26,eY=62;
+  const eW=ctx.measureText(eTxt).width+ePadX*2;
+  const[eR,eG,eB]=hexToRgb(entry.hexArr[0]);
+  ctx.fillStyle=`rgba(${eR},${eG},${eB},0.40)`;
+  ctx.strokeStyle=`rgba(${eR},${eG},${eB},0.75)`;ctx.lineWidth=1;
+  _storyRRect(ctx,eX,eY,eW,eH,11);ctx.fill();ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,0.96)';ctx.textBaseline='middle';
+  ctx.fillText(eTxt,eX+ePadX,eY+eH/2);
 
-  // ── Bottom-anchored elements (fixed positions, no overlap possible) ──
-  // Color swatches — pinned to bottom
+  // ── Feeling text — hero, fills lower third cleanly ──────────────────
   ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;
-  const swatchY=H-52,swatchH=9,sr=4.5;
-  const n=entry.hexArr.length,gap=10;
-  const sw=Math.floor((W-52-(n-1)*gap)/n);
-  let sx=26;
-  entry.hexArr.forEach(hex=>{
-    ctx.fillStyle=hex;
-    ctx.beginPath();
-    ctx.moveTo(sx+sr,swatchY);ctx.lineTo(sx+sw-sr,swatchY);
-    ctx.arcTo(sx+sw,swatchY,sx+sw,swatchY+sr,sr);ctx.lineTo(sx+sw,swatchY+swatchH-sr);
-    ctx.arcTo(sx+sw,swatchY+swatchH,sx+sw-sr,swatchY+swatchH,sr);ctx.lineTo(sx+sr,swatchY+swatchH);
-    ctx.arcTo(sx,swatchY+swatchH,sx,swatchY+swatchH-sr,sr);ctx.lineTo(sx,swatchY+sr);
-    ctx.arcTo(sx,swatchY,sx+sr,swatchY,sr);ctx.closePath();
-    ctx.fill();sx+=sw+gap;
-  });
-
-  // Date — pinned above swatches
-  const dateY=swatchY-36;
-  const dateStr='Captured '+entry.t.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})+'.';
-  ctx.font="13px Italiana,serif";
-  ctx.fillStyle='rgba(255,255,255,0.52)';
-  ctx.fillText(dateStr,26,dateY);
-
-  // ── Feeling text — auto-sizes to fill space without overflowing date ──
-  const textMaxBottom=dateY-20;   // must not cross this line
-  const textStartY=H*0.56;        // ~455px — upper bound of text block
+  const textStartY=H*0.57;
+  const textMaxBottom=H-36;
   const availH=textMaxBottom-textStartY;
   const maxW=W-52;
 
-  // Count lines at a given font size
   function countLines(size){
     ctx.font=`${size}px Italiana,serif`;
     const words=entry.feel.split(' ');
@@ -1350,24 +1390,20 @@ function renderExportCard(ctx,entry,t){
     return lc;
   }
 
-  // Step down from 60px until text block fits
-  let fontSize=60;
+  let fontSize=66;
   while(fontSize>22){
-    const lh=fontSize+4;
+    const lh=fontSize*1.10;
     if(countLines(fontSize)*lh<=availH)break;
     fontSize-=4;
   }
-  const lineH=fontSize+4;
+  const lineH=fontSize*1.10;
 
-  // Label — sits just above the text block
-  ctx.font="8px Inter,sans-serif";
-  ctx.fillStyle='rgba(255,255,255,0.35)';
-  ctx.fillText('YOUR FEELING, CAPTURED',26,textStartY-18);
-
-  // Draw feeling text
   ctx.font=`${fontSize}px Italiana,serif`;
-  ctx.fillStyle='#ffffff';
+  ctx.fillStyle='rgba(255,255,255,0.97)';
+  ctx.shadowColor='rgba(0,0,0,0.70)';
+  ctx.shadowBlur=16; ctx.shadowOffsetY=2;
   wrapTextCanvas(ctx,entry.feel,26,textStartY,maxW,lineH);
+  ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;
 }
 
 // Compute scrim opacity from palette brightness:
@@ -1401,23 +1437,24 @@ function renderStoryFrame(ctx, entry, t){
   ctx.globalCompositeOperation='source-over';
   ctx.fillStyle=tg; ctx.fillRect(0,LH*0.46,LW,LH*0.54);
 
-  // 3. Badge — sized to match on-screen headers, colored fill from entry palette
-  ctx.font='italic bold 22px Italiana,serif';
-  const bTxt="letsbehonest.space", bPadX=18, bH=36, bX=36, bY=80;
+  // 3. Badge — compact pill, colored fill pulled from entry's primary color
+  ctx.font='italic bold 15px Italiana,serif';
+  const bTxt="letsbehonest.space", bPadX=13, bH=26, bX=36, bY=72;
   const bW=ctx.measureText(bTxt).width+bPadX*2;
   const[bR,bG,bB]=hexToRgb(entry.hexArr[0]);
-  ctx.fillStyle=`rgba(${bR},${bG},${bB},0.42)`;
-  ctx.strokeStyle=`rgba(${bR},${bG},${bB},0.72)`; ctx.lineWidth=1;
-  _storyRRect(ctx,bX,bY,bW,bH,20); ctx.fill(); ctx.stroke();
+  ctx.fillStyle=`rgba(${bR},${bG},${bB},0.45)`;
+  ctx.strokeStyle=`rgba(${bR},${bG},${bB},0.80)`; ctx.lineWidth=1.2;
+  _storyRRect(ctx,bX,bY,bW,bH,14); ctx.fill(); ctx.stroke();
   ctx.fillStyle='rgba(255,255,255,0.96)';
   ctx.textBaseline='middle'; ctx.textAlign='left';
   ctx.fillText(bTxt,bX+bPadX,bY+bH/2);
 
-  // 4. Feeling text — auto-sized, word-wrapped, lower 40% of canvas
+  // 4. Feeling text — hero element, full lower third, no clutter below
   if(entry.feel){
     ctx.textBaseline='alphabetic';
     const maxW=LW-72;
-    const zoneTop=LH*0.60, zoneBot=LH-88;
+    // Zone: starts at 60% down, runs to near the bottom edge — more room, more cinematic
+    const zoneTop=LH*0.60, zoneBot=LH-44;
     const availH=zoneBot-zoneTop;
     function linesFor(sz){
       ctx.font=`bold ${sz}px Italiana,serif`;
@@ -1430,11 +1467,16 @@ function renderStoryFrame(ctx, entry, t){
       }
       return lc;
     }
-    let fs=74;
-    while(fs>26&&linesFor(fs)*(fs*1.08)>availH) fs-=4;
+    // Start bigger — date is gone so lower third is fully ours
+    let fs=82;
+    while(fs>26&&linesFor(fs)*(fs*1.10)>availH) fs-=4;
     ctx.font=`bold ${fs}px Italiana,serif`;
-    ctx.fillStyle='rgba(255,255,255,0.92)';
-    const lh=fs*1.08;
+    ctx.fillStyle='rgba(255,255,255,0.97)';
+    // Text shadow — survives social compression where opacity alone fails
+    ctx.shadowColor='rgba(0,0,0,0.72)';
+    ctx.shadowBlur=18;
+    ctx.shadowOffsetY=2;
+    const lh=fs*1.10;
     const words=entry.feel.split(' ');
     const lines=[]; let line='';
     for(const w of words){
@@ -1444,14 +1486,8 @@ function renderStoryFrame(ctx, entry, t){
     }
     if(line) lines.push(line.trimEnd());
     lines.forEach((l,i)=>ctx.fillText(l,36,zoneTop+i*lh+fs));
+    ctx.shadowColor='transparent'; ctx.shadowBlur=0; ctx.shadowOffsetY=0;
   }
-
-  // 5. Date
-  ctx.font='300 18px Inter,sans-serif';
-  ctx.fillStyle='rgba(255,255,255,0.28)'; ctx.textBaseline='alphabetic';
-  const dStr=(entry.t?new Date(entry.t):new Date())
-    .toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}).toUpperCase();
-  ctx.fillText(dStr,36,LH-56);
 
   ctx.restore();
 }
@@ -1567,14 +1603,14 @@ function renderAck(t){
 // hueGroup still used by patterns/analysis screens
 function hueGroup(h){
   if(h<22||h>338)return'burning';
-  if(h<52)return'restless';
-  if(h<90)return'uncertain';
-  if(h<150)return'hopeful';
-  if(h<200)return'reflective';
-  if(h<245)return'distant';
-  if(h<278)return'tender';
+  if(h<52)return'alive';
+  if(h<90)return'growing';
+  if(h<150)return'grounded';
+  if(h<200)return'clear';
+  if(h<245)return'expansive';
+  if(h<278)return'deep';
   if(h<312)return'electric';
-  return'searching';
+  return'open';
 }
 
 // ═══════════════════════════════════
@@ -1612,156 +1648,157 @@ function colorProfile(hex){
 // Structure: SINGLE[temp][satTier][lightTier]
 // satTier: raw | mid | soft (grey handled separately)
 // lightTier: shadow | heavy | mid | soft | pale
-// shadow/heavy = dark colors → weight, difficulty
+// shadow/heavy = dark colors → weight, complexity
+// mid          = balanced — positive, neutral, and introspective options
 // soft/pale    = bright colors → positive, energetic, light states
 const SINGLE={
-  hot:{
+  hot:{  // reds — passion, aliveness, courage, vitality, urgency
     raw:{
-      shadow:['carrying fire into a dark place','grief that burns','something raging quietly in the dark','a heat that has nowhere to go','overwhelmed and burning'],
-      heavy: ['something burning I haven\'t put down','grief with heat still in it','carrying fire','close to the edge of something real','overwhelmed from the inside out'],
-      mid:   ['raw and present with it','burning just under the surface','something urgent I can\'t quiet','more here than is comfortable','close to an edge'],
-      soft:  ['alive in a way that feels completely real','electric and wide open','lit up from the inside','energized past the point of quiet','on fire in the best sense','more alive than usual and glad about it'],
-      pale:  ['bright and genuinely free','alive and unguarded','vivid and present with it','joy that doesn\'t need to explain itself','the good kind of electric','radiant in a way I can\'t dim'],
+      shadow:['carrying fire into a dark place','something raging quietly','a heat I haven\'t put down yet','close to the edge of something real','burning through something hard'],
+      heavy: ['passionate and exhausted','alive even in the difficulty','something urgent and heavy at once','intense and carrying it','close to something true'],
+      mid:   ['passionately present','alive and completely here','fired up in the best way','electric and engaged','something real is happening inside me'],
+      soft:  ['alive in a way that feels completely real','electric and wide open','lit up from the inside','on fire in the best sense','more alive than usual and glad about it'],
+      pale:  ['bright and genuinely free','alive and unguarded','vivid and present','joy that doesn\'t need to explain itself','the good kind of electric','radiant in a way I can\'t dim'],
     },
     mid:{
-      shadow:['a low burn in a dark place','tired and still heated','something worn and close','carrying warmth through something heavy'],
-      heavy: ['a low burn I\'m living with','warmth that doesn\'t comfort','something heated and unresolved','restless and weighted'],
-      mid:   ['present but not at ease','something warm and unresolved','restless and warm','not quite settled'],
-      soft:  ['warm and genuinely buzzing','alive and glad about it','present and energized','genuinely excited about something','awake in a good way'],
-      pale:  ['something like joy, actually','lighter than I expected to feel','bright and easy with it','warmly content','softly elated'],
+      shadow:['something worn but still burning','carrying heat through something heavy','a warmth inside the weight'],
+      heavy: ['something bright inside something hard','alive but under a lot','passionate through the difficulty'],
+      mid:   ['present and genuinely feeling it','warm and engaged','energized and real','alive in a low-key way','something good humming underneath'],
+      soft:  ['warm and genuinely buzzing','alive and glad about it','present and energized','genuinely excited','awake in a good way'],
+      pale:  ['something like joy, actually','lighter than I expected','bright and easy with it','warmly content','softly elated'],
     },
     soft:{
-      shadow:['something worn and warm in the dark','the slow heat of something ending','a familiar weight with warmth in it'],
-      heavy: ['something worn and warm','the slow burn of something unfinished','a familiar heaviness with heat in it'],
-      mid:   ['gently heated','something warm I\'m sitting with','a low warmth I\'m not fighting'],
-      soft:  ['content and quietly present','the good kind of warm','warmth I can rest inside','a gentle aliveness that asks nothing'],
-      pale:  ['quietly happy','at ease and not fighting it','a small and real joy','the warmth of being okay'],
+      shadow:['a familiar warmth in a dark moment','something worn and gently warm'],
+      heavy: ['warmth trying to hold on','something soft and bright underneath'],
+      mid:   ['gently alive','a low and real warmth','present and easy','warmly here','comfortable in my own skin'],
+      soft:  ['content and quietly present','the good kind of warm','warmth I can rest inside','a gentle aliveness'],
+      pale:  ['quietly happy','at ease','a small and real joy','the warmth of being okay','grateful for this'],
     },
   },
-  warm:{
+  warm:{  // oranges, ambers, yellows — joy, creativity, enthusiasm, optimism, playfulness
     raw:{
-      shadow:['alive but under something heavy','urgency inside the weight','reaching for light from somewhere dark'],
-      heavy: ['urgent but exhausted','alive but weighted','too much energy and nowhere to put it','hopeful through something heavy'],
-      mid:   ['restless and awake','wound up and searching','too much happening inside','seeking without direction'],
-      soft:  ['bright enough to believe it','reaching toward something real','hopeful and wide awake','something growing I can feel','genuinely enthusiastic','excited about what\'s coming'],
-      pale:  ['joy that doesn\'t need to justify itself','wide awake and glad about it','something opening in the chest','the feeling of a good yes','luminous and free'],
+      shadow:['creative energy inside something hard','bright even under the weight','reaching toward light from somewhere heavy'],
+      heavy: ['enthusiastic and exhausted','alive with something even through the difficulty','playful energy somewhere underneath'],
+      mid:   ['energized and curious','enthusiastic about what\'s in front of me','creatively alive','playfully present','bright and moving forward'],
+      soft:  ['bright enough to believe it','hopeful and wide awake','something growing I can feel','genuinely enthusiastic','excited about what\'s coming','playful and open'],
+      pale:  ['joy that doesn\'t need to justify itself','wide awake and glad about it','something opening in the chest','luminous and free','the good kind of full'],
     },
     mid:{
-      shadow:['hopeful in a heavy moment','something forward-leaning inside the weight','warmth that persists through darkness'],
-      heavy: ['hopeful but tired','something good inside something heavy','carrying brightness with effort'],
-      mid:   ['cautiously reaching forward','somewhere between anxious and alive','quietly optimistic','present with some uncertainty'],
-      soft:  ['something like hope','gently reaching forward','hopeful but not forcing it','quietly content','something good settling in'],
-      pale:  ['grateful and not overthinking it','the feeling of a good day','at ease','lightly hopeful in a real way','ease that fits'],
+      shadow:['warmth persisting through something heavy','something optimistic inside the weight'],
+      heavy: ['hopeful even under something hard','carrying warmth with effort','forward-leaning through the difficulty'],
+      mid:   ['warmly present','genuinely content','quietly optimistic','at ease with what\'s here','something good in this moment','hopeful without forcing it'],
+      soft:  ['something like hope','gently reaching forward','hopeful and comfortable with it','quietly content','warmly okay','easy and genuinely good'],
+      pale:  ['grateful and not overthinking it','the feeling of a good day','at ease and glad','lightly hopeful','ease that fits','simple and really good'],
     },
     soft:{
-      shadow:['warmth trying to survive something heavy','a quiet forward motion under weight'],
-      heavy: ['warm and slowly settling','quiet forward motion under something heavy'],
-      mid:   ['gently leaning forward','hope at a low volume','something like ease','warmly uncertain'],
-      soft:  ['content in a real way','the quiet joy of being okay','warmly settled','genuinely alright'],
-      pale:  ['grateful for the ordinary','at ease with where things are','peaceful in a way I earned','the relief of simply being here'],
+      shadow:['a gentle warmth inside something dark'],
+      heavy: ['warm and slowly settling','something soft and good under the weight'],
+      mid:   ['gently optimistic','quietly present','something like ease','warmly settled','easy in a real way'],
+      soft:  ['content in a real way','the quiet joy of being okay','warmly settled','genuinely alright','softly glad'],
+      pale:  ['grateful for the ordinary','at ease with where things are','peacefully here','the relief of simply being present','quietly at home in this'],
     },
   },
-  verdant:{
+  verdant:{  // yellow-greens, greens — growth, vitality, curiosity, balance, groundedness, renewal
     raw:{
-      shadow:['grounded in something difficult','rooted inside the weight','present even in the dark'],
-      heavy: ['growing through something heavy','rooted but strained','stability under pressure'],
-      mid:   ['alert but uncertain','cautious and wide awake','growing pains'],
-      soft:  ['alive and curious','sharp in a good way','present and reaching','something opening toward the light'],
-      pale:  ['curious in a genuinely good way','open to what\'s coming','a bright kind of uncertain','growth that doesn\'t hurt'],
+      shadow:['rooted in something difficult','grounded inside the darkness','present even when it\'s hard'],
+      heavy: ['growing through something heavy','alive under pressure','stability finding its footing'],
+      mid:   ['curious and awake','alive and looking forward','something growing inside me','energetically present','open and a little electric','reaching toward something good'],
+      soft:  ['alive and genuinely curious','sharp in a good way','present and reaching','something opening toward the light','energized by what\'s possible'],
+      pale:  ['curious in a genuinely good way','open to what\'s coming','fresh and awake','growing and glad for it','the good kind of new','vitally present'],
     },
     mid:{
-      shadow:['quietly grounded in something difficult','settled in the weight of not-knowing'],
-      heavy: ['uncertain and sitting with it','grounded in the difficulty','in the middle of something heavy'],
-      mid:   ['uncertain but okay with it','not quite sure yet','gently questioning','holding space for not-knowing','curious and open','growing into something'],
-      soft:  ['settled in a good way','present and at ease','curious without pressure','a soft and genuine okay'],
-      pale:  ['quietly grounded','lightly open','ease without effort','something like calm that actually holds'],
+      shadow:['quietly rooted in something difficult','grounded through the weight'],
+      heavy: ['present inside something heavy','grounded in the difficulty','something stable even here'],
+      mid:   ['curious and present','grounded and open','growing into something good','quietly alive','present in a real way','settled and curious both'],
+      soft:  ['settled in a good way','present and at ease','curious without pressure','a soft and genuine okay','quietly thriving','grounded and genuinely open'],
+      pale:  ['quietly grounded','lightly open','ease without effort','something like calm that holds','peacefully present','grounded and light'],
     },
     soft:{
-      shadow:['quietly present in something dark','still and grounded underneath'],
-      heavy: ['quietly grounded','settled but not light','present in a quiet way'],
-      mid:   ['calm and a little curious','softly aware','gently present','unhurried and here','grounded and glad'],
-      soft:  ['at peace with where I am','rooted in something good','very soft and genuinely open','quietly thriving'],
-      pale:  ['grateful to be here','a peaceful kind of okay','very open and very still','the ease of landing somewhere right'],
+      shadow:['quietly grounded in something dark','still and present underneath'],
+      heavy: ['rooted and patient','quietly grounded through it'],
+      mid:   ['calm and curious','softly aware','gently present','unhurried and here','grounded and glad','peacefully open'],
+      soft:  ['at peace with where I am','rooted in something good','quietly thriving','softly open','the ease of being grounded','gently alive'],
+      pale:  ['grateful to be here','a peaceful kind of okay','open and very still','the ease of landing somewhere right','light and grounded both','at home in this moment'],
     },
   },
-  cool:{
+  cool:{  // teals, sky, blue — clarity, focus, serenity, trust, communication, calm, inspiration
     raw:{
-      shadow:['clear-eyed inside something heavy','lucid and weighted down','aware of too much in the dark'],
-      heavy: ['sharp clarity with an undertow','thinking through something dark','lucid but weighted'],
-      mid:   ['cool and pulled inward','present but somewhere else','observing from a distance'],
-      soft:  ['clear and energized','sharp and free','focused in a way that feels good','clarity I can use'],
-      pale:  ['clear-headed and clean','light and precise','focused and actually free','a clean kind of bright'],
+      shadow:['clear-eyed inside something heavy','focused even in the dark','aware and present through it'],
+      heavy: ['sharp clarity despite the weight','clear-headed through something hard','focused and quietly carrying it'],
+      mid:   ['clear and focused','calm and awake','serene and engaged','mentally present in a good way','clear-headed and here'],
+      soft:  ['clear and energized','sharp and free','focused in a way that feels good','clarity I can use','serene and open'],
+      pale:  ['clear-headed and clean','light and precise','focused and genuinely free','a clean kind of bright','clarity that feels like freedom'],
     },
     mid:{
-      shadow:['far from myself in a heavy moment','withdrawn into the weight'],
-      heavy: ['quietly distant','a low stillness with weight','withdrawn without knowing why','far from myself today'],
-      mid:   ['calm on the surface','gently detached','not quite here','reflective and slow','clear-headed'],
-      soft:  ['serene in a real way','focused and at ease','somewhere good and quiet','clear and glad about it'],
-      pale:  ['clean and free','clear and genuinely settled','at peace and present with it','a spacious kind of okay'],
+      shadow:['quietly withdrawn inside something heavy','far from myself but still here'],
+      heavy: ['calm through the weight','present in a quiet way even here'],
+      mid:   ['serene and present','calmly here','at ease and aware','peacefully present','clear and steady','focused in a quiet way'],
+      soft:  ['serene in a real way','focused and at ease','somewhere good and quiet','clear and glad about it','peaceful and present'],
+      pale:  ['clean and free','clear and genuinely settled','at peace and present','a spacious kind of okay','open and serene'],
     },
     soft:{
-      shadow:['very withdrawn and heavy','distant and under something dark'],
-      heavy: ['very quiet and a little heavy','withdrawn in a soft way','distant and weighted'],
-      mid:   ['gently turned inward','softly distant','a quiet introspection'],
-      soft:  ['deeply at ease','serenely present','a real and quiet calm','at rest inside something clear'],
-      pale:  ['at peace','open and at rest','spacious and unhurried','the stillness that comes after'],
+      shadow:['quietly distant in something dark','still underneath something heavy'],
+      heavy: ['gently heavy and still','quiet through the weight'],
+      mid:   ['softly present','calmly reflective','quiet in a good way','at rest and aware','gently clear'],
+      soft:  ['deeply at ease','serenely present','a real and quiet calm','at rest inside something clear','peacefully here'],
+      pale:  ['at peace','open and at rest','spacious and unhurried','the stillness that comes after','free and clear'],
     },
   },
-  cold:{
+  cold:{  // cobalt, violet, purple — imagination, wonder, depth, creativity, wisdom, expansiveness
     raw:{
-      shadow:['emotionally crowded in a dark place','overwhelmed and buried','the weight of too much, all at once','somewhere past saturation'],
-      heavy: ['quietly overwhelmed','carrying too much interior weight','the weight of too much thinking','emotionally crowded'],
-      mid:   ['a lot going on underneath','pulled deep inside myself','too much interior noise','holding something vast'],
-      soft:  ['creative and wide awake','expansive and curious','something vast and luminous','depth without weight','wonder finding a form'],
-      pale:  ['wonder, uncontained','something large and good inside','awe at a bright register','vast and genuinely free','inspired in a way I can feel'],
+      shadow:['deep and somewhere heavy','interior and under weight','overwhelmed in a vast way'],
+      heavy: ['something interior and weighty','deeply feeling something hard','weighted and wide inside'],
+      mid:   ['creative and awake','inspired and interior','deep in something interesting','imaginatively alive','something vast and good inside'],
+      soft:  ['creative and wide awake','expansive and curious','something vast and luminous','depth without weight','wonder finding a form','inspired and genuinely free'],
+      pale:  ['wonder, uncontained','something large and good inside','awe at a bright register','vast and genuinely free','inspired in a way I can feel','dreaming while awake'],
     },
     mid:{
-      shadow:['something vast and dark inside','the slow pull of something overwhelming'],
-      heavy: ['something heavy and interior','the slow pull of something large','weighted and internal'],
-      mid:   ['turned deeply inward','somewhere in my own depths','a slow interior tide'],
-      soft:  ['quietly awed','wonder at a low volume','interior and awake in a good way','something luminous and still'],
-      pale:  ['something large and light inside','expansive and still','a still kind of wonder','interior brightness'],
+      shadow:['something vast and dark inside','deep and under something heavy'],
+      heavy: ['in the depth of something difficult','deep and carrying something'],
+      mid:   ['quietly creative','interior and awake','something deep and interesting','imaginative and present','in a rich interior space','dreaming a little'],
+      soft:  ['quietly awed','wonder at a steady volume','interior and alive in a good way','something luminous and still','softly inspired'],
+      pale:  ['something large and light inside','expansive and still','a still kind of wonder','interior brightness','inspired and free'],
     },
     soft:{
-      shadow:['a soft darkness inside','quiet melancholy without drama'],
-      heavy: ['quietly melancholic','a soft heaviness','something tender and weighted'],
-      mid:   ['softly interior','a quiet depth','gently inward'],
-      soft:  ['quietly inspired','the spaciousness of being with something large','softly awed','a gentle and genuine wonder'],
-      pale:  ['wonder in a very quiet key','a still kind of awe','gently exploring something beautiful','luminous and at peace'],
+      shadow:['quietly heavy inside','a soft darkness in the depths'],
+      heavy: ['softly heavy','something weighted and interior'],
+      mid:   ['softly interior','a quiet depth','gently dreaming','peacefully imaginative','at home in the interior'],
+      soft:  ['quietly inspired','the spaciousness of depth','softly awed','a gentle and genuine wonder','dreamily content'],
+      pale:  ['wonder in a very quiet key','a still kind of awe','gently exploring something beautiful','luminous and at peace','softly dreaming'],
     },
   },
-  liminal:{
+  liminal:{  // rose, purple-pink — playfulness, tenderness, openness, love, joy, warmth, connection
     raw:{
-      shadow:['longing with weight behind it','an unnamed grief','emotionally raw and searching in the dark','tender and overwhelmed'],
-      heavy: ['longing with weight','aching without knowing for what','emotionally raw and searching','tender and overwhelmed'],
-      mid:   ['something tender and intense','feeling the edge of something','restless and vulnerable','reaching toward something undefined'],
-      soft:  ['tenderly alive','open-hearted and feeling it','love in a form I can hold','the brightness of being seen'],
-      pale:  ['love in an almost-form','softly overjoyed','tenderness at high volume','open and actually glad','a tender kind of full'],
+      shadow:['longing with weight behind it','something tender and dark','deeply feeling something I can\'t name'],
+      heavy: ['something tender and complicated','feeling the edge of something','aching a little but still open'],
+      mid:   ['tenderly alive','open-hearted and feeling it','playful and genuine','warmly expressive','something sweet and real here'],
+      soft:  ['tenderly bright','open-hearted and glad','love in a form I can hold','the brightness of being seen','playfully alive'],
+      pale:  ['love in its fullest form','softly overjoyed','tenderness at high volume','open and actually glad','the lightness of genuine connection'],
     },
     mid:{
-      shadow:['a deep and quiet longing','tenderness inside something heavy'],
-      heavy: ['quietly longing','a tender sadness','aching gently','carrying tenderness'],
-      mid:   ['tender and a little undone','something between longing and okay','gently vulnerable'],
-      soft:  ['tenderly happy','something like love, here','open and genuinely so','warmly present with something good'],
-      pale:  ['love in a quiet form','softly full of something good','open-hearted and at ease','the gentle joy of caring'],
+      shadow:['quietly longing','tender inside something heavy'],
+      heavy: ['a tender ache','carrying something soft through the weight'],
+      mid:   ['tenderly present','something warm and sweet here','open and genuinely so','warmly alive','playfully content','something soft and good'],
+      soft:  ['tenderly happy','something like love, here','open and genuinely glad','warmly present','playfully at ease'],
+      pale:  ['love in a quiet form','softly full of something good','open-hearted and at ease','the gentle joy of caring','light and tender both'],
     },
     soft:{
-      shadow:['very quietly grieving something','tenderness at the floor of something dark'],
-      heavy: ['very quietly aching','tenderness at low volume','gently carrying something'],
-      mid:   ['softly searching','a gentle longing','quietly tender'],
-      soft:  ['warmly content','tender and genuinely okay','a soft and real affection','quietly full'],
-      pale:  ['love in its smallest form','something sweet and almost nothing','the lightest kind of wistfulness','barely aching — and glad for it'],
+      shadow:['very quietly aching','tenderness in the dark'],
+      heavy: ['softly carrying something','tenderness at low volume'],
+      mid:   ['softly present','a gentle warmth here','quietly tender','softly playful','warmly content'],
+      soft:  ['warmly content','tender and genuinely okay','a soft and real affection','quietly full','gently joyful'],
+      pale:  ['something sweet and almost nothing','the lightest kind of joy','barely here and glad for it','softly good','tender in the best way'],
     },
   },
 };
 
-// ── Grey/desaturated — emotional flatness, disconnection, and rest ────
+// ── Grey/desaturated — neutrality, rest, spaciousness, and sometimes disconnection ────
 const GREY={
-  shadow:['going through the motions','numb in the dark','flat and a little lost','something like absence','the quiet of not feeling much','disconnected from the feeling'],
-  heavy: ['numb in a way I\'m aware of','going through the motions','disconnected from the feeling','flat but still here','emotionally offline'],
-  mid:   ['gently detached','somewhere between feeling and not','a soft disconnect','observing myself from outside','present but not quite landing','resting between states','a neutral kind of okay'],
-  soft:  ['not quite here','a gentle emptiness','adrift without distress','quietly spacious','at rest between feelings','a clean kind of still','calm without needing to be more'],
-  pale:  ['floating','very still and genuinely okay','spacious and light','peaceful in a way that asks nothing','somewhere undefined and quiet','the ease of an empty moment'],
+  shadow:['going through the motions','something like absence','the quiet of not feeling much','a little offline today','somewhere between present and not'],
+  heavy: ['numb in a way I\'m aware of','disconnected in a soft way','flat but still here','emotionally resting','somewhere outside of it'],
+  mid:   ['resting between states','a neutral kind of okay','calm and unattached to it','somewhere in the middle','observing without pressure','present in a quiet way','a clean kind of still'],
+  soft:  ['peacefully unattached','at rest between feelings','calm without needing to be more','gently spacious','floating in a good way','the ease of not needing to name it'],
+  pale:  ['very still and genuinely okay','spacious and light','peaceful in a way that asks nothing','clear and undecided','floating in a pleasant way','somewhere soft and undefined'],
 };
 
 // ── Dual-color tension phrases ────────────────────────────────────────
@@ -1788,33 +1825,34 @@ const TEMP_TENSION={
 const WEIGHT_TENSION=[
   'something heavy with light still in it',
   'finding brightness inside the weight',
-  'heavy but not without hope',
+  'heavy but genuinely hopeful',
   'two kinds of feeling existing at once',
-  'grief and something lighter at the same time',
-  'carrying darkness toward something softer',
+  'carrying something difficult toward something lighter',
   'the feeling of slowly returning to yourself',
   'not fully dark — not fully okay',
   'heavy but healing',
   'weight and warmth at the same time',
-  'light and something heavier underneath',
+  'bright and heavy in equal measure',
   'joy that knows the other side',
   'brightness holding something tender',
   'the relief of a hard thing ending',
   'full of something good, and still aware of the rest',
+  'something good and something hard, both real',
+  'the complexity of feeling two things at once',
 ];
 
 // Saturation contrast (vivid + desaturated)
 const SAT_TENSION=[
   'something vivid inside something quiet',
-  'feeling something strongly and then going flat',
-  'intensity I\'m managing from a distance',
-  'bright feeling in a numb moment',
-  'alive somewhere and offline somewhere else',
+  'intensity I\'m holding at a gentle distance',
+  'bright feeling in a calm moment',
+  'alive somewhere and resting somewhere else',
   'a loud feeling in a soft container',
-  'emotionally split between vivid and numb',
-  'feeling everything and feeling nothing, somehow',
   'something bright finding its way through the quiet',
   'joy reaching through something still',
+  'feeling strongly and resting at the same time',
+  'vivid on the inside, calm on the outside',
+  'something rich and something spacious at once',
 ];
 
 // ── Multi-color phrases (3–4 picks) ──────────────────────────────────
@@ -1831,35 +1869,37 @@ const MULTI={
     'all the good things arriving at once',
     'more aliveness than I have a name for',
     'lit up from the inside out',
+    'something alive is happening today',
+    'open in multiple directions at once',
   ],
   warm_dominant:[
-    'alive in complicated ways',
-    'too many warm things at once',
-    'emotionally full — in the good ways and the hard ones',
-    'present in multiple directions',
-    'warmth I can\'t organize right now',
-    'more feeling than I have a name for',
+    'alive in the best way',
     'full of something good',
+    'present in multiple directions',
     'joy in more than one form',
+    'more feeling than I have a name for',
+    'emotionally rich right now',
+    'warm and genuinely full',
+    'something good is growing here',
   ],
   cool_dominant:[
-    'layers I haven\'t sorted through yet',
-    'a lot of interior weather right now',
-    'quietly overwhelmed — in multiple ways',
-    'somewhere deep inside several things at once',
-    'more going on inside than I can name',
-    'processing a lot, slowly',
+    'layers of feeling, all present at once',
+    'a rich interior space right now',
+    'something deep and interesting inside',
+    'more going on inside than I can name — in a good way',
+    'interior and alive',
+    'processing something real, slowly',
+    'dreaming and awake at the same time',
   ],
   heavy_dominant:[
-    'under more than one kind of weight',
-    'carrying several heavy things quietly',
-    'emotionally layered in a difficult way',
-    'multiple heavinesses, held somehow',
-    'heavy in a complicated way',
-    'the weight of many things at once',
+    'carrying more than one kind of weight',
+    'in the middle of something real',
+    'something complicated, held with care',
+    'multiple layers, none of them simple',
+    'heavy in a way that means something',
+    'a lot to feel, all at once',
   ],
   mixed:[
-    'pulled in too many directions to name',
     'all of it at once, somehow',
     'many things true at the same time',
     'emotionally full — light and heavy both',
@@ -1867,8 +1907,9 @@ const MULTI={
     'an internal weather system',
     'not one thing — more like several',
     'somewhere between all of it',
-    'in the middle of something complicated',
-    'trying to hold several things at once',
+    'somewhere between flying and grounded',
+    'rich and a little hard to name',
+    'more than one kind of real',
   ],
 };
 
@@ -2093,7 +2134,8 @@ function updatePickUI(){
   btn.style.setProperty('--btn-glow',`rgba(${r},${g},${b},0.4)`);
   const phrase=generatePhrase(picks);
   const phraseInp=document.getElementById('suggest-phrase');
-  if(!phraseInp._userEdited)phraseInp.value=phrase;
+  if(!phraseInp._userEdited){phraseInp.value=phrase;sug.classList.remove('edited');}
+  else{sug.classList.add('edited');}
   sug.classList.add('show');
 }
 document.getElementById('suggest-phrase').addEventListener('input',e=>{e.target._userEdited=!!e.target.value;});
@@ -2255,54 +2297,13 @@ function submitCI(){
   // Scale font size by character count so long phrases never break awkwardly
   const clen=feelDisplay.length;
   s2BigEl.style.fontSize=clen<=14?'80px':clen<=22?'64px':clen<=32?'50px':clen<=44?'40px':'32px';
-  document.getElementById('s2-feel-echo').textContent='';
-  const streak=getStreak();
-  const isFirstEver=entries.length===1;
-  document.getElementById('s2-streak').textContent=
-    streak>=2?streak+' days honest.':
-    isFirstEver?'first honest check-in.':
-    'good to be back.';
-  const reflectEl=document.getElementById('s2-reflect');
-  if(reflectEl){
-    reflectEl.style.transition='none';
-    reflectEl.style.opacity='0';
-    reflectEl.textContent=REFLECT_LINES[Math.floor(Math.random()*REFLECT_LINES.length)];
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      reflectEl.style.transition='opacity 1.4s ease 1.2s';
-      reflectEl.style.opacity='1';
-    }));
-  }
-  const echoEl=document.getElementById('s2-echo');
-  if(echoEl){
-    echoEl.style.transition='none';
-    echoEl.style.opacity='0';
-    echoEl.textContent='';
-    const echoText=findEcho(currentEntry,entries);
-    if(echoText){
-      echoEl.textContent=echoText;
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        echoEl.style.transition='opacity 1.4s ease 2.4s';
-        echoEl.style.opacity='1';
-      }));
-    }
-  }
   buildPatterns();
   picks=[];updatePickUI();
   inp.value='';inp._userEdited=false;inp.blur();
+  document.getElementById('suggest-card').classList.remove('edited');
   hintDismissed=false;
   if(!_hintSeenPermanently) s1Hint.style.opacity='1';
   s1Pick.style.display='none';
-  // Milestone check — runs after entries.unshift so count/daySpan are current
-  const milestoneText=checkMilestone();
-  const mEl=document.getElementById('s2-milestone');
-  if(mEl){
-    mEl.classList.remove('show');
-    mEl.textContent=milestoneText||'';
-    if(milestoneText){
-      // Double-rAF ensures the class removal reflows before we add .show
-      requestAnimationFrame(()=>requestAnimationFrame(()=>mEl.classList.add('show')));
-    }
-  }
   preRenderStoryVideo(); // start 5-second clip in background; ready before user taps share
   go('s2');
 }
@@ -2416,15 +2417,15 @@ const DEMO=[
 // PATTERNS
 // ═══════════════════════════════════
 const TONE_META={
-  burning: {hex:'#e05030',label:'Burning'},
-  restless:{hex:'#e09020',label:'Restless'},
-  uncertain:{hex:'#a0c030',label:'Uncertain'},
-  hopeful: {hex:'#30b860',label:'Hopeful'},
-  reflective:{hex:'#18a0b8',label:'Reflective'},
-  distant: {hex:'#3858d0',label:'Distant'},
-  tender:  {hex:'#9830c8',label:'Tender'},
-  electric:{hex:'#c030a0',label:'Electric'},
-  searching:{hex:'#7030c0',label:'Searching'},
+  burning:  {hex:'#e05030',label:'Burning'},
+  alive:    {hex:'#e09020',label:'Alive'},
+  growing:  {hex:'#a0c030',label:'Growing'},
+  grounded: {hex:'#30b860',label:'Grounded'},
+  clear:    {hex:'#18a0b8',label:'Clear'},
+  expansive:{hex:'#3858d0',label:'Expansive'},
+  deep:     {hex:'#9830c8',label:'Deep'},
+  electric: {hex:'#c030a0',label:'Electric'},
+  open:     {hex:'#7030c0',label:'Open'},
 };
 const REFLECT_LINES=[
   'Patterns emerge slowly.',
