@@ -30,9 +30,9 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{overflow:hidden;height:100%}
-body{background:#060608;display:flex;justify-content:center;align-items:center;min-height:100vh;font-synthesis:none}
-.phone{width:375px;height:812px;background:#060608;overflow:hidden;position:relative;border-radius:44px;
-  box-shadow:0 80px 160px rgba(0,0,0,0.9),0 0 0 1px rgba(255,255,255,0.06),0 0 80px rgba(120,80,255,0.06)}
+body{background:#E8E3DB;display:flex;justify-content:center;align-items:center;min-height:100vh;font-synthesis:none}
+.phone{width:375px;height:812px;background:#F0EDE6;overflow:hidden;position:relative;border-radius:44px;
+  box-shadow:0 60px 120px rgba(30,20,10,0.22),0 0 0 1px rgba(26,23,20,0.10),0 20px 60px rgba(26,23,20,0.10)}
 @media(max-width:430px){
   html,body{overflow:hidden;height:100%;min-height:0}
   /* svh = viewport height when browser toolbar fully shown — nav never hides behind it.
@@ -45,7 +45,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
   #gnav{border-radius:0 0 44px 44px}
 }
 
-.grain{position:absolute;inset:0;pointer-events:none;z-index:999;opacity:0.042;mix-blend-mode:screen;
+.grain{position:absolute;inset:0;pointer-events:none;z-index:999;opacity:0.055;mix-blend-mode:multiply;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 .screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 0.55s ease}
@@ -56,48 +56,49 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
   position:absolute;bottom:0;left:0;right:0;
   height:calc(72px + env(safe-area-inset-bottom));
   display:flex;align-items:center;justify-content:space-around;
-  background:rgba(6,6,8,0.92);border-top:1px solid rgba(255,255,255,0.07);
+  background:rgba(240,237,230,0.92);border-top:1px solid rgba(26,23,20,0.08);
   backdrop-filter:blur(32px);z-index:500;border-radius:0;
   padding-bottom:calc(14px + env(safe-area-inset-bottom));
 }
 .nb{background:none;border:none;cursor:pointer;padding:10px 18px;display:flex;flex-direction:column;align-items:center;gap:5px}
-.ni{width:18px;height:1.5px;background:rgba(255,255,255,0.18);border-radius:1px;transition:all 0.3s;display:block}
-.nb.act .ni{background:rgba(255,255,255,0.85);width:22px}
-.nl{font-size:8.5px;letter-spacing:0.17em;font-weight:400;font-family:'Inter',sans-serif;display:block;color:rgba(255,255,255,0.18);transition:color 0.3s}
-.nb.act .nl{color:rgba(255,255,255,0.82);font-weight:500}
-.bp{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.88);font-family:'Italiana',serif;font-size:11px;padding:5px 13px;border-radius:50px;font-weight:700;font-style:italic;border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(16px);display:inline-block;letter-spacing:0.01em}
+.ni{width:18px;height:1.5px;background:rgba(26,23,20,0.18);border-radius:1px;transition:all 0.3s;display:block}
+.nb.act .ni{background:rgba(26,23,20,0.78);width:22px}
+.nl{font-size:8.5px;letter-spacing:0.17em;font-weight:400;font-family:'Inter',sans-serif;display:block;color:rgba(26,23,20,0.22);transition:color 0.3s}
+.nb.act .nl{color:rgba(26,23,20,0.75);font-weight:500}
+.bp{background:rgba(26,23,20,0.06);color:rgba(26,23,20,0.68);font-family:'Italiana',serif;font-size:11px;padding:5px 13px;border-radius:50px;font-weight:700;font-style:italic;border:1px solid rgba(26,23,20,0.10);backdrop-filter:blur(16px);display:inline-block;letter-spacing:0.01em}
+/* On check-in page the badge sits over the wheel canvas — use light/white */
+#s1 .bp{background:rgba(255,255,255,0.18);color:rgba(255,255,255,0.88);border-color:rgba(255,255,255,0.28)}
 
 /* ═══════════════════════════
    S1: CHECK-IN — Artistic orb canvas
 ═══════════════════════════ */
-#s1{background:#060608}
+#s1{background:#F0EDE6}
 #s1-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
 
 .s1-head{position:absolute;top:calc(22px + env(safe-area-inset-top));left:22px;right:22px;display:flex;justify-content:space-between;align-items:center;z-index:40;pointer-events:all}
 .pick-dots{display:flex;gap:7px;align-items:center}
-.pd{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,0.12);transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);flex-shrink:0}
-.pd.lit{width:13px;height:13px;box-shadow:0 0 10px var(--c),0 0 24px var(--c),0 0 40px var(--c);background:var(--c);cursor:pointer}
-.pd.lit:hover{transform:scale(1.28);box-shadow:0 0 14px var(--c),0 0 32px var(--c),0 0 52px var(--c)}
+.pd{width:9px;height:9px;border-radius:50%;background:rgba(26,23,20,0.14);transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);flex-shrink:0}
+.pd.lit{width:13px;height:13px;box-shadow:0 0 8px var(--c),0 0 18px var(--c)66;background:var(--c);cursor:pointer}
+.pd.lit:hover{transform:scale(1.28);box-shadow:0 0 12px var(--c),0 0 26px var(--c)88}
 .pd.editing{
   width:15px!important;height:15px!important;cursor:pointer;
   animation:dotEditPulse 1.1s ease-in-out infinite;
 }
 @keyframes dotEditPulse{
-  0%,100%{box-shadow:0 0 0 2.5px rgba(255,255,255,0.95),0 0 0 5px rgba(255,255,255,0.18),0 0 16px var(--c),0 0 34px var(--c)}
-  50%{box-shadow:0 0 0 2.5px rgba(255,255,255,0.95),0 0 0 9px rgba(255,255,255,0.07),0 0 24px var(--c),0 0 50px var(--c)}
+  0%,100%{box-shadow:0 0 0 2.5px rgba(255,255,255,0.90),0 0 0 5px rgba(26,23,20,0.10),0 0 12px var(--c),0 0 24px var(--c)66}
+  50%{box-shadow:0 0 0 2.5px rgba(255,255,255,0.90),0 0 0 9px rgba(26,23,20,0.05),0 0 18px var(--c),0 0 36px var(--c)44}
 }
 
 .s1-title{position:absolute;top:calc(92px + env(safe-area-inset-top));left:22px;right:22px;z-index:40;pointer-events:none}
-.s1-title h1{font-family:'Italiana',serif;font-size:52px;line-height:0.93;font-weight:700;color:#fff;letter-spacing:-0.025em;text-shadow:0 2px 24px rgba(0,0,0,0.8),0 8px 50px rgba(0,0,0,0.6)}
-.s1-title h1 em{font-style:italic;color:rgba(255,255,255,0.55)}
+.s1-title h1{font-family:'Italiana',serif;font-size:52px;line-height:0.93;font-weight:700;color:rgba(255,255,255,0.96);letter-spacing:-0.025em;text-shadow:0 1px 12px rgba(0,0,0,0.22),0 3px 32px rgba(0,0,0,0.10)}
+.s1-title h1 em{font-style:italic;color:rgba(255,255,255,0.50)}
 
 /* S1 background canvas — ambient only */
 #s1-canvas{cursor:default}
 .s1-hint{
   position:absolute;bottom:calc(218px + env(safe-area-inset-bottom));left:22px;right:22px;z-index:41;
   font-family:'Italiana',serif;font-size:15px;font-style:italic;
-  color:rgba(255,255,255,0.62);text-align:center;pointer-events:none;
-  text-shadow:0 1px 12px rgba(0,0,0,0.55);
+  color:rgba(26,23,20,0.42);text-align:center;pointer-events:none;
   transition:opacity 0.6s ease;
 }
 
@@ -115,8 +116,8 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
   content:'';
   position:absolute;inset:0;
   border-radius:50%;
-  border:1.5px solid rgba(255,255,255,0.45);
-  box-shadow:0 0 0 5px rgba(255,255,255,0.07),0 0 22px rgba(255,255,255,0.12);
+  border:1.5px solid rgba(26,23,20,0.30);
+  box-shadow:0 0 0 5px rgba(26,23,20,0.04);
   animation:ghostPulse 2.4s ease-in-out infinite;
 }
 @keyframes ghostFloat{
@@ -135,18 +136,18 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 }
 #s1-return-time{
   font-family:'Inter',sans-serif;font-size:8px;letter-spacing:0.10em;
-  color:rgba(255,255,255,0.24);text-transform:uppercase;
+  color:rgba(26,23,20,0.32);text-transform:uppercase;
 }
 #s1-return-feel{
   display:flex;align-items:center;gap:5px;margin-top:5px;
   font-family:'Italiana',serif;font-size:12px;font-style:italic;
-  color:rgba(255,255,255,0.32);
+  color:rgba(26,23,20,0.42);
 }
-.s1-last-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;box-shadow:0 0 5px var(--ldc),0 0 10px var(--ldc)}
+.s1-last-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;box-shadow:0 0 5px var(--ldc)88}
 .s1-pick{
   position:absolute;width:22px;height:22px;border-radius:50%;
   border:2px solid rgba(255,255,255,0.92);
-  box-shadow:0 0 0 3px rgba(0,0,0,0.3),0 0 14px var(--pc,#fff),0 0 32px var(--pc,#fff);
+  box-shadow:0 0 0 3px rgba(26,23,20,0.12),0 2px 12px rgba(26,23,20,0.22);
   transform:translate(-50%,-50%);pointer-events:none;display:none;
   background:var(--pc,#fff);z-index:42;transition:box-shadow 0.15s ease;
 }
@@ -160,13 +161,13 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 /* Suggest card — sits cleanly above the bottom panel, no overlap */
 #suggest-card{
   position:absolute;bottom:calc(153px + env(safe-area-inset-bottom));left:18px;right:18px;z-index:42;
-  background:rgba(6,6,10,0.72);backdrop-filter:blur(36px) saturate(1.8);
-  border:1px solid rgba(255,255,255,0.14);border-radius:18px;
+  background:rgba(255,255,255,0.82);backdrop-filter:blur(36px) saturate(1.4);
+  border:1px solid rgba(26,23,20,0.09);border-radius:18px;
   padding:13px 17px 11px;
   opacity:0;transform:translateY(10px);
   transition:opacity 0.4s ease,transform 0.4s cubic-bezier(0.34,1.3,0.64,1);
   pointer-events:none;
-  box-shadow:0 12px 48px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.12);
+  box-shadow:0 8px 32px rgba(26,23,20,0.10),0 2px 8px rgba(26,23,20,0.06),inset 0 1px 0 rgba(255,255,255,0.90);
 }
 /* Keep container non-blocking so the wheel is tappable through the card's empty space */
 #suggest-card.show{opacity:1;transform:translateY(0);pointer-events:none}
@@ -177,73 +178,54 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 /* Soft framing label — tentative, not diagnostic */
 .suggest-lbl{
   font-family:'Italiana',serif;font-size:10px;font-style:italic;
-  color:rgba(255,255,255,0.26);margin-bottom:5px;letter-spacing:0.04em;
+  color:rgba(26,23,20,0.38);margin-bottom:5px;letter-spacing:0.04em;
 }
 /* The phrase — with a visible bottom border that signals "this is editable" */
 .suggest-phrase{
   font-family:'Italiana',serif;font-size:20px;font-style:italic;font-weight:700;
-  color:#fff;line-height:1.1;
+  color:#1A1714;line-height:1.1;
   background:transparent;border:none;outline:none;width:100%;padding:0 0 5px;margin:0;
-  -webkit-appearance:none;appearance:none;caret-color:rgba(255,255,255,0.65);
-  border-bottom:1px solid rgba(255,255,255,0.15);
+  -webkit-appearance:none;appearance:none;caret-color:rgba(26,23,20,0.65);
+  border-bottom:1px solid rgba(26,23,20,0.14);
   transition:border-bottom-color 0.35s ease;
 }
-.suggest-phrase:focus{border-bottom-color:rgba(255,255,255,0.50);}
-.suggest-phrase::placeholder{color:rgba(255,255,255,0.20);font-style:italic;font-family:'Italiana',serif}
+.suggest-phrase:focus{border-bottom-color:rgba(26,23,20,0.45);}
+.suggest-phrase::placeholder{color:rgba(26,23,20,0.22);font-style:italic;font-family:'Italiana',serif}
 /* Edit affordance — liquid glass pill, teal/tiffany */
 .suggest-edit{
   font-family:'Italiana',serif;font-size:12.5px;font-style:italic;
-  color:rgba(180,240,235,0.92);margin-top:10px;letter-spacing:0.03em;
+  color:rgba(26,23,20,0.52);margin-top:10px;letter-spacing:0.03em;
   display:inline-flex;align-items:center;gap:6px;
-  /* liquid glass: teal tint + layered transparency */
-  background:
-    linear-gradient(
-      135deg,
-      rgba(100,220,210,0.22) 0%,
-      rgba(60,185,195,0.12) 50%,
-      rgba(80,200,215,0.18) 100%
-    );
+  background:rgba(255,255,255,0.62);
   border:none;
-  outline: 1px solid rgba(140,230,225,0.30);
+  outline: 1px solid rgba(26,23,20,0.12);
   outline-offset: -1px;
-  box-shadow:
-    inset 0 1px 0 rgba(200,255,252,0.28),
-    inset 0 -1px 0 rgba(0,160,155,0.18),
-    0 4px 16px rgba(60,200,200,0.12),
-    0 1px 3px rgba(0,0,0,0.28);
+  box-shadow:0 1px 6px rgba(26,23,20,0.06),0 1px 2px rgba(26,23,20,0.04);
   border-radius:20px;padding:5px 14px 5px 10px;
-  backdrop-filter:blur(12px) saturate(1.6);
-  -webkit-backdrop-filter:blur(12px) saturate(1.6);
-  transition:opacity 0.25s ease,box-shadow 0.25s ease;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  transition:opacity 0.25s ease;
   position:relative;overflow:hidden;
 }
-/* glass sheen — top highlight streak */
-.suggest-edit::after{
-  content:'';
-  position:absolute;top:0;left:10%;right:30%;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(200,255,252,0.55),transparent);
-  border-radius:1px;
-  pointer-events:none;
-}
-.suggest-edit::before{content:'✏';font-style:normal;font-size:10px;flex-shrink:0;opacity:0.80}
+.suggest-edit::after{content:none}
+.suggest-edit::before{content:'✏';font-style:normal;font-size:10px;flex-shrink:0;opacity:0.60}
 /* Hide edit hint while typing — its job is done */
 .suggest-phrase:focus~.suggest-edit{opacity:0;pointer-events:none}
 /* Dim hint once user has written their own phrase */
 #suggest-card.edited .suggest-edit{opacity:0.10}
-/* Pulse the edit hint twice when the card first appears — draws the eye */
 @keyframes editPulse{
-  0%  {box-shadow:inset 0 1px 0 rgba(200,255,252,0.28),inset 0 -1px 0 rgba(0,160,155,0.18),0 4px 16px rgba(60,200,200,0.12),0 1px 3px rgba(0,0,0,0.28)}
-  42% {box-shadow:inset 0 1px 0 rgba(200,255,252,0.50),inset 0 -1px 0 rgba(0,160,155,0.28),0 4px 24px rgba(60,200,200,0.32),0 1px 3px rgba(0,0,0,0.28)}
-  100%{box-shadow:inset 0 1px 0 rgba(200,255,252,0.28),inset 0 -1px 0 rgba(0,160,155,0.18),0 4px 16px rgba(60,200,200,0.12),0 1px 3px rgba(0,0,0,0.28)}
+  0%  {box-shadow:0 1px 6px rgba(26,23,20,0.06),0 1px 2px rgba(26,23,20,0.04)}
+  42% {box-shadow:0 2px 14px rgba(26,23,20,0.12),0 1px 4px rgba(26,23,20,0.08)}
+  100%{box-shadow:0 1px 6px rgba(26,23,20,0.06),0 1px 2px rgba(26,23,20,0.04)}
 }
 #suggest-card.show .suggest-edit{
   animation:editPulse 1.6s ease 0.55s 2;
 }
 /* Underline also pulses briefly on first show */
 @keyframes underPulse{
-  0%  {border-bottom-color:rgba(255,255,255,0.15)}
-  42% {border-bottom-color:rgba(255,255,255,0.55)}
-  100%{border-bottom-color:rgba(255,255,255,0.15)}
+  0%  {border-bottom-color:rgba(26,23,20,0.14)}
+  42% {border-bottom-color:rgba(26,23,20,0.50)}
+  100%{border-bottom-color:rgba(26,23,20,0.14)}
 }
 #suggest-card.show .suggest-phrase:not(:focus){
   animation:underPulse 1.6s ease 0.55s 2;
@@ -255,8 +237,8 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 .s1-panel{
   position:absolute;bottom:calc(72px + env(safe-area-inset-bottom));left:0;right:0;z-index:40;
   padding:12px 20px 14px;
-  background:rgba(6,6,8,0.82);backdrop-filter:blur(36px) saturate(1.5);
-  border-top:1px solid rgba(255,255,255,0.07);
+  background:rgba(240,237,230,0.90);backdrop-filter:blur(36px) saturate(1.3);
+  border-top:1px solid rgba(26,23,20,0.08);
   pointer-events:none;
 }
 
@@ -271,25 +253,25 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 /* Inner hint — collapses when color is picked */
 #s1-cta-hint{
   font-family:'Inter',sans-serif;font-size:9px;letter-spacing:0.10em;
-  color:rgba(255,255,255,0.32);pointer-events:none;
+  color:rgba(26,23,20,0.38);pointer-events:none;
   overflow:hidden;max-height:14px;
   transition:opacity 0.4s ease,max-height 0.45s ease;
 }
 #s1-cta-hint.hidden{opacity:0;max-height:0}
 .honest-btn.off{
-  background:rgba(255,255,255,0.055);
-  color:rgba(255,255,255,0.22);
-  border:1px solid rgba(255,255,255,0.09);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);
+  background:rgba(26,23,20,0.055);
+  color:rgba(26,23,20,0.28);
+  border:1px solid rgba(26,23,20,0.09);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.40);
   pointer-events:none;cursor:default;
   backdrop-filter:blur(12px);
 }
 .honest-btn.on{
-  background:var(--btn-grad,rgba(255,255,255,0.12));
+  background:var(--btn-grad,rgba(26,23,20,0.10));
   color:#fff;border:none;
-  box-shadow:0 0 40px var(--btn-glow,rgba(200,180,255,0.3)),0 8px 32px rgba(0,0,0,0.5);
+  box-shadow:0 4px 24px var(--btn-glow,rgba(80,60,40,0.28)),0 8px 32px rgba(26,23,20,0.22);
   pointer-events:auto;cursor:pointer;
-  text-shadow:0 2px 12px rgba(0,0,0,0.6);
+  text-shadow:0 1px 8px rgba(0,0,0,0.45);
 }
 /* Glow pulse via opacity on a composited pseudo-element — avoids paint */
 .honest-btn.on::after{
@@ -312,39 +294,39 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 /* ═══════════════════════════
    S2: ACKNOWLEDGMENT
 ═══════════════════════════ */
-#s2{background:#050508}
+#s2{background:#F0EDE6}
 #ack-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .s2-overlay{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;justify-content:flex-end;padding:60px 26px calc(86px + env(safe-area-inset-bottom))}
 .s2-overlay>.bp{position:absolute;top:calc(22px + env(safe-area-inset-top));left:26px}
-.s2-big{font-family:'Italiana',serif;font-size:80px;line-height:0.92;font-weight:700;color:#fff;letter-spacing:-0.03em;word-break:break-word;overflow-wrap:break-word;hyphens:none;max-height:52vh;overflow:hidden;transition:font-size 0.25s ease}
-.s2-sub{font-family:'Italiana',serif;font-size:16px;color:rgba(255,255,255,0.88);font-style:italic;line-height:1.58;margin-top:18px;max-width:210px}
+.s2-big{font-family:'Italiana',serif;font-size:80px;line-height:0.92;font-weight:700;color:#1A1714;letter-spacing:-0.03em;word-break:break-word;overflow-wrap:break-word;hyphens:none;max-height:52vh;overflow:hidden;transition:font-size 0.25s ease}
+.s2-sub{font-family:'Italiana',serif;font-size:16px;color:rgba(26,23,20,0.68);font-style:italic;line-height:1.58;margin-top:18px;max-width:210px}
 .s2-foot{display:flex;flex-direction:column;gap:10px;margin-top:32px}
-.s2-date{font-size:9px;color:rgba(255,255,255,0.28);letter-spacing:0.1em;font-family:'Inter',sans-serif}
+.s2-date{font-size:9px;color:rgba(26,23,20,0.38);letter-spacing:0.1em;font-family:'Inter',sans-serif}
 .s2-btns{display:flex;gap:10px}
-.s2-btn{flex:1;background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.2);padding:13px 14px;font-family:'Italiana',serif;font-size:clamp(13px,4vw,16px);font-style:italic;font-weight:700;border-radius:12px;cursor:pointer;backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.18);white-space:nowrap;text-align:center}
+.s2-btn{flex:1;background:rgba(255,255,255,0.70);color:#1A1714;border:1px solid rgba(26,23,20,0.12);padding:13px 14px;font-family:'Italiana',serif;font-size:clamp(13px,4vw,16px);font-style:italic;font-weight:700;border-radius:12px;cursor:pointer;backdrop-filter:blur(16px);box-shadow:0 2px 12px rgba(26,23,20,0.07),inset 0 1px 0 rgba(255,255,255,0.90);white-space:nowrap;text-align:center}
 #s2-share-hint{
   font-family:'Inter',sans-serif;font-size:10px;letter-spacing:0.06em;
-  color:rgba(255,255,255,0.28);text-align:center;
+  color:rgba(26,23,20,0.35);text-align:center;
   opacity:0;transition:opacity 0.4s ease;pointer-events:none;
   padding-top:4px;
 }
 #s2-share-hint.show{opacity:1}
 #s2-palette{display:flex;gap:10px;align-items:center;margin-bottom:22px}
-.s2-sw{width:13px;height:13px;border-radius:50%;flex-shrink:0;box-shadow:0 0 10px var(--sc),0 0 24px var(--sc),0 0 44px var(--sc)}
+.s2-sw{width:13px;height:13px;border-radius:50%;flex-shrink:0;box-shadow:0 0 8px var(--sc)88,0 0 18px var(--sc)44}
 
 
 /* ═══════════════════════════
    S3: PATTERNS
 ═══════════════════════════ */
-#s3{background:#060608}
+#s3{background:#F0EDE6}
 .s3-wrap{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;}
 .s3-wrap::-webkit-scrollbar{display:none}
 .s3-hd{padding:calc(22px + env(safe-area-inset-top)) 22px 0;display:flex;justify-content:space-between;align-items:center;z-index:2;position:relative}
-.s3-mo{font-family:'Italiana',serif;font-size:12px;font-style:italic;color:rgba(255,255,255,0.26)}
+.s3-mo{font-family:'Italiana',serif;font-size:12px;font-style:italic;color:rgba(26,23,20,0.38)}
 .s3-h2wrap{padding:20px 22px 10px;z-index:2;position:relative}
-.s3-h2{font-family:'Italiana',serif;font-size:30px;line-height:1.05;font-weight:700;color:#fff;letter-spacing:-0.02em}
-.s3-h2 em{font-style:italic;color:rgba(255,255,255,0.44)}
-#s3-tagline{padding:0 22px 14px;font-family:'Italiana',serif;font-size:13px;font-style:italic;color:rgba(255,255,255,0.30);line-height:1.55;z-index:2;position:relative}
+.s3-h2{font-family:'Italiana',serif;font-size:30px;line-height:1.05;font-weight:700;color:#1A1714;letter-spacing:-0.02em}
+.s3-h2 em{font-style:italic;color:rgba(26,23,20,0.38)}
+#s3-tagline{padding:0 22px 14px;font-family:'Italiana',serif;font-size:13px;font-style:italic;color:rgba(26,23,20,0.35);line-height:1.55;z-index:2;position:relative}
 
 /* Emotional ripple visualization — centerpiece */
 .s3-ripple-wrap{position:relative;z-index:2;}
@@ -357,50 +339,50 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 .s3-li{
   display:flex;align-items:center;gap:5px;
   padding:4px 11px 4px 7px;border-radius:20px;
-  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.60);border:1px solid rgba(26,23,20,0.08);
   cursor:pointer;transition:background 0.2s,border-color 0.2s;
 }
-.s3-li:hover,.s3-li.active{background:rgba(255,255,255,0.11);border-color:rgba(255,255,255,0.18)}
+.s3-li:hover,.s3-li.active{background:rgba(255,255,255,0.88);border-color:rgba(26,23,20,0.14)}
 .s3-li-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.s3-li-name{font-family:'Italiana',serif;font-size:11px;color:rgba(255,255,255,0.72);font-style:italic}
-.s3-li-pct{font-family:'Inter',sans-serif;font-size:9px;color:rgba(255,255,255,0.34);letter-spacing:0.03em;margin-left:2px}
+.s3-li-name{font-family:'Italiana',serif;font-size:11px;color:rgba(26,23,20,0.72);font-style:italic}
+.s3-li-pct{font-family:'Inter',sans-serif;font-size:9px;color:rgba(26,23,20,0.38);letter-spacing:0.03em;margin-left:2px}
 
 /* Insight chip */
 .s3-insight{
   flex-shrink:0;margin:12px 22px 0;
-  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);
+  background:rgba(255,255,255,0.58);border:1px solid rgba(26,23,20,0.07);
   border-radius:12px;padding:10px 13px;
   display:flex;align-items:flex-start;gap:9px;
   z-index:2;position:relative;
 }
 .s3-insight-dot{width:6px;height:6px;border-radius:50%;background:var(--idot,#c88028);flex-shrink:0;margin-top:4px}
-.s3-insight-text{font-family:'Italiana',serif;font-size:12px;font-style:italic;color:rgba(255,255,255,0.5);line-height:1.48}
+.s3-insight-text{font-family:'Italiana',serif;font-size:12px;font-style:italic;color:rgba(26,23,20,0.58);line-height:1.48}
 
 /* Weekly comparison */
 #s3-week-compare{flex-shrink:0;margin:12px 22px 0;z-index:2;position:relative;display:none}
-.wc-lbl{font-family:'Inter',sans-serif;font-size:7.5px;letter-spacing:0.12em;color:rgba(255,255,255,0.18);margin-bottom:9px;text-transform:uppercase}
+.wc-lbl{font-family:'Inter',sans-serif;font-size:7.5px;letter-spacing:0.12em;color:rgba(26,23,20,0.28);margin-bottom:9px;text-transform:uppercase}
 .wc-cols{display:flex;gap:1px}
-.wc-col{flex:1;padding:10px 13px;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.07)}
+.wc-col{flex:1;padding:10px 13px;background:rgba(255,255,255,0.55);border:0.5px solid rgba(26,23,20,0.07)}
 .wc-col:first-child{border-radius:10px 0 0 10px}
 .wc-col:last-child{border-radius:0 10px 10px 0}
-.wc-col-hd{font-family:'Inter',sans-serif;font-size:7px;letter-spacing:0.10em;color:rgba(255,255,255,0.22);text-transform:uppercase;margin-bottom:7px}
+.wc-col-hd{font-family:'Inter',sans-serif;font-size:7px;letter-spacing:0.10em;color:rgba(26,23,20,0.30);text-transform:uppercase;margin-bottom:7px}
 .wc-feel{display:flex;align-items:center;gap:6px}
 .wc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.wc-name{font-family:'Italiana',serif;font-size:16px;font-style:italic;font-weight:700;color:#fff}
-.wc-ct{font-family:'Inter',sans-serif;font-size:8px;color:rgba(255,255,255,0.24);letter-spacing:0.05em;margin-top:4px}
-.wc-shift{font-family:'Italiana',serif;font-size:13px;font-style:italic;color:rgba(255,255,255,0.40);margin-top:11px;line-height:1.55;letter-spacing:0.01em}
-.wc-shift em{color:rgba(255,255,255,0.70);font-style:italic}
+.wc-name{font-family:'Italiana',serif;font-size:16px;font-style:italic;font-weight:700;color:#1A1714}
+.wc-ct{font-family:'Inter',sans-serif;font-size:8px;color:rgba(26,23,20,0.32);letter-spacing:0.05em;margin-top:4px}
+.wc-shift{font-family:'Italiana',serif;font-size:13px;font-style:italic;color:rgba(26,23,20,0.45);margin-top:11px;line-height:1.55;letter-spacing:0.01em}
+.wc-shift em{color:rgba(26,23,20,0.75);font-style:italic}
 
 /* Waveform */
 .wave-wrap{flex-shrink:0;padding:8px 22px 0;z-index:2;position:relative}
-.wave-label{font-family:'Inter',sans-serif;font-size:7.5px;letter-spacing:0.12em;color:rgba(255,255,255,0.18);margin-bottom:4px}
+.wave-label{font-family:'Inter',sans-serif;font-size:7.5px;letter-spacing:0.12em;color:rgba(26,23,20,0.28);margin-bottom:4px}
 #wave-canvas{width:100%;height:56px;display:block;border-radius:8px;cursor:crosshair}
 .wave-tooltip{
   position:absolute;pointer-events:none;
   font-family:'Italiana',serif;font-size:10px;font-style:italic;
-  color:rgba(255,255,255,0.88);
-  background:rgba(10,6,22,0.78);backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,0.12);border-radius:16px;
+  color:rgba(26,23,20,0.82);
+  background:rgba(255,255,255,0.88);backdrop-filter:blur(12px);
+  border:1px solid rgba(26,23,20,0.10);border-radius:16px;
   padding:4px 11px;white-space:nowrap;
   opacity:0;transition:opacity 0.18s;transform:translate(-50%,-100%);
   margin-top:-6px;z-index:20;
@@ -421,7 +403,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 #s3-drift{
   flex-shrink:0;padding:14px 22px 2px;z-index:2;position:relative;
   font-family:'Italiana',serif;font-size:13.5px;font-style:italic;
-  color:rgba(255,255,255,0.52);letter-spacing:0.01em;line-height:1.5;
+  color:rgba(26,23,20,0.48);letter-spacing:0.01em;line-height:1.5;
   display:none;transition:opacity 0.6s ease;
 }
 
@@ -429,48 +411,48 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 #s3-contradiction{
   flex-shrink:0;margin:12px 22px 0;z-index:2;position:relative;
   padding:10px 13px;
-  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.065);
+  background:rgba(255,255,255,0.50);border:1px solid rgba(26,23,20,0.06);
   border-radius:12px;
   font-family:'Italiana',serif;font-size:12px;font-style:italic;
-  color:rgba(255,255,255,0.38);line-height:1.58;
+  color:rgba(26,23,20,0.45);line-height:1.58;
   display:none;
 }
 
 /* Season chapter headers */
 .season-hd{
   padding:18px 0 6px;
-  border-top:1px solid rgba(255,255,255,0.055);
+  border-top:1px solid rgba(26,23,20,0.08);
   margin:6px 0 0;
 }
 .season-hd.first{border-top:none;padding-top:2px}
 .season-name{
   font-family:'Italiana',serif;font-size:17px;font-style:italic;font-weight:700;
-  color:rgba(255,255,255,0.62);letter-spacing:-0.01em;line-height:1;
+  color:rgba(26,23,20,0.55);letter-spacing:-0.01em;line-height:1;
 }
 .season-range{
   font-family:'Inter',sans-serif;font-size:7.5px;letter-spacing:0.13em;
-  color:rgba(255,255,255,0.20);text-transform:uppercase;margin-top:4px;
+  color:rgba(26,23,20,0.28);text-transform:uppercase;margin-top:4px;
 }
 
 /* Backup notice */
-.s3-backup{margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.055);display:flex;flex-direction:column;gap:7px}
-.s3-backup-msg{font-family:'Inter',sans-serif;font-size:8.5px;letter-spacing:0.10em;color:rgba(255,255,255,0.18);text-transform:uppercase;line-height:1.55}
-.s3-backup-btn{font-family:'Italiana',serif;font-size:13px;font-style:italic;color:rgba(255,255,255,0.30);background:none;border:none;cursor:pointer;padding:0;text-align:left;transition:color 0.2s;letter-spacing:0.01em}
-.s3-backup-btn:hover{color:rgba(255,255,255,0.60)}
-.s3-backup-confirm{font-family:'Inter',sans-serif;font-size:8px;letter-spacing:0.08em;color:rgba(255,255,255,0.18);opacity:0;transition:opacity 0.4s ease;text-transform:uppercase}
+.s3-backup{margin-top:20px;padding-top:16px;border-top:1px solid rgba(26,23,20,0.08);display:flex;flex-direction:column;gap:7px}
+.s3-backup-msg{font-family:'Inter',sans-serif;font-size:8.5px;letter-spacing:0.10em;color:rgba(26,23,20,0.28);text-transform:uppercase;line-height:1.55}
+.s3-backup-btn{font-family:'Italiana',serif;font-size:13px;font-style:italic;color:rgba(26,23,20,0.38);background:none;border:none;cursor:pointer;padding:0;text-align:left;transition:color 0.2s;letter-spacing:0.01em}
+.s3-backup-btn:hover{color:rgba(26,23,20,0.68)}
+.s3-backup-confirm{font-family:'Inter',sans-serif;font-size:8px;letter-spacing:0.08em;color:rgba(26,23,20,0.28);opacity:0;transition:opacity 0.4s ease;text-transform:uppercase}
 .s3-backup-confirm.show{opacity:1}
 
 /* Month summary */
 #s3-month-summary{
   padding:14px 0 0;z-index:2;position:relative;display:none;
   font-family:'Italiana',serif;font-size:14px;font-style:italic;
-  color:rgba(255,255,255,0.36);line-height:1.78;letter-spacing:0.01em;
-  border-top:1px solid rgba(255,255,255,0.055);margin:14px 22px 0;
+  color:rgba(26,23,20,0.42);line-height:1.78;letter-spacing:0.01em;
+  border-top:1px solid rgba(26,23,20,0.08);margin:14px 22px 0;
 }
-#s3-month-summary em{color:rgba(255,255,255,0.72);font-style:italic}
+#s3-month-summary em{color:rgba(26,23,20,0.75);font-style:italic}
 
 /* Visualization captions */
-.viz-caption{font-family:'Italiana',serif;font-size:11px;font-style:italic;color:rgba(255,255,255,0.18);text-align:center;letter-spacing:0.02em;padding:5px 22px 0;z-index:2;position:relative}
+.viz-caption{font-family:'Italiana',serif;font-size:11px;font-style:italic;color:rgba(26,23,20,0.28);text-align:center;letter-spacing:0.02em;padding:5px 22px 0;z-index:2;position:relative}
 
 /* Cards scroll */
 .cards-scroll{padding:8px 22px calc(84px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:9px;scrollbar-width:none;z-index:2;position:relative}
@@ -517,10 +499,10 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 .gc{
   border-radius:22px;overflow:hidden;position:relative;cursor:pointer;
   transition:transform 0.28s cubic-bezier(0.34,1.2,0.64,1),box-shadow 0.28s ease;
-  box-shadow:0 10px 44px rgba(0,0,0,0.72),0 2px 8px rgba(0,0,0,0.5),0 0 0 0.5px rgba(255,255,255,0.14) inset;
+  box-shadow:0 4px 20px rgba(26,23,20,0.10),0 1px 4px rgba(26,23,20,0.07),0 0 0 0.5px rgba(26,23,20,0.06) inset;
   width:100%;
 }
-.gc:hover{transform:translateY(-4px) scale(1.014);box-shadow:0 18px 56px rgba(0,0,0,0.78),0 0 60px var(--card-glow,rgba(120,80,255,0.22)),0 0 0 0.5px rgba(255,255,255,0.22) inset}
+.gc:hover{transform:translateY(-4px) scale(1.014);box-shadow:0 12px 36px rgba(26,23,20,0.14),0 0 0 0.5px rgba(26,23,20,0.10) inset}
 .gc:active{transform:scale(0.972)}
 .gc-hero{height:178px}
 .gc-half{height:144px}
@@ -530,15 +512,15 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
   position:absolute;inset:-55%;
   background:var(--g);
   animation:waveOrg var(--dur,9s) ease-in-out infinite;
-  filter:blur(28px) saturate(2.0) brightness(1.06);
+  filter:blur(32px) saturate(1.3) brightness(1.14);
   will-change:transform;
 }
 .gc-atmo2{
   position:absolute;inset:-60%;
   background:var(--g2,var(--g));
   animation:waveOrg2 var(--dur2,13s) ease-in-out infinite;
-  filter:blur(40px) saturate(1.7) brightness(0.88);
-  opacity:0.72;will-change:transform;
+  filter:blur(44px) saturate(1.1) brightness(1.08);
+  opacity:0.60;will-change:transform;
 }
 @keyframes waveOrg{
   0%  {transform:translate(0%,0%) scale(1) rotate(0deg)}
@@ -555,11 +537,11 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
   78% {transform:translate(-18%,30%) scale(1.35) rotate(-38deg)}
   100%{transform:translate(0%,0%) scale(1.14) rotate(24deg)}
 }
-/* iOS glass surface — reflection + edge highlights */
+/* Glass surface — soft reflection */
 .gc::before{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:22px;
-  background:linear-gradient(145deg,rgba(255,255,255,0.26) 0%,rgba(255,255,255,0.08) 28%,transparent 54%,rgba(0,0,0,0.14) 100%)}
+  background:linear-gradient(145deg,rgba(255,255,255,0.55) 0%,rgba(255,255,255,0.22) 28%,transparent 54%,rgba(26,23,20,0.06) 100%)}
 .gc::after{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:22px;
-  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.32),inset 0 -1px 0 rgba(0,0,0,0.28),inset 1px 0 0 rgba(255,255,255,0.10),inset -1px 0 0 rgba(0,0,0,0.12)}
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,0.72),inset 0 -1px 0 rgba(26,23,20,0.08),inset 1px 0 0 rgba(255,255,255,0.30),inset -1px 0 0 rgba(26,23,20,0.04)}
 /* Slow shimmer sweep */
 .gc-shine{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:22px;overflow:hidden}
 .gc-shine::after{content:'';position:absolute;top:0;left:-120%;width:55%;height:100%;
@@ -569,59 +551,59 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 .gc-noise{position:absolute;inset:0;z-index:2;opacity:0.06;mix-blend-mode:overlay;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
 .gc-body{position:relative;z-index:4;padding:13px 14px;height:100%;display:flex;flex-direction:column;justify-content:space-between}
-.gc-date{font-size:8px;color:rgba(255,255,255,0.5);letter-spacing:0.12em;font-family:'Inter',sans-serif}
-.gc-time-badge{font-size:8px;color:rgba(255,255,255,0.3);font-family:'Inter',sans-serif;margin-top:2px;letter-spacing:0.06em}
-.gc-feel{font-family:'Italiana',serif;font-size:17px;color:#fff;font-weight:700;font-style:italic;line-height:1.1;text-shadow:0 2px 20px rgba(0,0,0,0.5);margin-top:auto}
+.gc-date{font-size:8px;color:rgba(26,23,20,0.52);letter-spacing:0.12em;font-family:'Inter',sans-serif}
+.gc-time-badge{font-size:8px;color:rgba(26,23,20,0.35);font-family:'Inter',sans-serif;margin-top:2px;letter-spacing:0.06em}
+.gc-feel{font-family:'Italiana',serif;font-size:17px;color:#1A1714;font-weight:700;font-style:italic;line-height:1.1;text-shadow:0 1px 8px rgba(255,255,255,0.40);margin-top:auto}
 .gc-feel.lg{font-size:22px}
 .gc-foot{display:flex;justify-content:flex-end;align-items:center;margin-top:6px}
 .gc-dots{display:flex;gap:3px}
 .gc-dot{width:7px;height:7px;border-radius:50%;opacity:0.85}
-.pat-empty{font-family:'Italiana',serif;font-size:14px;color:rgba(255,255,255,0.1);font-style:italic;padding:18px 0}
-#pat-last-checkin{font-family:'Inter',sans-serif;font-size:8px;letter-spacing:0.10em;color:rgba(255,255,255,0.22);margin-top:6px;text-transform:uppercase}
-.pat-early-msg{font-family:'Italiana',serif;font-size:13px;font-style:italic;color:rgba(255,255,255,0.25);text-align:center;padding:20px 22px 8px;line-height:1.6}
-.gc-placeholder{border-radius:22px;background:rgba(255,255,255,0.016);border:0.5px solid rgba(255,255,255,0.045);width:100%}
+.pat-empty{font-family:'Italiana',serif;font-size:14px;color:rgba(26,23,20,0.18);font-style:italic;padding:18px 0}
+#pat-last-checkin{font-family:'Inter',sans-serif;font-size:8px;letter-spacing:0.10em;color:rgba(26,23,20,0.28);margin-top:6px;text-transform:uppercase}
+.pat-early-msg{font-family:'Italiana',serif;font-size:13px;font-style:italic;color:rgba(26,23,20,0.32);text-align:center;padding:20px 22px 8px;line-height:1.6}
+.gc-placeholder{border-radius:22px;background:rgba(26,23,20,0.04);border:0.5px solid rgba(26,23,20,0.07);width:100%}
 .ph-hero{height:178px}
 .ph-half{height:144px;flex:1}
 
 /* ═══════════════════════════
    S4: PULSE — Aurora Borealis
 ═══════════════════════════ */
-#s4{background:#030210}
+#s4{background:#EEE9E2}
 #pulse-aurora-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none}
 .s4-wrap{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;pointer-events:none}
 .s4-hd{flex-shrink:0;padding:calc(22px + env(safe-area-inset-top)) 22px 0;z-index:2;position:relative;pointer-events:all}
 .s4-h2wrap{flex-shrink:0;padding:20px 22px 0;z-index:2;position:relative}
-.s4-h2{font-family:'Italiana',serif;font-size:36px;line-height:0.95;font-weight:700;color:#fff;letter-spacing:-0.022em;text-shadow:0 2px 32px rgba(3,2,16,0.7)}
-.s4-h2 em{font-style:italic;color:rgba(255,255,255,0.44)}
-.s4-tag{flex-shrink:0;padding:5px 22px 0;font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:0.13em;color:rgba(255,255,255,0.22);z-index:2;position:relative;text-transform:uppercase}
-.s4-source{flex-shrink:0;padding:5px 22px 0;font-family:'Inter',sans-serif;font-size:8px;letter-spacing:0.13em;color:rgba(255,255,255,0.14);z-index:2;position:relative;text-transform:uppercase;transition:color 0.6s ease}
-.s4-source.live{color:rgba(100,220,200,0.38)}
+.s4-h2{font-family:'Italiana',serif;font-size:36px;line-height:0.95;font-weight:700;color:#1A1714;letter-spacing:-0.022em}
+.s4-h2 em{font-style:italic;color:rgba(26,23,20,0.38)}
+.s4-tag{flex-shrink:0;padding:5px 22px 0;font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:0.13em;color:rgba(26,23,20,0.30);z-index:2;position:relative;text-transform:uppercase}
+.s4-source{flex-shrink:0;padding:5px 22px 0;font-family:'Inter',sans-serif;font-size:8px;letter-spacing:0.13em;color:rgba(26,23,20,0.22);z-index:2;position:relative;text-transform:uppercase;transition:color 0.6s ease}
+.s4-source.live{color:rgba(80,130,100,0.65)}
 #s4-personal{
   flex-shrink:0;margin:8px 22px 4px;
   display:flex;align-items:center;gap:8px;
-  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);
+  background:rgba(255,255,255,0.55);border:1px solid rgba(26,23,20,0.07);
   border-radius:8px;padding:7px 10px;
   cursor:pointer;z-index:2;position:relative;pointer-events:all;
   transition:background 0.2s;
 }
-#s4-personal:hover{background:rgba(255,255,255,0.07)}
-.s4p-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;box-shadow:0 0 4px var(--pdc),0 0 10px var(--pdc)}
-.s4p-text{font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:0.01em;color:rgba(255,255,255,0.38);flex:1;line-height:1.3}
-.s4p-text em{color:rgba(255,255,255,0.72);font-style:normal;font-weight:500}
-.s4p-arrow{font-family:'Inter',sans-serif;font-size:9px;color:rgba(255,255,255,0.2);flex-shrink:0}
+#s4-personal:hover{background:rgba(255,255,255,0.80)}
+.s4p-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;box-shadow:0 0 4px var(--pdc)88}
+.s4p-text{font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:0.01em;color:rgba(26,23,20,0.42);flex:1;line-height:1.3}
+.s4p-text em{color:rgba(26,23,20,0.78);font-style:normal;font-weight:500}
+.s4p-arrow{font-family:'Inter',sans-serif;font-size:9px;color:rgba(26,23,20,0.25);flex-shrink:0}
 .pulse-list{
   flex-shrink:0;margin-top:auto;padding:12px 22px calc(86px + env(safe-area-inset-bottom));
   display:flex;flex-direction:column;z-index:2;position:relative;
   pointer-events:all;
 }
-.pr{display:flex;align-items:center;gap:13px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:opacity 0.22s,transform 0.22s;pointer-events:all}
+.pr{display:flex;align-items:center;gap:13px;padding:8px 0;border-bottom:1px solid rgba(26,23,20,0.07);cursor:pointer;transition:opacity 0.22s,transform 0.22s;pointer-events:all}
 .pr:hover{opacity:0.55;transform:translateX(4px)}
 .pr:last-child{border-bottom:none}
 .pr-sw{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:2px}
 .pr-body{flex:1;display:flex;flex-direction:column;gap:5px;min-width:0}
 .pr-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
-.pr-w{font-family:'Italiana',serif;font-size:18px;color:#fff;font-weight:700;line-height:1;letter-spacing:-0.01em}
-.pr-bar-track{height:1.5px;background:rgba(255,255,255,0.06);border-radius:1px;overflow:hidden}
+.pr-w{font-family:'Italiana',serif;font-size:18px;color:#1A1714;font-weight:700;line-height:1;letter-spacing:-0.01em}
+.pr-bar-track{height:1.5px;background:rgba(26,23,20,0.10);border-radius:1px;overflow:hidden}
 .pr-bar{height:100%;border-radius:1px;transition:width 0.6s cubic-bezier(0.25,0.46,0.45,0.94)}
 
 /* ═══════════════════════════
@@ -629,58 +611,58 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 ═══════════════════════════ */
 #card-modal{
   position:absolute;inset:0;z-index:600;display:flex;flex-direction:column;
-  background:#060608;
+  background:#F0EDE6;
   opacity:0;pointer-events:none;transition:opacity 0.4s ease;border-radius:44px;overflow:hidden;
 }
 #card-modal.show{opacity:1;pointer-events:all}
-.modal-wp{width:100%;height:54%;position:relative;overflow:hidden;flex-shrink:0;background:#06060c}
-.modal-wp-bg{position:absolute;inset:-45%;background:var(--g);animation:waveOrg 14s ease-in-out infinite;filter:blur(28px) saturate(1.6)}
-.modal-wp-vignette{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(6,6,8,0.12) 0%,transparent 30%,rgba(8,8,14,0.9) 100%)}
-.modal-wp-noise{position:absolute;inset:0;opacity:0.055;mix-blend-mode:overlay;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+.modal-wp{width:100%;height:54%;position:relative;overflow:hidden;flex-shrink:0;background:#EAE5DC}
+.modal-wp-bg{position:absolute;inset:-45%;background:var(--g);animation:waveOrg 14s ease-in-out infinite;filter:blur(32px) saturate(1.2) brightness(1.12)}
+.modal-wp-vignette{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(240,237,230,0.08) 0%,transparent 30%,rgba(240,237,230,0.88) 100%)}
+.modal-wp-noise{position:absolute;inset:0;opacity:0.055;mix-blend-mode:multiply;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
 .modal-wp-hd{position:absolute;top:18px;left:20px;right:20px;display:flex;justify-content:space-between;align-items:center;z-index:4}
-.modal-date{font-size:9px;color:rgba(255,255,255,0.62);letter-spacing:0.12em;font-family:'Inter',sans-serif}
-.modal-x{width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.38);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.85);font-size:13px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Inter',sans-serif;flex-shrink:0;line-height:1;padding:0;appearance:none;-webkit-appearance:none}
-.modal-wp-feel{position:absolute;bottom:22px;left:20px;right:56px;font-family:'Italiana',serif;font-size:38px;font-style:italic;font-weight:700;color:#fff;line-height:1.0;letter-spacing:-0.02em;z-index:4;text-shadow:0 2px 32px rgba(0,0,0,0.55)}
-.modal-body{flex:1;background:#08080e;padding:20px 22px 30px;display:flex;flex-direction:column;overflow-y:auto;scrollbar-width:none;border-top:1px solid rgba(255,255,255,0.07)}
+.modal-date{font-size:9px;color:rgba(26,23,20,0.52);letter-spacing:0.12em;font-family:'Inter',sans-serif}
+.modal-x{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.65);backdrop-filter:blur(16px);border:1px solid rgba(26,23,20,0.12);color:rgba(26,23,20,0.72);font-size:13px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'Inter',sans-serif;flex-shrink:0;line-height:1;padding:0;appearance:none;-webkit-appearance:none}
+.modal-wp-feel{position:absolute;bottom:22px;left:20px;right:56px;font-family:'Italiana',serif;font-size:38px;font-style:italic;font-weight:700;color:#1A1714;line-height:1.0;letter-spacing:-0.02em;z-index:4}
+.modal-body{flex:1;background:#F4F1EA;padding:20px 22px 30px;display:flex;flex-direction:column;overflow-y:auto;scrollbar-width:none;border-top:1px solid rgba(26,23,20,0.07)}
 .modal-body::-webkit-scrollbar{display:none}
-.modal-section-lbl{font-size:9px;letter-spacing:0.14em;color:rgba(255,255,255,0.24);font-family:'Inter',sans-serif;margin-bottom:12px}
+.modal-section-lbl{font-size:9px;letter-spacing:0.14em;color:rgba(26,23,20,0.30);font-family:'Inter',sans-serif;margin-bottom:12px}
 .modal-section-lbl-mt{margin-top:20px}
 .modal-obs{display:flex;flex-direction:column;gap:12px}
 .modal-ob{display:flex;align-items:flex-start;gap:11px}
 .modal-ob-dot{width:5px;height:5px;border-radius:50%;background:var(--c,#c88028);flex-shrink:0;margin-top:7px}
-.modal-ob-text{font-family:'Italiana',serif;font-size:15px;font-style:italic;color:rgba(255,255,255,0.76);line-height:1.54}
+.modal-ob-text{font-family:'Italiana',serif;font-size:15px;font-style:italic;color:rgba(26,23,20,0.72);line-height:1.54}
 .modal-chart-labels{display:flex;gap:12px;margin-top:10px;flex-wrap:wrap}
 .modal-chart-lbl{display:flex;align-items:center;gap:5px}
 .modal-chart-lbl-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.modal-chart-lbl-text{font-family:'Inter',sans-serif;font-size:9px;color:rgba(255,255,255,0.32);letter-spacing:0.06em}
+.modal-chart-lbl-text{font-family:'Inter',sans-serif;font-size:9px;color:rgba(26,23,20,0.38);letter-spacing:0.06em}
 
 /* ═══════════════════════════
    PULSE INSIGHT PANEL
 ═══════════════════════════ */
 #pulse-panel{
   position:absolute;bottom:0;left:0;right:0;z-index:400;
-  background:rgba(3,2,12,0.88);backdrop-filter:blur(52px);
-  border-top:1px solid rgba(255,255,255,0.08);border-radius:28px 28px 0 0;
+  background:rgba(248,245,240,0.96);backdrop-filter:blur(52px);
+  border-top:1px solid rgba(26,23,20,0.08);border-radius:28px 28px 0 0;
   padding:0 24px 72px;
   transform:translateY(100%);transition:transform 0.42s cubic-bezier(0.25,0.46,0.45,0.94);
 }
 #pulse-panel.show{transform:translateY(0)}
-.pp-handle{width:36px;height:4px;background:rgba(255,255,255,0.12);border-radius:2px;margin:14px auto 18px}
-.pp-feel{font-family:'Italiana',serif;font-size:38px;font-style:italic;font-weight:700;color:#fff;line-height:1;letter-spacing:-0.02em;margin-bottom:6px}
-.pp-headline{font-family:'Italiana',serif;font-size:14px;color:rgba(255,255,255,0.5);font-style:italic;line-height:1.5;margin-bottom:14px}
-.pp-section{font-size:9px;letter-spacing:0.14em;color:rgba(255,255,255,0.2);font-family:'Inter',sans-serif;margin-bottom:10px;margin-top:16px}
-.pp-sparkline-wrap{position:relative;width:100%;height:64px;border-radius:14px;overflow:hidden;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.06)}
+.pp-handle{width:36px;height:4px;background:rgba(26,23,20,0.12);border-radius:2px;margin:14px auto 18px}
+.pp-feel{font-family:'Italiana',serif;font-size:38px;font-style:italic;font-weight:700;color:#1A1714;line-height:1;letter-spacing:-0.02em;margin-bottom:6px}
+.pp-headline{font-family:'Italiana',serif;font-size:14px;color:rgba(26,23,20,0.52);font-style:italic;line-height:1.5;margin-bottom:14px}
+.pp-section{font-size:9px;letter-spacing:0.14em;color:rgba(26,23,20,0.28);font-family:'Inter',sans-serif;margin-bottom:10px;margin-top:16px}
+.pp-sparkline-wrap{position:relative;width:100%;height:64px;border-radius:14px;overflow:hidden;background:rgba(26,23,20,0.03);border:1px solid rgba(26,23,20,0.07)}
 .pp-paired{display:flex;gap:8px;flex-wrap:wrap}
-.pp-paired-chip{font-family:'Italiana',serif;font-size:15px;font-style:italic;color:rgba(255,255,255,0.72);background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:50px;padding:6px 16px}
+.pp-paired-chip{font-family:'Italiana',serif;font-size:15px;font-style:italic;color:rgba(26,23,20,0.70);background:rgba(26,23,20,0.05);border:1px solid rgba(26,23,20,0.10);border-radius:50px;padding:6px 16px}
 .pp-words{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
-.pp-word{font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);border-radius:50px;padding:4px 12px;letter-spacing:0.04em}
-.pp-close{margin-top:18px;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);color:rgba(255,255,255,0.4);font-family:'Italiana',serif;font-size:14px;font-style:italic;padding:12px;border-radius:12px;cursor:pointer}
-.modal-share-btn{margin-top:24px;width:100%;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.22);color:rgba(255,255,255,0.88);font-family:'Italiana',serif;font-size:15px;font-style:italic;font-weight:700;padding:13px;border-radius:12px;cursor:pointer;transition:background 0.2s,color 0.2s,border-color 0.2s;letter-spacing:0.01em;backdrop-filter:blur(10px)}
-.modal-share-btn:hover{background:rgba(255,255,255,0.16);border-color:rgba(255,255,255,0.34)}
-.modal-delete-btn{margin-top:10px;width:100%;background:none;border:1px solid rgba(220,80,80,0.18);color:rgba(220,80,80,0.38);font-family:'Italiana',serif;font-size:13px;font-style:italic;padding:11px;border-radius:12px;cursor:pointer;transition:color 0.2s,border-color 0.2s;letter-spacing:0.01em}
-.modal-delete-btn:hover{color:rgba(220,80,80,0.70);border-color:rgba(220,80,80,0.40)}
-.modal-delete-btn.confirming{color:rgba(220,80,80,0.80);border-color:rgba(220,80,80,0.55)}
-.modal-delete-confirm{font-family:'Inter',sans-serif;font-size:8px;letter-spacing:0.10em;color:rgba(220,80,80,0.42);text-transform:uppercase;text-align:center;margin-top:6px;opacity:0;transition:opacity 0.3s ease}
+.pp-word{font-family:'Inter',sans-serif;font-size:10px;color:rgba(26,23,20,0.48);background:rgba(26,23,20,0.04);border:1px solid rgba(26,23,20,0.08);border-radius:50px;padding:4px 12px;letter-spacing:0.04em}
+.pp-close{margin-top:18px;width:100%;background:rgba(26,23,20,0.04);border:1px solid rgba(26,23,20,0.09);color:rgba(26,23,20,0.42);font-family:'Italiana',serif;font-size:14px;font-style:italic;padding:12px;border-radius:12px;cursor:pointer}
+.modal-share-btn{margin-top:24px;width:100%;background:rgba(26,23,20,0.07);border:1px solid rgba(26,23,20,0.14);color:rgba(26,23,20,0.82);font-family:'Italiana',serif;font-size:15px;font-style:italic;font-weight:700;padding:13px;border-radius:12px;cursor:pointer;transition:background 0.2s,color 0.2s,border-color 0.2s;letter-spacing:0.01em;backdrop-filter:blur(10px)}
+.modal-share-btn:hover{background:rgba(26,23,20,0.12);border-color:rgba(26,23,20,0.22)}
+.modal-delete-btn{margin-top:10px;width:100%;background:none;border:1px solid rgba(180,60,60,0.18);color:rgba(180,60,60,0.42);font-family:'Italiana',serif;font-size:13px;font-style:italic;padding:11px;border-radius:12px;cursor:pointer;transition:color 0.2s,border-color 0.2s;letter-spacing:0.01em}
+.modal-delete-btn:hover{color:rgba(180,60,60,0.72);border-color:rgba(180,60,60,0.40)}
+.modal-delete-btn.confirming{color:rgba(180,60,60,0.82);border-color:rgba(180,60,60,0.55)}
+.modal-delete-confirm{font-family:'Inter',sans-serif;font-size:8px;letter-spacing:0.10em;color:rgba(180,60,60,0.45);text-transform:uppercase;text-align:center;margin-top:6px;opacity:0;transition:opacity 0.3s ease}
 .modal-delete-confirm.show{opacity:1}
 
 /* ═══════════════════════════
@@ -690,31 +672,31 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
   position:absolute;inset:0;z-index:998;pointer-events:all;
   display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;
   padding:60px 28px 108px;
-  background:linear-gradient(to bottom,rgba(6,6,8,0.28) 0%,rgba(6,6,8,0.82) 52%,rgba(6,6,8,0.96) 100%);
+  background:linear-gradient(to bottom,rgba(240,237,230,0.10) 0%,rgba(240,237,230,0.80) 45%,rgba(240,237,230,0.97) 100%);
   transition:opacity 0.55s ease;
 }
 #intro-overlay.done{opacity:0;pointer-events:none;}
 .intro-badge{align-self:flex-start;margin-bottom:auto}
 .intro-headline{
   font-family:'Italiana',serif;font-size:36px;line-height:1.0;font-weight:700;
-  color:#fff;letter-spacing:-0.02em;margin-bottom:14px;
+  color:#1A1714;letter-spacing:-0.02em;margin-bottom:14px;
 }
 .intro-sub{
   font-family:'Inter',sans-serif;font-size:13px;font-style:italic;
-  color:rgba(255,255,255,0.40);line-height:1.55;margin-bottom:34px;
+  color:rgba(26,23,20,0.48);line-height:1.55;margin-bottom:34px;
 }
 .intro-privacy{
   font-family:'Inter',sans-serif;font-size:10.5px;
-  color:rgba(255,255,255,0.22);line-height:1.5;margin-bottom:16px;
+  color:rgba(26,23,20,0.30);line-height:1.5;margin-bottom:16px;
   letter-spacing:0.01em;
 }
 .intro-btn{
   width:100%;padding:16px 28px;border-radius:14px;
-  background:rgba(255,255,255,0.10);color:#fff;
-  border:1px solid rgba(255,255,255,0.18);
+  background:rgba(26,23,20,0.08);color:#1A1714;
+  border:1px solid rgba(26,23,20,0.14);
   font-family:'Italiana',serif;font-size:18px;font-style:italic;font-weight:700;
   cursor:pointer;backdrop-filter:blur(16px);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.14);letter-spacing:0.01em;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);letter-spacing:0.01em;
 }
 /* Hide S1 UI elements during onboarding so only the canvas shows through */
 #s1.onboarding .s1-head,
@@ -733,7 +715,7 @@ body{background:#060608;display:flex;justify-content:center;align-items:center;m
 #dot-hint{
   position:absolute;top:calc(54px + env(safe-area-inset-top));right:22px;z-index:41;
   font-family:'Inter',sans-serif;font-size:8px;letter-spacing:0.12em;
-  color:rgba(255,255,255,0.22);pointer-events:none;
+  color:rgba(255,255,255,0.52);pointer-events:none;
   transition:opacity 0.4s ease;
 }
 #dot-hint.gone{opacity:0;}
@@ -1033,41 +1015,24 @@ function renderWheel(t){
     }
   }
 
-  // ── Dark radial vignette — mirrors the quadratic dark zone in getWheelColor ──
-  // Darkness kicks in harder at ~46% radius to visually match what's pickable.
+  // ── Warm radial vignette — mirrors getWheelColor zones, fades to deep warm ──
   const dk=wheelCtx.createRadialGradient(W_CX,W_CY,W_BASE_R*0.18,W_CX,W_CY,W_BASE_R);
-  dk.addColorStop(0,    'rgba(0,0,0,0)');
-  dk.addColorStop(0.18, 'rgba(0,0,0,0.15)');
-  dk.addColorStop(0.36, 'rgba(0,0,0,0.55)');
-  dk.addColorStop(0.52, 'rgba(0,0,0,0.82)');
-  dk.addColorStop(0.70, 'rgba(0,0,0,0.96)');
-  dk.addColorStop(1,    'rgba(0,0,0,0.99)');
+  dk.addColorStop(0,    'rgba(26,20,14,0)');
+  dk.addColorStop(0.22, 'rgba(26,20,14,0.08)');
+  dk.addColorStop(0.42, 'rgba(26,20,14,0.38)');
+  dk.addColorStop(0.62, 'rgba(26,20,14,0.62)');
+  dk.addColorStop(0.82, 'rgba(26,20,14,0.80)');
+  dk.addColorStop(1,    'rgba(26,20,14,0.88)');
   wheelCtx.fillStyle=dk;
   wheelCtx.fillRect(0,0,W,H);
 
-  // ── Drifting dark void pools — pockets of deep black moving through spectrum ──
-  const dv1x=W_CX+Math.cos(t*0.19+0.8)*W_BASE_R*0.54;
-  const dv1y=W_CY+Math.sin(t*0.14+1.2)*W_BASE_R*0.50;
-  const void1=wheelCtx.createRadialGradient(dv1x,dv1y,0,dv1x,dv1y,W_BASE_R*0.44);
-  void1.addColorStop(0,'rgba(0,0,0,0.38)');
-  void1.addColorStop(0.40,'rgba(0,0,0,0.12)');
-  void1.addColorStop(1,'rgba(0,0,0,0)');
-  wheelCtx.fillStyle=void1;wheelCtx.fillRect(0,0,W,H);
-
-  const dv2x=W_CX+Math.cos(t*0.11+3.8)*W_BASE_R*0.48;
-  const dv2y=W_CY+Math.sin(t*0.16+2.6)*W_BASE_R*0.44;
-  const void2=wheelCtx.createRadialGradient(dv2x,dv2y,0,dv2x,dv2y,W_BASE_R*0.38);
-  void2.addColorStop(0,'rgba(0,0,0,0.32)');
-  void2.addColorStop(0.48,'rgba(0,0,0,0.08)');
-  void2.addColorStop(1,'rgba(0,0,0,0)');
-  wheelCtx.fillStyle=void2;wheelCtx.fillRect(0,0,W,H);
-
-  const dv3x=W_CX+Math.cos(t*0.076+6.1)*W_BASE_R*0.36;
-  const dv3y=W_CY+Math.sin(t*0.092+4.4)*W_BASE_R*0.38;
-  const void3=wheelCtx.createRadialGradient(dv3x,dv3y,0,dv3x,dv3y,W_BASE_R*0.28);
-  void3.addColorStop(0,'rgba(0,0,0,0.26)');
-  void3.addColorStop(1,'rgba(0,0,0,0)');
-  wheelCtx.fillStyle=void3;wheelCtx.fillRect(0,0,W,H);
+  // ── Feather wheel edge into page background — soft dissolve ──
+  const edge=wheelCtx.createRadialGradient(W_CX,W_CY,W_BASE_R*0.82,W_CX,W_CY,W_BASE_R*1.18);
+  edge.addColorStop(0,'rgba(240,237,230,0)');
+  edge.addColorStop(0.55,'rgba(240,237,230,0.65)');
+  edge.addColorStop(1,'rgba(240,237,230,1.0)');
+  wheelCtx.fillStyle=edge;
+  wheelCtx.fillRect(0,0,W,H);
 
   // ── Colored light orbs — large, faster, sweeping wider arcs ──
   const co1Angle=t*0.46+0.0;
@@ -1088,9 +1053,9 @@ function renderWheel(t){
   const co2Hue=((co2Angle*180/Math.PI)+180)%360;
   const[cr2,cg2,cb2]=hslToRgb(co2Hue,0.92,0.68);
   const orb2=wheelCtx.createRadialGradient(co2x,co2y,0,co2x,co2y,W_BASE_R*0.54);
-  orb2.addColorStop(0,`rgba(${cr2},${cg2},${cb2},0.70)`);
-  orb2.addColorStop(0.36,`rgba(${cr2},${cg2},${cb2},0.28)`);
-  orb2.addColorStop(0.68,`rgba(${cr2},${cg2},${cb2},0.06)`);
+  orb2.addColorStop(0,`rgba(${cr2},${cg2},${cb2},0.32)`);
+  orb2.addColorStop(0.36,`rgba(${cr2},${cg2},${cb2},0.10)`);
+  orb2.addColorStop(0.68,`rgba(${cr2},${cg2},${cb2},0.02)`);
   orb2.addColorStop(1,`rgba(${cr2},${cg2},${cb2},0)`);
   wheelCtx.fillStyle=orb2;wheelCtx.fillRect(0,0,W,H);
 
@@ -1098,86 +1063,56 @@ function renderWheel(t){
   const co3x=W_CX+Math.cos(co3Angle)*W_BASE_R*0.44;
   const co3y=W_CY+Math.sin(co3Angle*1.18+1.0)*W_BASE_R*0.42;
   const co3Hue=((co3Angle*180/Math.PI)+90)%360;
-  const[cr3,cg3,cb3]=hslToRgb(co3Hue,0.90,0.70);
+  const[cr3,cg3,cb3]=hslToRgb(co3Hue,0.75,0.62);
   const orb3=wheelCtx.createRadialGradient(co3x,co3y,0,co3x,co3y,W_BASE_R*0.46);
-  orb3.addColorStop(0,`rgba(${cr3},${cg3},${cb3},0.62)`);
-  orb3.addColorStop(0.42,`rgba(${cr3},${cg3},${cb3},0.18)`);
+  orb3.addColorStop(0,`rgba(${cr3},${cg3},${cb3},0.28)`);
+  orb3.addColorStop(0.42,`rgba(${cr3},${cg3},${cb3},0.08)`);
   orb3.addColorStop(1,`rgba(${cr3},${cg3},${cb3},0)`);
   wheelCtx.fillStyle=orb3;wheelCtx.fillRect(0,0,W,H);
 
-  // ── Fourth orb — counter-rotating, adds complexity and cross-movement ──
-  const co4Angle=-t*0.19+Math.PI*2.1;
-  const co4x=W_CX+Math.cos(co4Angle*1.1)*W_BASE_R*0.46;
-  const co4y=W_CY+Math.sin(co4Angle*0.9+2.4)*W_BASE_R*0.44;
-  const co4Hue=((co4Angle*180/Math.PI)+270)%360;
-  const[cr4,cg4,cb4]=hslToRgb(co4Hue,0.88,0.68);
-  const orb4=wheelCtx.createRadialGradient(co4x,co4y,0,co4x,co4y,W_BASE_R*0.50);
-  orb4.addColorStop(0,`rgba(${cr4},${cg4},${cb4},0.58)`);
-  orb4.addColorStop(0.40,`rgba(${cr4},${cg4},${cb4},0.16)`);
-  orb4.addColorStop(1,`rgba(${cr4},${cg4},${cb4},0)`);
-  wheelCtx.fillStyle=orb4;wheelCtx.fillRect(0,0,W,H);
-
-  // ── White shimmer — faster sweeping arcs, more visible ──
+  // ── Soft shimmer sweep — gentle light on water ──
   if(_hasConicGradient){
     const a1=-Math.PI/2+t*0.38;
     const sh1=wheelCtx.createConicGradient(a1,W_CX,W_CY);
     sh1.addColorStop(0,'rgba(255,255,255,0)');
-    sh1.addColorStop(0.032,'rgba(255,255,255,0.42)');
-    sh1.addColorStop(0.080,'rgba(255,255,255,0.16)');
+    sh1.addColorStop(0.032,'rgba(255,255,255,0.22)');
+    sh1.addColorStop(0.080,'rgba(255,255,255,0.07)');
     sh1.addColorStop(0.160,'rgba(255,255,255,0)');
     sh1.addColorStop(1,'rgba(255,255,255,0)');
     wheelCtx.fillStyle=sh1;wheelCtx.fillRect(0,0,W,H);
-
-    const a2=-Math.PI/2-t*0.22+Math.PI*0.72;
-    const sh2=wheelCtx.createConicGradient(a2,W_CX,W_CY);
-    sh2.addColorStop(0,'rgba(255,255,255,0)');
-    sh2.addColorStop(0.022,'rgba(255,255,255,0.26)');
-    sh2.addColorStop(0.060,'rgba(255,255,255,0.06)');
-    sh2.addColorStop(0.120,'rgba(255,255,255,0)');
-    sh2.addColorStop(1,'rgba(255,255,255,0)');
-    wheelCtx.fillStyle=sh2;wheelCtx.fillRect(0,0,W,H);
   }
 
-  // ── Pulsing outer glow ring — bigger amplitude ──
-  const pulse=0.5+Math.sin(t*0.68)*0.5;
-  const ringR=W_BASE_R*(0.58+pulse*0.13);
-  const ring=wheelCtx.createRadialGradient(W_CX,W_CY,ringR*0.78,W_CX,W_CY,ringR);
-  ring.addColorStop(0,'rgba(255,255,255,0)');
-  ring.addColorStop(0.50,`rgba(255,255,255,${(0.10+pulse*0.16).toFixed(3)})`);
-  ring.addColorStop(1,'rgba(255,255,255,0)');
-  wheelCtx.fillStyle=ring;wheelCtx.fillRect(0,0,W,H);
-
-  // ── Breathing luminous center — more pronounced ──
+  // ── Soft breathing center — warm cream ──
   const breathe=0.52+Math.sin(t*0.88)*0.22;
-  const cf=wheelCtx.createRadialGradient(W_CX,W_CY,0,W_CX,W_CY,W_BASE_R*breathe*0.42);
-  cf.addColorStop(0,'rgba(255,255,255,0.96)');
-  cf.addColorStop(0.18,'rgba(255,255,255,0.48)');
-  cf.addColorStop(0.48,'rgba(255,255,255,0.12)');
-  cf.addColorStop(1,'rgba(255,255,255,0)');
+  const cf=wheelCtx.createRadialGradient(W_CX,W_CY,0,W_CX,W_CY,W_BASE_R*breathe*0.40);
+  cf.addColorStop(0,'rgba(248,244,238,0.95)');
+  cf.addColorStop(0.22,'rgba(248,244,238,0.52)');
+  cf.addColorStop(0.52,'rgba(248,244,238,0.14)');
+  cf.addColorStop(1,'rgba(248,244,238,0)');
   wheelCtx.fillStyle=cf;wheelCtx.fillRect(0,0,W,H);
 
   // ── Touch spotlight ──
   if(wheelDragPos&&dragging){
     const{wx,wy}=wheelDragPos;
     const ts=wheelCtx.createRadialGradient(wx,wy,0,wx,wy,64);
-    ts.addColorStop(0,'rgba(255,255,255,0.30)');
-    ts.addColorStop(0.45,'rgba(255,255,255,0.08)');
+    ts.addColorStop(0,'rgba(255,255,255,0.28)');
+    ts.addColorStop(0.45,'rgba(255,255,255,0.06)');
     ts.addColorStop(1,'rgba(255,255,255,0)');
     wheelCtx.fillStyle=ts;wheelCtx.fillRect(0,0,W,H);
   }
 
-  // ── Top dark band — readability for title text ──
-  const tv=wheelCtx.createLinearGradient(0,0,0,180);
-  tv.addColorStop(0,'rgba(0,0,0,0.72)');
-  tv.addColorStop(0.55,'rgba(0,0,0,0.22)');
-  tv.addColorStop(1,'rgba(0,0,0,0)');
-  wheelCtx.fillStyle=tv;wheelCtx.fillRect(0,0,W,180);
+  // ── Top fade — merges into page background for title readability ──
+  const tv=wheelCtx.createLinearGradient(0,0,0,160);
+  tv.addColorStop(0,'rgba(240,237,230,0.88)');
+  tv.addColorStop(0.55,'rgba(240,237,230,0.28)');
+  tv.addColorStop(1,'rgba(240,237,230,0)');
+  wheelCtx.fillStyle=tv;wheelCtx.fillRect(0,0,W,160);
 
-  // ── Bottom fade — merges into the panel glass ──
+  // ── Bottom fade — merges into the panel ──
   const bv=wheelCtx.createLinearGradient(0,H-310,0,H);
-  bv.addColorStop(0,'rgba(6,6,8,0)');
-  bv.addColorStop(0.55,'rgba(6,6,8,0.80)');
-  bv.addColorStop(1,'rgba(6,6,8,0.97)');
+  bv.addColorStop(0,'rgba(240,237,230,0)');
+  bv.addColorStop(0.55,'rgba(240,237,230,0.82)');
+  bv.addColorStop(1,'rgba(240,237,230,0.98)');
   wheelCtx.fillStyle=bv;wheelCtx.fillRect(0,H-310,W,310);
 
   // ── Time-of-day ambient tint — very subtle hue wash over the wheel ──
@@ -1220,19 +1155,18 @@ function getWheelColor(wx,wy){
   let sat,light;
   if(norm<0.20){
     // Inner white zone: saturation builds, lightness fades from pure white
-    sat=(norm/0.20)*0.92;
+    sat=(norm/0.20)*0.72;
     light=1.0-(norm/0.20)*0.42;
   } else if(norm<0.36){
-    // Saturated mid ring — peak chroma (tightened so dark zone starts earlier)
+    // Saturated mid ring — peak chroma, watercolor-muted for light theme
     const t=(norm-0.20)/0.16;
-    sat=0.92;
+    sat=0.72;
     light=0.58-t*0.12; // 0.58 → 0.46
   } else {
-    // Dark outer zone — starts much earlier so sides/edges of wheel are properly dark.
-    // At norm=0.47 (screen edge on 375px phone): t=0.306 → light=0.221 (rich dark color).
-    const t=Math.min((norm-0.36)/0.36,1.0); // saturates at norm 0.72
-    sat=0.88-t*0.55;                         // 0.88 → 0.33 (desaturates to near-grey at black)
-    light=0.46*Math.pow(1-t,2);             // quadratic drop: 0.46 → 0 much faster than linear
+    // Outer zone — muted, deepening toward near-black at the rim
+    const t=Math.min((norm-0.36)/0.36,1.0);
+    sat=0.72-t*0.42;                         // 0.72 → 0.30 (desaturates toward edge)
+    light=0.05+0.41*Math.pow(1-t,0.80);      // 0.46 → 0.05 (near-black at outer edge)
   }
   const[r,g,b]=hslToRgb(hue,sat,light);
   return rgbToHex(r,g,b);
@@ -1253,7 +1187,7 @@ function renderOrbBg(ctx,hexArr,t,W,H){
   if(!hexArr||!hexArr.length)return;
 
   ctx.globalCompositeOperation='source-over';
-  ctx.fillStyle='#070514';
+  ctx.fillStyle='#F0EDE6';
   ctx.fillRect(0,0,W,H);
 
   const n=hexArr.length;
@@ -1318,23 +1252,23 @@ function renderOrbBg(ctx,hexArr,t,W,H){
     ctx.fillStyle=grd;ctx.fill();
   }
 
-  // Center glow — hot white spike + color bloom, breathing
-  ctx.globalCompositeOperation='lighter';
+  // Center glow — warm bloom, softer on light background
+  ctx.globalCompositeOperation='source-over';
   const[rcC,gcC,bcC]=lerpColor(0);
-  const glowR=W*0.20+Math.sin(t*0.40)*W*0.04;
+  const glowR=W*0.22+Math.sin(t*0.40)*W*0.04;
   const glow=ctx.createRadialGradient(rx,ry,0,rx,ry,glowR);
-  glow.addColorStop(0,   'rgba(255,255,255,0.88)');
-  glow.addColorStop(0.22,`rgba(${rcC|0},${gcC|0},${bcC|0},0.55)`);
-  glow.addColorStop(0.62,`rgba(${rcC|0},${gcC|0},${bcC|0},0.12)`);
+  glow.addColorStop(0,   'rgba(255,255,255,0.55)');
+  glow.addColorStop(0.22,`rgba(${rcC|0},${gcC|0},${bcC|0},0.28)`);
+  glow.addColorStop(0.62,`rgba(${rcC|0},${gcC|0},${bcC|0},0.06)`);
   glow.addColorStop(1,   `rgba(${rcC|0},${gcC|0},${bcC|0},0)`);
   ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
 
-  // Very subtle corner-only vignette (keeps corners from looking raw)
+  // Soft cream edge — blends corners back into page background
   ctx.globalCompositeOperation='source-over';
   const vig=ctx.createRadialGradient(cx,cy,maxR*0.58,cx,cy,maxR*1.05);
-  vig.addColorStop(0,'rgba(0,0,0,0)');
-  vig.addColorStop(0.72,'rgba(0,0,0,0)');
-  vig.addColorStop(1,'rgba(0,0,0,0.30)');
+  vig.addColorStop(0,'rgba(240,237,230,0)');
+  vig.addColorStop(0.72,'rgba(240,237,230,0)');
+  vig.addColorStop(1,'rgba(240,237,230,0.45)');
   ctx.fillStyle=vig;ctx.fillRect(0,0,W,H);
 }
 
@@ -1365,13 +1299,12 @@ function renderExportCard(ctx,entry,t){
   ctx.fillStyle=tg;ctx.fillRect(0,H*0.46,W,H*0.54);
   ctx.textBaseline='top';
 
-  // Logo — compact colored pill matching story badge
+  // Logo — white pill
   ctx.font="italic bold 13px Italiana,serif";ctx.textAlign='left';
   const eTxt="letsbehonest.space",ePadX=10,eH=22,eX=26,eY=62;
   const eW=ctx.measureText(eTxt).width+ePadX*2;
-  const[eR,eG,eB]=hexToRgb(entry.hexArr[0]);
-  ctx.fillStyle=`rgba(${eR},${eG},${eB},0.40)`;
-  ctx.strokeStyle=`rgba(${eR},${eG},${eB},0.75)`;ctx.lineWidth=1;
+  ctx.fillStyle='rgba(255,255,255,0.22)';
+  ctx.strokeStyle='rgba(255,255,255,0.48)';ctx.lineWidth=1;
   _storyRRect(ctx,eX,eY,eW,eH,11);ctx.fill();ctx.stroke();
   ctx.fillStyle='rgba(255,255,255,0.96)';ctx.textBaseline='middle';
   ctx.fillText(eTxt,eX+ePadX,eY+eH/2);
@@ -1442,13 +1375,12 @@ function renderStoryFrame(ctx, entry, t){
   ctx.globalCompositeOperation='source-over';
   ctx.fillStyle=tg; ctx.fillRect(0,LH*0.46,LW,LH*0.54);
 
-  // 3. Badge — compact pill, colored fill pulled from entry's primary color
+  // 3. Badge — white pill
   ctx.font='italic bold 15px Italiana,serif';
   const bTxt="letsbehonest.space", bPadX=13, bH=26, bX=36, bY=72;
   const bW=ctx.measureText(bTxt).width+bPadX*2;
-  const[bR,bG,bB]=hexToRgb(entry.hexArr[0]);
-  ctx.fillStyle=`rgba(${bR},${bG},${bB},0.45)`;
-  ctx.strokeStyle=`rgba(${bR},${bG},${bB},0.80)`; ctx.lineWidth=1.2;
+  ctx.fillStyle='rgba(255,255,255,0.22)';
+  ctx.strokeStyle='rgba(255,255,255,0.50)'; ctx.lineWidth=1.2;
   _storyRRect(ctx,bX,bY,bW,bH,14); ctx.fill(); ctx.stroke();
   ctx.fillStyle='rgba(255,255,255,0.96)';
   ctx.textBaseline='middle'; ctx.textAlign='left';
@@ -1597,10 +1529,10 @@ function renderAck(t){
   renderOrbBg(ackCtx,ackHexArr,t,W,H);
   const a=scrimAlpha(ackHexArr);
   const lg=ackCtx.createLinearGradient(0,H*0.46,0,H);
-  lg.addColorStop(0,   'rgba(5,3,14,0)');
-  lg.addColorStop(0.30,`rgba(5,3,14,${+(a*0.55).toFixed(2)})`);
-  lg.addColorStop(0.65,`rgba(5,3,14,${+(a*0.82).toFixed(2)})`);
-  lg.addColorStop(1,   `rgba(5,3,14,${a})`);
+  lg.addColorStop(0,   'rgba(240,237,230,0)');
+  lg.addColorStop(0.30,`rgba(240,237,230,${+(a*0.55).toFixed(2)})`);
+  lg.addColorStop(0.65,`rgba(240,237,230,${+(a*0.82).toFixed(2)})`);
+  lg.addColorStop(1,   `rgba(240,237,230,${a})`);
   ackCtx.fillStyle=lg;ackCtx.fillRect(0,H*0.46,W,H*0.54);
 }
 
@@ -2424,20 +2356,24 @@ const INSIGHTS_LIST=[
 ];
 function buildDominantTones(all){
   const counts={};
+  const sums={};
   all.forEach(e=>e.hexArr.forEach(h=>{
     const g=hueGroup(hexToHue(h));
     counts[g]=(counts[g]||0)+1;
+    if(!sums[g])sums[g]=[0,0,0];
+    const[r,gv,b]=hexToRgb(h);
+    sums[g][0]+=r;sums[g][1]+=gv;sums[g][2]+=b;
   }));
   const total=Object.values(counts).reduce((s,v)=>s+v,0)||1;
   return Object.entries(counts)
     .sort((a,b)=>b[1]-a[1])
     .slice(0,6)
-    .map(([g,c])=>({
-      group:g,
-      label:TONE_META[g]?.label||g,
-      hex:TONE_META[g]?.hex||'#888',
-      pct:Math.round(c/total*100)
-    }));
+    .map(([g,c])=>{
+      // Use actual average of user's picked colors in this hue group
+      const s=sums[g];
+      const hex=s?rgbToHex(Math.round(s[0]/c),Math.round(s[1]/c),Math.round(s[2]/c)):(TONE_META[g]?.hex||'#888');
+      return{group:g,label:TONE_META[g]?.label||g,hex,pct:Math.round(c/total*100)};
+    });
 }
 
 let donutTones=[];
@@ -2462,178 +2398,112 @@ function drawRipple(tones,t=0){
   if(!n)return;
 
   const cx=W/2, cy=H/2;
-  // Keep rings fully within canvas — outermost ring stays inside the frame
-  const maxR=Math.min(W*0.46,H*0.44);
 
-  // ── Pure dark base ────────────────────────────────────────────────
+  // ── Warm cream base ───────────────────────────────────────────────
   ctx.globalCompositeOperation='source-over';
-  ctx.fillStyle='#060608';
+  ctx.fillStyle='#F0EDE6';
   ctx.fillRect(0,0,W,H);
 
-  // ── Ring geometry ─────────────────────────────────────────────────
-  // Dominant tone = innermost ring. Rings evenly spaced radially.
-  // Ring half-width ∝ sqrt(pct) — dominant is thicker/more prominent.
-  const minRingR=maxR*0.18;
-  const maxRingR=maxR*0.96;
-  const radStep=n>1?(maxRingR-minRingR)/(n-1):0;
-  const total=sorted.reduce((s,tn)=>s+Math.sqrt(tn.pct/100),0)||1;
+  // ── Concentric stacked rings — V7 structure, no neon ─────────────
+  // Each tone = one annular ring. Dominant = outermost, widest band.
+  // Rings are crisp-edged annuli clipped from the canvas fill.
+  // No blur, no glow, no lighter composite — just solid color stacking.
+  const maxR=Math.min(W,H)*0.44;
+  const minR=maxR*0.06;  // center hole radius
+  const bandW=(maxR-minR)/Math.max(n,1);
 
   rippleRings=sorted.map((tone,i)=>{
-    const peakR=n===1?(minRingR+maxRingR)*0.5:minRingR+i*radStep;
-    const frac=Math.sqrt(tone.pct/100)/total;
-    const halfW=Math.max(frac*maxR*0.40,maxR*0.040); // min thickness guard
-    return{tone,inner:peakR-halfW,peak:peakR,outer:peakR+halfW,idx:i};
+    const outerR=maxR-i*bandW;
+    const innerR=Math.max(outerR-bandW,0);
+    return{tone,inner:innerR,peak:(outerR+innerR)/2,outer:outerR,idx:i};
   });
 
-  // ── Draw rings outer → inner so inner rings sit on top ────────────
-  [...rippleRings].reverse().forEach(({tone,inner,peak,outer,idx})=>{
+  // Draw outer→inner; dominant gets outermost position (widest visible band)
+  const globalBreathe=1+Math.sin(t*0.20)*0.016; // all rings breathe together
+  sorted.forEach((tone,i)=>{
     const[r,g,b]=hexToRgb(tone.hex);
-    const isHov=rippleHoverIdx===idx;
+    const isHov=rippleHoverIdx===i;
 
-    // Independent breathing — larger amplitude, incommensurable phases
-    const breathe=1+Math.sin(t*0.24+idx*1.44)*0.034;
-    const peakB=peak*breathe;
-    const halfWB=(outer-inner)*0.5*breathe;
-    const innerB=Math.max(peakB-halfWB,0);
-    const outerB=peakB+halfWB;
+    const outerR=(maxR-i*bandW)*globalBreathe;
+    const innerR=Math.max((maxR-i*bandW-bandW)*globalBreathe,0);
 
-    // Saturation boost + subtle live color wobble (channels drift at different rates)
-    const mean=(r+g+b)/3;
-    const sat=isHov?1.95:1.65;
-    const cWob=14; // channel wobble amplitude (±14 out of 255)
-    const rw=Math.sin(t*0.29+idx*0.88)*cWob;
-    const gw=Math.sin(t*0.23+idx*1.33)*cWob;
-    const bw=Math.sin(t*0.31+idx*0.61)*cWob;
-    const rv=Math.min(Math.max(mean+(r-mean)*sat+rw,0)|0,255);
-    const gv=Math.min(Math.max(mean+(g-mean)*sat+gw,0)|0,255);
-    const bv=Math.min(Math.max(mean+(b-mean)*sat+bw,0)|0,255);
+    const baseA=isHov?0.88:0.74;
+    const a=baseA*(0.94+0.06*Math.sin(t*0.26+i*2.1));
 
+    // ── Clip to annular region ────────────────────────────────────────
     ctx.save();
     ctx.beginPath();
-    ctx.arc(cx,cy,Math.min(outerB*1.45,maxR*1.06),0,Math.PI*2);
-    ctx.arc(cx,cy,Math.max(innerB*0.68,0),Math.PI*2,0,true);
+    ctx.arc(cx,cy,outerR,0,Math.PI*2);
+    if(innerR>0.5)ctx.arc(cx,cy,innerR,0,Math.PI*2,true);
     ctx.clip();
 
-    // ── Ring body: pulsing brightness ──────────────────────────────
-    ctx.globalCompositeOperation='source-over';
-    const bA=(isHov?0.92:0.76)*(0.86+0.14*Math.sin(t*0.48+idx*2.18));
-    const rGrd=ctx.createRadialGradient(cx,cy,innerB,cx,cy,outerB);
-    rGrd.addColorStop(0,   `rgba(${rv},${gv},${bv},0)`);
-    rGrd.addColorStop(0.22,`rgba(${rv},${gv},${bv},${(bA*0.55).toFixed(2)})`);
-    rGrd.addColorStop(0.50,`rgba(${rv},${gv},${bv},${bA.toFixed(2)})`);
-    rGrd.addColorStop(0.78,`rgba(${rv},${gv},${bv},${(bA*0.55).toFixed(2)})`);
-    rGrd.addColorStop(1,   `rgba(${rv},${gv},${bv},0)`);
-    ctx.fillStyle=rGrd;ctx.fillRect(0,0,W,H);
+    // ① Flat base fill
+    ctx.fillStyle=`rgba(${r},${g},${b},${a.toFixed(3)})`;
+    ctx.fillRect(0,0,W,H);
 
-    // ── Conic highlight: faster orbital rotation, pulsing intensity ─
-    // Each ring orbits at its own speed — never sync'd, always in motion
-    const hlAng=-Math.PI*0.48+idx*(Math.PI*2/Math.max(n,1))+t*(0.20+idx*0.025);
-    ctx.globalCompositeOperation='lighter';
-    const hlPulse=0.76+0.24*Math.sin(t*0.90+idx*1.82); // 0.52–1.0
-    const hlA=(isHov?0.68:0.44)*hlPulse;
-    const hr=Math.min(rv*1.65|0,255), hg=Math.min(gv*1.65|0,255), hb=Math.min(bv*1.65|0,255);
+    // ② Directional shading — light from above (conic gradient)
     if(_hasConicGradient){
-      const con=ctx.createConicGradient(hlAng,cx,cy);
-      con.addColorStop(0,    `rgba(255,255,255,${(hlA*0.55).toFixed(2)})`);
-      con.addColorStop(0.06, `rgba(${hr},${hg},${hb},${hlA.toFixed(2)})`);
-      con.addColorStop(0.18, `rgba(${hr},${hg},${hb},${(hlA*0.45).toFixed(2)})`);
-      con.addColorStop(0.36, `rgba(${rv},${gv},${bv},${(hlA*0.12).toFixed(2)})`);
-      con.addColorStop(0.55, `rgba(0,0,0,0)`);
-      con.addColorStop(0.82, `rgba(${rv},${gv},${bv},${(hlA*0.07).toFixed(2)})`);
-      con.addColorStop(1,    `rgba(255,255,255,${(hlA*0.55).toFixed(2)})`);
-      ctx.fillStyle=con;ctx.fillRect(0,0,W,H);
+      const conic=ctx.createConicGradient(-Math.PI/2,cx,cy);
+      conic.addColorStop(0,   'rgba(255,255,255,0.20)'); // top: highlight
+      conic.addColorStop(0.20,'rgba(255,255,255,0.06)'); // upper sides
+      conic.addColorStop(0.50,'rgba(0,0,0,0.18)');       // bottom: shadow
+      conic.addColorStop(0.80,'rgba(255,255,255,0.06)'); // lower sides
+      conic.addColorStop(1.0, 'rgba(255,255,255,0.20)'); // back to top
+      ctx.fillStyle=conic;
+      ctx.fillRect(0,0,W,H);
+    }
+    ctx.restore();
 
-      // ── Counter-rotating dim secondary highlight — adds depth ───────
-      const hlAng2=hlAng+Math.PI+t*0.055; // opposite side, slower
-      const hlA2=hlA*0.28;
-      const con2=ctx.createConicGradient(hlAng2,cx,cy);
-      con2.addColorStop(0,    `rgba(${hr},${hg},${hb},${(hlA2*0.4).toFixed(2)})`);
-      con2.addColorStop(0.05, `rgba(${hr},${hg},${hb},${hlA2.toFixed(2)})`);
-      con2.addColorStop(0.14, `rgba(${hr},${hg},${hb},${(hlA2*0.5).toFixed(2)})`);
-      con2.addColorStop(0.28, `rgba(0,0,0,0)`);
-      con2.addColorStop(1,    `rgba(${hr},${hg},${hb},${(hlA2*0.4).toFixed(2)})`);
-      ctx.fillStyle=con2;ctx.fillRect(0,0,W,H);
+    // ③ Outer edge highlight — bright arc along top of outer rim
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx,cy,outerR-1,-Math.PI*0.83,-Math.PI*0.17);
+    ctx.strokeStyle='rgba(255,255,255,0.50)';
+    ctx.lineWidth=1.8;
+    ctx.stroke();
+    ctx.restore();
+
+    // ④ Outer edge shadow — dark arc along bottom of outer rim
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx,cy,outerR-0.5,Math.PI*0.17,Math.PI*0.83);
+    ctx.strokeStyle='rgba(0,0,0,0.14)';
+    ctx.lineWidth=1.2;
+    ctx.stroke();
+    ctx.restore();
+
+    // ⑤ Inner edge shadow — dark arc along bottom of inner hole lip
+    if(innerR>4){
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx,cy,innerR+1,Math.PI*0.17,Math.PI*0.83);
+      ctx.strokeStyle='rgba(0,0,0,0.22)';
+      ctx.lineWidth=1.5;
+      ctx.stroke();
+      ctx.restore();
     }
 
+    // ⑥ Ring separator — hairline border to give stacked-plate definition
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx,cy,outerR,0,Math.PI*2);
+    ctx.strokeStyle='rgba(0,0,0,0.09)';
+    ctx.lineWidth=0.8;
+    ctx.stroke();
     ctx.restore();
   });
 
-  // ── Additive glow halo — animated intensity per ring ──────────────
-  ctx.globalCompositeOperation='lighter';
-  rippleRings.forEach(({tone,inner,peak,outer,idx})=>{
-    const[r,g,b]=hexToRgb(tone.hex);
-    const mean=(r+g+b)/3;
-    const rv=Math.min(Math.max(mean+(r-mean)*1.4,0)|0,255);
-    const gv=Math.min(Math.max(mean+(g-mean)*1.4,0)|0,255);
-    const bv=Math.min(Math.max(mean+(b-mean)*1.4,0)|0,255);
-    const breathe=1+Math.sin(t*0.24+idx*1.44)*0.034;
-    const peakB=peak*breathe;
-    const glowW=(outer-inner)*0.5*breathe;
-    // Glow pulses at a rate independent from breathing
-    const glowPulse=0.70+0.30*Math.sin(t*0.62+idx*1.91);
-    const gI=glowPulse; // intensity multiplier
-    const gGrd=ctx.createRadialGradient(cx,cy,Math.max(peakB-glowW*2.4,0),cx,cy,peakB+glowW*2.4);
-    gGrd.addColorStop(0,   `rgba(${rv},${gv},${bv},0)`);
-    gGrd.addColorStop(0.35,`rgba(${rv},${gv},${bv},${(0.09*gI).toFixed(2)})`);
-    gGrd.addColorStop(0.50,`rgba(${rv},${gv},${bv},${(0.18*gI).toFixed(2)})`);
-    gGrd.addColorStop(0.65,`rgba(${rv},${gv},${bv},${(0.09*gI).toFixed(2)})`);
-    gGrd.addColorStop(1,   `rgba(${rv},${gv},${bv},0)`);
-    ctx.fillStyle=gGrd;ctx.fillRect(0,0,W,H);
-  });
-  ctx.globalCompositeOperation='source-over';
+  // ── Top + bottom cream fades ──────────────────────────────────────
+  const tf=ctx.createLinearGradient(0,0,0,H*0.08);
+  tf.addColorStop(0,'rgba(240,237,230,1)');
+  tf.addColorStop(1,'rgba(240,237,230,0)');
+  ctx.fillStyle=tf;ctx.fillRect(0,0,W,H*0.08);
+  const bf=ctx.createLinearGradient(0,H*0.86,0,H);
+  bf.addColorStop(0,'rgba(240,237,230,0)');
+  bf.addColorStop(1,'rgba(240,237,230,1)');
+  ctx.fillStyle=bf;ctx.fillRect(0,H*0.86,W,H*0.14);
 
-  // ── Visual evolution — atmospheric depth grows with history ──────
-  // Faint nebula layer that fills in as entries accumulate.
-  // 1-4: none. 5-10: whisper. 11-20: soft. 21-40: present. 40+: full.
-  const evN=entries.length;
-  if(evN>=5&&sorted.length>0){
-    const evDepth=evN>=40?1.0:evN>=21?0.65:evN>=11?0.38:0.18; // 0→1
-    ctx.globalCompositeOperation='lighter';
-    sorted.forEach(({tone,idx})=>{
-      const[r,g,b]=hexToRgb(tone.hex);
-      const mean=(r+g+b)/3;
-      const rv=Math.min(Math.max(mean+(r-mean)*1.2,0)|0,255);
-      const gv=Math.min(Math.max(mean+(g-mean)*1.2,0)|0,255);
-      const bv=Math.min(Math.max(mean+(b-mean)*1.2,0)|0,255);
-      // Slowly drifting bloom per tone
-      const bx=cx+Math.cos(t*0.04+idx*2.09)*cx*0.28;
-      const by=cy+Math.sin(t*0.03+idx*1.57)*cy*0.22;
-      const nebR=Math.min(W,H)*(0.38+idx*0.12)*evDepth;
-      const neb=ctx.createRadialGradient(bx,by,0,bx,by,nebR);
-      const a=(0.06*evDepth*(0.7+0.3*Math.sin(t*0.18+idx*2.44))).toFixed(3);
-      neb.addColorStop(0,  `rgba(${rv},${gv},${bv},${a})`);
-      neb.addColorStop(0.5,`rgba(${rv},${gv},${bv},${(a*0.4).toFixed(3)})`);
-      neb.addColorStop(1,  `rgba(${rv},${gv},${bv},0)`);
-      ctx.fillStyle=neb;ctx.fillRect(0,0,W,H);
-    });
-    ctx.globalCompositeOperation='source-over';
-  }
-
-  // ── Soft outer vignette — fades the outermost ring edge smoothly ──
-  // Replaces the hard circular boundary with a gentle gradient dissolve
-  const vig=ctx.createRadialGradient(cx,cy,maxR*0.74,cx,cy,maxR*1.10);
-  vig.addColorStop(0,   'rgba(6,6,8,0)');
-  vig.addColorStop(0.42,'rgba(6,6,8,0.28)');
-  vig.addColorStop(0.68,'rgba(6,6,8,0.62)');
-  vig.addColorStop(0.88,'rgba(6,6,8,0.88)');
-  vig.addColorStop(1,   'rgba(6,6,8,1)');
-  ctx.fillStyle=vig;ctx.fillRect(0,0,W,H);
-
-  // ── Seamless top + bottom fade into dark page background ──────────
-  // Narrow fade — rings don't reach canvas edges so this is mainly a
-  // polish pass ensuring pixel-perfect blend with the surrounding page.
-  const fadeH=H*0.13;
-  const tFade=ctx.createLinearGradient(0,0,0,fadeH);
-  tFade.addColorStop(0,'rgba(6,6,8,1)');
-  tFade.addColorStop(1,'rgba(6,6,8,0)');
-  ctx.fillStyle=tFade;ctx.fillRect(0,0,W,fadeH);
-  const bFade=ctx.createLinearGradient(0,H-fadeH,0,H);
-  bFade.addColorStop(0,'rgba(6,6,8,0)');
-  bFade.addColorStop(1,'rgba(6,6,8,1)');
-  ctx.fillStyle=bFade;ctx.fillRect(0,H-fadeH,W,fadeH);
-
-  // Sync legend .active class to current hover index (cheap DOM update,
-  // only runs when the index actually changed)
+  // Legend sync
   const legend=document.getElementById('s3-legend');
   if(legend&&legend._lastActiveIdx!==rippleHoverIdx){
     legend._lastActiveIdx=rippleHoverIdx;
@@ -2652,8 +2522,8 @@ function initRippleInteraction(){
   if(!canvas)return;
   function hitRing(ex,ey){
     const rect=canvas.getBoundingClientRect();
-    const cx=(rect.width/2),cy=(rect.height/2);
-    const dx=(ex-rect.left)-cx,dy=(ey-rect.top)-cy;
+    const cx=rect.width/2, cy=rect.height/2;
+    const dx=(ex-rect.left)-cx, dy=(ey-rect.top)-cy;
     const dist=Math.sqrt(dx*dx+dy*dy);
     for(let i=0;i<rippleRings.length;i++){
       if(dist>=rippleRings[i].inner&&dist<=rippleRings[i].outer)return i;
@@ -4155,14 +4025,14 @@ const AURORA_BANDS=[
   {baseY:0.38,amp:0.070,freq:1.3,spd:0.15,phase:0.9},  // lonely
 ];
 
-// Vivid color overrides
+// Vivid color overrides — clear, calm palette for pill-bar visualization
 const PULSE_VIVID=[
-  [115, 52,250],  // overwhelmed — violet
-  [ 30,112,248],  // tired       — blue
-  [235, 32, 82],  // anxious     — crimson
-  [245,158,  12], // hopeful     — amber
-  [ 72,220,  90], // calm        — soft green
-  [108,108,255],  // lonely      — indigo
+  [108, 58,188],  // overwhelmed — violet
+  [ 58,112,215],  // tired       — blue
+  [215, 58, 92],  // anxious     — rose-red
+  [212,158, 30],  // hopeful     — amber
+  [ 48,172,115],  // calm        — sage green
+  [ 82, 96,208],  // lonely      — periwinkle
 ];
 
 // Pre-computed star field
@@ -4185,107 +4055,24 @@ function renderPulseArt(t){
   const W=canvas.offsetWidth||375,H=canvas.offsetHeight||812;
   ctx.setTransform(dpr,0,0,dpr,0,0);
 
-  // ── Deep space base ───────────────────────────────────────────────
+  // ── Cream base ──────────────────────────────────────────────────────
   ctx.globalCompositeOperation='source-over';
-  ctx.fillStyle='#030210';
+  ctx.fillStyle='#EEE9E2';
   ctx.fillRect(0,0,W,H);
 
-  // ── Background atmospheric blush — very subtle per-band color bloom ──
-  // Draws before stars so stars sit on top of the ambient color
-  ctx.globalCompositeOperation='source-over';
-  PULSE_DATA.forEach((p,ei)=>{
-    const band=AURORA_BANDS[ei];
-    const [cr,cg,cb]=PULSE_VIVID[ei];
-    const surge=0.55+Math.sin(t*0.18+ei*1.7)*0.38;
-    const r=230;
-    const by=band.baseY*H;
-    const bg=ctx.createRadialGradient(W*0.5,by,0,W*0.5,by,r);
-    bg.addColorStop(0,`rgba(${cr},${cg},${cb},${(0.018*surge*(p.weight/100)).toFixed(4)})`);
-    bg.addColorStop(1,`rgba(${cr},${cg},${cb},0)`);
-    ctx.fillStyle=bg;ctx.fillRect(0,by-r,W,r*2);
-  });
+  // ── Aurora waves — V7 geometry adapted for light background ─────────
+  // Single-pass strokes per feeling. Width scales with weight.
+  // Horizontal fade gradient so waves dissolve at canvas edges.
+  // No blur, no glow, no multi-pass.
 
-  // ── Personal upper bloom — user's dominant tone tints the sky ────
-  if(auroraUserRGB){
-    const[ur,ug,ub]=auroraUserRGB;
-    const bSurge=0.55+Math.sin(t*0.08+2.3)*0.28;
-    // Wide ambient glow centered in the upper sky
-    const bY=H*0.16,bR=H*0.46;
-    const bg2=ctx.createRadialGradient(W*0.5,bY,0,W*0.5,bY,bR);
-    bg2.addColorStop(0,  `rgba(${ur},${ug},${ub},${(0.048*bSurge).toFixed(4)})`);
-    bg2.addColorStop(0.5,`rgba(${ur},${ug},${ub},${(0.016*bSurge).toFixed(4)})`);
-    bg2.addColorStop(1,  `rgba(${ur},${ug},${ub},0)`);
-    ctx.fillStyle=bg2;ctx.fillRect(0,0,W,H*0.62);
-  }
-
-  // ── Stars — fine pinpoints in upper sky ───────────────────────────
-  PULSE_STARS.forEach(s=>{
-    const a=0.13+Math.sin(t*s.tw+s.tp)*0.10;
-    ctx.beginPath();
-    ctx.arc(s.x*W,s.y*H,s.r,0,Math.PI*2);
-    ctx.fillStyle=`rgba(210,220,255,${Math.max(0.02,a).toFixed(3)})`;
-    ctx.fill();
-  });
-
-  // ── Waves ─────────────────────────────────────────────────────────
-  ctx.globalCompositeOperation='lighter';
-
-  // ── Personal aurora wave — user's dominant tone, slow curtain ────
-  if(auroraUserRGB){
-    const[ur,ug,ub]=auroraUserRGB;
-    const pSurge=0.48+Math.sin(t*0.07+5.5)*0.26;
-    // Slow, wide band between top-seal and first PULSE_DATA band
-    const pBaseY=0.21,pAmp=0.048,pFreq=0.65,pSpd=0.055,pPhase=3.7;
-    const steps=100,pts=[];
-    for(let xi=0;xi<=steps;xi++){
-      const xf=xi/steps;
-      pts.push([xf*W,(pBaseY+pAmp*Math.sin(xf*Math.PI*pFreq*2+t*pSpd+pPhase))*H]);
-    }
-    function pPath(){
-      ctx.beginPath();pts.forEach(([x,y],i)=>i===0?ctx.moveTo(x,y):ctx.lineTo(x,y));
-    }
-    // Diffuse haze blobs
-    for(let bi=0;bi<8;bi++){
-      const idx=Math.round(bi/7*steps);
-      const[bx,by]=pts[idx];
-      const r=150*pSurge;
-      const g=ctx.createRadialGradient(bx,by,0,bx,by,r);
-      g.addColorStop(0,`rgba(${ur},${ug},${ub},${(0.052*pSurge).toFixed(4)})`);
-      g.addColorStop(1,`rgba(${ur},${ug},${ub},0)`);
-      ctx.fillStyle=g;ctx.fillRect(bx-r,by-r,r*2,r*2);
-    }
-    // Glowing body
-    pPath();
-    ctx.strokeStyle=`rgba(${ur},${ug},${ub},${(0.13*pSurge).toFixed(4)})`;
-    ctx.lineWidth=24;ctx.lineCap='round';
-    ctx.shadowColor=`rgba(${ur},${ug},${ub},0.55)`;ctx.shadowBlur=28;ctx.stroke();
-    // Bright core thread
-    pPath();
-    ctx.strokeStyle=`rgba(${ur},${ug},${ub},${(0.38*pSurge).toFixed(4)})`;
-    ctx.lineWidth=1.8;
-    ctx.shadowColor='rgba(255,255,255,0.65)';ctx.shadowBlur=5;ctx.stroke();
-    ctx.shadowBlur=0;
-  }
+  const steps=90;
 
   PULSE_DATA.forEach((p,ei)=>{
     const band=AURORA_BANDS[ei];
-    const [cr,cg,cb]=PULSE_VIVID[ei];
+    const[cr,cg,cb]=PULSE_VIVID[ei];
     const norm=p.weight/100;
-    // Breathing surge + subtle flare spike per band
-    const breathe=0.62+Math.sin(t*0.22+ei*1.4)*0.26;
-    const flare=Math.pow(Math.max(0,Math.sin(t*0.55+ei*2.3)),5)*0.32;
-    const surge=Math.min(1.1,breathe+flare);
+    const surge=0.88+Math.sin(t*0.06+ei*1.4)*0.12;
 
-    // Per-wave live color shimmer — each channel drifts at its own rate
-    const sR=Math.sin(t*0.55+ei*0.88)*28;
-    const sG=Math.sin(t*0.41+ei*1.33)*20;
-    const sB=Math.sin(t*0.48+ei*0.61)*26;
-    const crs=Math.min(255,Math.max(0,(cr+sR)|0));
-    const cgs=Math.min(255,Math.max(0,(cg+sG)|0));
-    const cbs=Math.min(255,Math.max(0,(cb+sB)|0));
-
-    // Wave path — primary harmonic + subtle overtone
-    const steps=120;
     const pts=[];
     for(let xi=0;xi<=steps;xi++){
       const xf=xi/steps;
@@ -4293,7 +4080,7 @@ function renderPulseArt(t){
         xf*W,
         (band.baseY
           +band.amp*Math.sin(xf*Math.PI*band.freq*2+t*band.spd+band.phase)
-          +band.amp*0.15*Math.sin(xf*Math.PI*band.freq*3.1+t*band.spd*1.35+band.phase*1.1)
+          +band.amp*0.14*Math.sin(xf*Math.PI*band.freq*2.9+t*band.spd*1.3+band.phase*1.1)
         )*H
       ]);
     }
@@ -4303,74 +4090,39 @@ function renderPulseArt(t){
       pts.forEach(([x,y],i)=>i===0?ctx.moveTo(x,y):ctx.lineTo(x,y));
     }
 
-    // LAYER 1: Wide diffuse haze — no hard edges, pure atmosphere
-    const hazeN=10;
-    for(let bi=0;bi<hazeN;bi++){
-      const idx=Math.round(bi/(hazeN-1)*steps);
-      const [bx,by]=pts[idx];
-      const r=(180+norm*90)*surge;
-      const g=ctx.createRadialGradient(bx,by,0,bx,by,r);
-      g.addColorStop(0,   `rgba(${crs},${cgs},${cbs},${((0.062+norm*0.038)*surge).toFixed(4)})`);
-      g.addColorStop(0.38,`rgba(${crs},${cgs},${cbs},${((0.020+norm*0.012)*surge).toFixed(4)})`);
-      g.addColorStop(1,   `rgba(${crs},${cgs},${cbs},0)`);
-      ctx.fillStyle=g;ctx.fillRect(bx-r,by-r,r*2,r*2);
-    }
+    // Line width proportional to weight
+    const lw=(20+norm*28)*surge;
+    const alpha=(0.62+norm*0.22).toFixed(3);
 
-    // LAYER 2: Glowing body — wide soft stroke, more impact
+    // Horizontal fade — waves dissolve at left and right edges
+    const grd=ctx.createLinearGradient(0,0,W,0);
+    grd.addColorStop(0,   `rgba(${cr},${cg},${cb},0)`);
+    grd.addColorStop(0.07,`rgba(${cr},${cg},${cb},${alpha})`);
+    grd.addColorStop(0.93,`rgba(${cr},${cg},${cb},${alpha})`);
+    grd.addColorStop(1,   `rgba(${cr},${cg},${cb},0)`);
+
+    ctx.save();
+    ctx.lineCap='round';
+    ctx.lineJoin='round';
+    ctx.lineWidth=lw;
+    ctx.strokeStyle=grd;
     drawPath();
-    ctx.strokeStyle=`rgba(${crs},${cgs},${cbs},${((0.14+norm*0.10)*surge).toFixed(4)})`;
-    ctx.lineWidth=28;ctx.lineCap='round';
-    ctx.shadowColor=`rgba(${crs},${cgs},${cbs},0.60)`;
-    ctx.shadowBlur=32;
     ctx.stroke();
-
-    // LAYER 3: Mid glow — tighter, brighter band
-    drawPath();
-    ctx.strokeStyle=`rgba(${crs},${cgs},${cbs},${((0.32+norm*0.14)*surge).toFixed(4)})`;
-    ctx.lineWidth=6;
-    ctx.shadowColor=`rgba(${crs},${cgs},${cbs},0.75)`;
-    ctx.shadowBlur=14;
-    ctx.stroke();
-
-    // LAYER 4: Bright core line — the luminous thread
-    drawPath();
-    ctx.strokeStyle=`rgba(${crs},${cgs},${cbs},${((0.72+norm*0.12)*surge).toFixed(4)})`;
-    ctx.lineWidth=1.6;
-    ctx.shadowColor=`rgba(255,255,255,0.70)`;
-    ctx.shadowBlur=6;
-    ctx.stroke();
-    ctx.shadowBlur=0;
-
-    // LAYER 5: Glowing particles — dense sparkle riding the core
-    ctx.shadowColor=`rgba(${crs},${cgs},${cbs},0.8)`;
-    ctx.shadowBlur=10;
-    for(let xi=0;xi<=steps;xi+=2){
-      const [px,py]=pts[xi];
-      const tw=0.28+Math.sin(xi*0.91+t*1.8+ei*1.2)*0.44;
-      const a=(0.40+norm*0.22)*surge*tw;
-      if(a<0.04)continue;
-      ctx.beginPath();
-      ctx.arc(px,py,1.4+norm*1.0,0,Math.PI*2);
-      ctx.fillStyle=`rgba(${crs},${cgs},${cbs},${a.toFixed(3)})`;
-      ctx.fill();
-    }
-    ctx.shadowBlur=0;
+    ctx.restore();
   });
 
-  ctx.globalCompositeOperation='source-over';
+  // ── Ground fade — waves dissolve into list ──────────────────────────
+  const gf=ctx.createLinearGradient(0,H*0.55,0,H);
+  gf.addColorStop(0,   'rgba(238,233,226,0)');
+  gf.addColorStop(0.38,'rgba(238,233,226,0.88)');
+  gf.addColorStop(1,   'rgba(238,233,226,1)');
+  ctx.fillStyle=gf;ctx.fillRect(0,H*0.55,W,H*0.45);
 
-  // ── Ground fog — waves dissolve into the list ─────────────────────
-  const gf=ctx.createLinearGradient(0,H*0.62,0,H);
-  gf.addColorStop(0,   'rgba(3,2,16,0)');
-  gf.addColorStop(0.42,'rgba(3,2,16,0.72)');
-  gf.addColorStop(1,   'rgba(3,2,16,0.98)');
-  ctx.fillStyle=gf;ctx.fillRect(0,H*0.62,W,H*0.38);
-
-  // ── Top seal — header text stays readable ─────────────────────────
-  const tf=ctx.createLinearGradient(0,0,0,H*0.13);
-  tf.addColorStop(0,'rgba(3,2,16,0.86)');
-  tf.addColorStop(1,'rgba(3,2,16,0)');
-  ctx.fillStyle=tf;ctx.fillRect(0,0,W,H*0.13);
+  // ── Top seal ───────────────────────────────────────────────────────
+  const tf=ctx.createLinearGradient(0,0,0,H*0.10);
+  tf.addColorStop(0,'rgba(238,233,226,0.92)');
+  tf.addColorStop(1,'rgba(238,233,226,0)');
+  ctx.fillStyle=tf;ctx.fillRect(0,0,W,H*0.10);
 }
 
 function buildPulsePersonal(){
