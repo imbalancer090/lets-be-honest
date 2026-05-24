@@ -4015,14 +4015,14 @@ const PULSE_DATA=[
    shift:[6,7,5,8,6,7,5,6,8,6,7,6]},
 ];
 
-// Aurora band geometry — lively, breathing sinusoidal curtains
+// Aurora band geometry — all bands compressed into visible window (0.13–0.50)
 const AURORA_BANDS=[
-  {baseY:0.17,amp:0.082,freq:1.1,spd:0.14,phase:0.0},  // overwhelmed — near top
-  {baseY:0.30,amp:0.072,freq:1.4,spd:0.10,phase:2.1},  // tired
-  {baseY:0.56,amp:0.094,freq:0.9,spd:0.17,phase:1.4},  // anxious
-  {baseY:0.66,amp:0.064,freq:1.7,spd:0.12,phase:3.0},  // hopeful
-  {baseY:0.44,amp:0.100,freq:0.72,spd:0.085,phase:4.2},// calm — wide, slower
-  {baseY:0.38,amp:0.070,freq:1.3,spd:0.15,phase:0.9},  // lonely
+  {baseY:0.13,amp:0.070,freq:1.1,spd:0.14,phase:0.0},  // overwhelmed — top
+  {baseY:0.23,amp:0.065,freq:1.4,spd:0.10,phase:2.1},  // tired
+  {baseY:0.42,amp:0.080,freq:0.9,spd:0.17,phase:1.4},  // anxious
+  {baseY:0.50,amp:0.058,freq:1.7,spd:0.12,phase:3.0},  // hopeful — lower
+  {baseY:0.33,amp:0.088,freq:0.72,spd:0.085,phase:4.2},// calm — wide, slower
+  {baseY:0.29,amp:0.062,freq:1.3,spd:0.15,phase:0.9},  // lonely
 ];
 
 // Vivid color overrides — clear, calm palette for pill-bar visualization
@@ -4111,18 +4111,18 @@ function renderPulseArt(t){
     ctx.restore();
   });
 
-  // ── Ground fade — waves dissolve into list ──────────────────────────
-  const gf=ctx.createLinearGradient(0,H*0.55,0,H);
+  // ── Ground fade — starts late so lower waves stay visible ──────────
+  const gf=ctx.createLinearGradient(0,H*0.62,0,H);
   gf.addColorStop(0,   'rgba(238,233,226,0)');
-  gf.addColorStop(0.38,'rgba(238,233,226,0.88)');
+  gf.addColorStop(0.42,'rgba(238,233,226,0.92)');
   gf.addColorStop(1,   'rgba(238,233,226,1)');
-  ctx.fillStyle=gf;ctx.fillRect(0,H*0.55,W,H*0.45);
+  ctx.fillStyle=gf;ctx.fillRect(0,H*0.62,W,H*0.38);
 
-  // ── Top seal ───────────────────────────────────────────────────────
-  const tf=ctx.createLinearGradient(0,0,0,H*0.10);
-  tf.addColorStop(0,'rgba(238,233,226,0.92)');
+  // ── Top seal — thin, light touch only ─────────────────────────────
+  const tf=ctx.createLinearGradient(0,0,0,H*0.06);
+  tf.addColorStop(0,'rgba(238,233,226,0.55)');
   tf.addColorStop(1,'rgba(238,233,226,0)');
-  ctx.fillStyle=tf;ctx.fillRect(0,0,W,H*0.10);
+  ctx.fillStyle=tf;ctx.fillRect(0,0,W,H*0.06);
 }
 
 function buildPulsePersonal(){
